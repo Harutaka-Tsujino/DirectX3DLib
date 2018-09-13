@@ -123,6 +123,9 @@
   <ItemGroup>
     <ClInclude Include="DX9LibX64.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\命名規則.md" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
