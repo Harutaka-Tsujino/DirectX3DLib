@@ -49,7 +49,7 @@
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -70,6 +70,10 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>$(DXSDK_DIR)Include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(DXSDK_DIR)Lib\x64;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>$(DXSDK_DIR)Include;$(IncludePath)</IncludePath>
     <LibraryPath>$(DXSDK_DIR)Lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
@@ -118,10 +122,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ClassDirectX.cpp" />
+    <ClCompile Include="ClassFPS.cpp" />
+    <ClCompile Include="ClassWindow.cpp" />
     <ClCompile Include="DX9LibX64.cpp" />
+    <ClCompile Include="IClassInit.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ClassDirectX.h" />
+    <ClInclude Include="ClassFPS.h" />
+    <ClInclude Include="ClassWindow.h" />
     <ClInclude Include="DX9LibX64.h" />
+    <ClInclude Include="IClassInit.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\命名規則.md" />

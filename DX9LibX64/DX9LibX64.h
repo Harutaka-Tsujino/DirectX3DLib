@@ -1,16 +1,14 @@
-#ifndef DX9_X64_LIB_H
-#define DX9_X64_LIB_H
-
+#pragma once
 #include<windows.h>
 
-#define D3DFVF_CUSTOMVERTEX (D3DFVF_XYZ|D3DFVF_DIFFUSE)
+#define DISALLOW_DEFAULT_CONSTRACTA_AND_DESTRACTA(ClassName)\
+ClassName(const ClassName&) = delete;\
+~ClassName() = delete;\
+ClassName& operator=(const ClassName&) = delete;
 
-//É|ÉäÉSÉìÇÃí∏ì_èÓïÒÇÃç\ë¢ëÃ
-struct CustomVertex
-{
-	FLOAT m_x, m_y, m_z;
-	DWORD m_aRGB;
-	FLOAT m_tu, m_tv;
-};
+#define CREATE_CONSTRACTA_AND_DESTRACTA(ClassName)\
+ClassName(){}\
+~ClassName(){}\
 
-#endif//DX9_X64_LIB_H
+//INT LoopMainFunc(VOID(*func)(), Window* pWindow, DirectX* pDirectX);
+VOID MainFunc();
