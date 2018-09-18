@@ -5,7 +5,7 @@
 class FPS
 {
 public:
-	static FPS* GetInstancePointer();
+	static FPS* GetInstance();
 
 	BOOL CoordinateFrame();
 

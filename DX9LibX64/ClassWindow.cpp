@@ -3,7 +3,7 @@
 
 Window* Window::m_pWindowClass;
 
-Window* Window::GetInstancePointer()
+Window* Window::GetInstance()
 {
 	if (!m_pWindowClass)m_pWindowClass = new(Window);
 

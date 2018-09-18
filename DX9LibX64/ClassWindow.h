@@ -5,7 +5,7 @@
 class Window
 {
 public:
-	static Window* GetInstancePointer();
+	static Window* GetInstance();
 	template<typename T1, typename T2>
 	VOID Init(const HINSTANCE hInst, const CHAR* nameApp, const T1 widthDisplay, const T2 heightDisplay, const BOOL window);
 	template<typename T1, typename T2>

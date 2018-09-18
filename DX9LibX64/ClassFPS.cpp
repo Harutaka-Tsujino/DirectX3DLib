@@ -3,7 +3,7 @@
 
 FPS* FPS::m_pFPSClass;
 
-FPS* FPS::GetInstancePointer()
+FPS* FPS::GetInstance ()
 {
 	if (!m_pFPSClass)m_pFPSClass = new(FPS);
 
