@@ -58,6 +58,7 @@ typedef struct
 	BOOL m_buttonUninput[4];
 }MouseState;
 
+//DirectX関係の初期化インターフェイス 3Dに対応したときにBridgeを行いたいため
 class IDirectXInitializer
 {
 public:
@@ -67,6 +68,7 @@ public:
 private:
 };
 
+//DirectXオブジェクトの初期化機能追加部分 実装部分に追加部分を持たせないことによって修正変更が容易になる
 class DirectXObjectInitializer :public IDirectXInitializer
 {
 public:
@@ -75,6 +77,22 @@ private:
 	VOID SetBuckBufferOverall();
 };
 
+//DirectXオブジェクトの初期化や設定等のクラスをまたいだデータを
+//データのみの別クラスにまとめることで
+//あるクラスとその要素となるクラスの結合度を下げている
+
+//ただのグローバル変数になっているのでカプセル化を行いたい
+
+//要素クラスをインナークラスとするか（一番楽そう）
+
+//このデータによって呼び出す初期化クラスを変えるか（この場合小さな差異であっても分けなければいけないのでコードが増える）
+
+//インターフェイスの定義がDirectX関係の初期化となっているので
+//オブジェクトの初期化インターフェイスというように分けるべきか（現在コンテキストに依存したコーディングとなっているので最善だと思われる）
+
+//friendを持ち入る方法もあるがクラスが増えてくると大変
+
+//windowモードは不変的なのでstaticにしている
 class DirectXObjectDatas
 {
 public:
@@ -84,6 +102,7 @@ public:
 private:
 };
 
+//windowのモードを変える関数があるが外部から操作できるし自クラスのメンバではない
 class DirectXObject
 {
 public:
@@ -116,6 +135,8 @@ public:
 private:
 };
 
+
+//描画の準備　描画しているものの消去などさらにクラス分けを行ったほうがいいのでは
 class DirectX3DDevice
 {
 public:
@@ -190,3 +211,4 @@ struct CustomVertex
 	FLOAT m_tu;
 	FLOAT m_tv;
 };
+//全体的にカプセル化ができていない
