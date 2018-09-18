@@ -35,15 +35,13 @@ INT LoopMainFunc(VOID(*func)(),Window* pWindow, DirectX* pDirectX)
 	
 	FPS* pFPS = FPS::GetInstancePointer();
 
-	pFPS->Init(60);
-
 	while (pWindow->m_msg.message != WM_QUIT)
 	{
 		if (pWindow->ConfirmMessage())
 		{
 			pFPS->UpdateTime();
 
-			if (pFPS->CheckTime())
+			if (pFPS->CoordinateFrame())
 			{
 				pDirectX->GetInputStates();
 				pDirectX->PrepareRender();

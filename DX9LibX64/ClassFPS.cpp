@@ -10,10 +10,8 @@ FPS* FPS::GetInstancePointer()
 	return m_pFPSClass;
 }
 
-VOID FPS::Init(UINT frame)
+FPS::FPS()
 {
-	m_frame = frame;
-
 	timeBeginPeriod(1);
 
 	m_timeCurrent = timeGetTime();
@@ -21,15 +19,15 @@ VOID FPS::Init(UINT frame)
 	timeEndPeriod(1);
 
 	m_timePrev = 0;
-
-	return;
 }
 
-BOOL FPS::CheckTime()
+BOOL FPS::CoordinateFrame()
 {
 	timeBeginPeriod(1);
+	
+	const INT DEFAULT_FPS = 60;
 
-	if (m_timeCurrent - m_timePrev >= 1000 / m_frame)
+	if (m_timeCurrent - m_timePrev >= 1000 / DEFAULT_FPS)
 	{
 		m_timePrev = timeGetTime();
 

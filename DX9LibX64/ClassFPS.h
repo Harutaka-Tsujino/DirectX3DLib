@@ -6,16 +6,18 @@ class FPS
 {
 public:
 	static FPS* GetInstancePointer();
-	VOID Init(UINT frame);
-	BOOL CheckTime();
+
+	BOOL CoordinateFrame();
+
 	VOID UpdateTime();
 
-	UINT m_frame;
-
 private:
-	CREATE_CONSTRACTA_AND_DESTRACTA(FPS)
+	FPS();
+	~FPS() {};
 
 	static FPS* m_pFPSClass;
-	DWORD m_timeCurrent;
-	DWORD m_timePrev;
+
+	typedef DWORD t_TIME;
+	t_TIME m_timeCurrent;
+	t_TIME m_timePrev;
 };

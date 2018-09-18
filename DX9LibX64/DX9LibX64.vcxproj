@@ -126,14 +126,12 @@
     <ClCompile Include="ClassFPS.cpp" />
     <ClCompile Include="ClassWindow.cpp" />
     <ClCompile Include="DX9LibX64.cpp" />
-    <ClCompile Include="IClassInit.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ClassDirectX.h" />
     <ClInclude Include="ClassFPS.h" />
     <ClInclude Include="ClassWindow.h" />
     <ClInclude Include="DX9LibX64.h" />
-    <ClInclude Include="IClassInit.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\命名規則.md" />
