@@ -58,118 +58,147 @@ typedef struct
 	BOOL m_buttonUninput[4];
 }MouseState;
 
-//DirectX関係の初期化インターフェイス 3Dに対応したときにBridgeを行いたいため
-class IDirectXInitializer
+//DirectXの初期化インターフェイス 3Dに対応したときにBridgeを行いたいため
+class IDirectXObjectInitializer
 {
 public:
-	CREATE_CONSTRACTA_AND_DESTRACTA(IDirectXInitializer)
-	virtual HRESULT Init() = 0;
+	CREATE_CONSTRACTA_AND_DESTRACTA(IDirectXObjectInitializer)
+		virtual HRESULT Initialize(BOOL window) = 0;
 
 private:
 };
 
 //DirectXオブジェクトの初期化機能追加部分 実装部分に追加部分を持たせないことによって修正変更が容易になる
-class DirectXObjectInitializer :public IDirectXInitializer
+class DirectXObjectInitializer :public IDirectXObjectInitializer
 {
 public:
-	HRESULT Init();
+	HRESULT Initialize(BOOL window);
 private:
-	VOID SetBuckBufferOverall();
+	VOID SetBuckBufferOverall(BOOL window);
 };
 
-//DirectXオブジェクトの初期化や設定等のクラスをまたいだデータを
-//データのみの別クラスにまとめることで
-//あるクラスとその要素となるクラスの結合度を下げている
-
-//ただのグローバル変数になっているのでカプセル化を行いたい
-
-//要素クラスをインナークラスとするか（一番楽そう）
-
-//このデータによって呼び出す初期化クラスを変えるか（この場合小さな差異であっても分けなければいけないのでコードが増える）
-
-//インターフェイスの定義がDirectX関係の初期化となっているので
-//オブジェクトの初期化インターフェイスというように分けるべきか（現在コンテキストに依存したコーディングとなっているので最善だと思われる）
-
-//friendを持ち入る方法もあるがクラスが増えてくると大変
-
-//windowモードは不変的なのでstaticにしている
-class DirectXObjectDatas
-{
-public:
-	CREATE_CONSTRACTA_AND_DESTRACTA(DirectXObjectDatas)
-	static BOOL m_window;
-
-private:
-};
-
-//windowのモードを変える関数があるが外部から操作できるし自クラスのメンバではない
 class DirectXObject
 {
 public:
-	CREATE_CONSTRACTA_AND_DESTRACTA(DirectXObject)
-	HRESULT Init();
+	DirectXObject();
+	~DirectXObject() {};
+	HRESULT Initialize();
 	VOID SetWindowMode(BOOL window);
 
-	IDirectXInitializer* m_pDirectXObjectInitializer;
+	IDirectXObjectInitializer* m_pDirectXObjectInitializer;
+private:
+	BOOL m_window;
+};
+
+typedef DWORD t_VERTEX_FORMAT;
+
+class IDirectX3DDeviceInitializer
+{
+public:
+	CREATE_CONSTRACTA_AND_DESTRACTA(IDirectX3DDeviceInitializer)
+		virtual HRESULT Initialize(t_VERTEX_FORMAT d3DFVF, BOOL cullPollygon) = 0;
+
 private:
 };
 
-class DirectX3DDeviceInitializer:public IDirectXInitializer
+class DirectX3DDeviceInitializer:public IDirectX3DDeviceInitializer
 {
 public:
-	HRESULT Init();
+	HRESULT Initialize(t_VERTEX_FORMAT d3DFVF, BOOL cullPollygon);
 private:
-	VOID SetRenderState();
+	VOID SetRenderState(BOOL cullPollygon);
 	VOID SetTextureStageState();
 };
 
-typedef DWORD t_VERTEX_FOTMAT;
-
-class DirectX3DDeviceDatas
-{
-public:
-	CREATE_CONSTRACTA_AND_DESTRACTA(DirectX3DDeviceDatas)
-	static BOOL m_cullPolygon;
-	static t_VERTEX_FOTMAT m_d3DFVF;
-
-private:
-};
-
-
-//描画の準備　描画しているものの消去などさらにクラス分けを行ったほうがいいのでは
 class DirectX3DDevice
 {
 public:
-	CREATE_CONSTRACTA_AND_DESTRACTA(DirectX3DDevice)
-	HRESULT Init();
+	DirectX3DDevice();
+	~DirectX3DDevice() {};
+	HRESULT Initialize();
 	VOID SetCullPolygon(BOOL cullPolygon);
-	VOID SetVertexFormat(t_VERTEX_FOTMAT d3DFVF);
+	VOID SetVertexFormat(t_VERTEX_FORMAT d3DFVF);
 	VOID PrepareRender();
 	VOID CleanUpRender();
 
-	IDirectXInitializer* m_pDirectX3DDeviceInitializer;
+	IDirectX3DDeviceInitializer* m_pDirectX3DDeviceInitializer;
+private:
+	BOOL m_cullPolygon;
+	t_VERTEX_FORMAT m_d3DFVF;
+};
+
+class IDirectXInputDevicesInitializer
+{
+public:
+	CREATE_CONSTRACTA_AND_DESTRACTA(IDirectXInputDevicesInitializer)
+	virtual HRESULT Initialize() = 0;
+
 private:
 };
 
-class DirectXInputDevicesInitializer :public IDirectXInitializer
+class DirectXInputDevicesInitializer :public IDirectXInputDevicesInitializer
 {
 public:
-	HRESULT Init();
+	HRESULT Initialize();
+private:
+};
+
+class IInputStatesGetter
+{
+public:
+	CREATE_CONSTRACTA_AND_DESTRACTA(IInputStatesGetter)
+	virtual VOID Get(InputData& rInputData)=0;
+
+private:
+};
+
+class MouseAndKeyBoardStatesGetter:public IInputStatesGetter
+{
+public:
+	VOID Get(InputData& rInputData);
+
+private:
+};
+
+class IInputStatesUpdater
+{
+public:
+	CREATE_CONSTRACTA_AND_DESTRACTA(IInputStatesUpdater)
+	virtual VOID Update(InputData& rInputData) = 0;
+
+private:
+};
+
+class MouseAndKeyBoardStatesUpdater :public IInputStatesUpdater
+{
+private:
+	VOID Update(InputData& rInputData);
+
+private:
+};
+
+class InputData
+{
+public:
+	KeyBoardState m_keyBoardState;
+	MouseState m_mouseState;
+
 private:
 };
 
 class DirectXInputDevices
 {
 public:
-	CREATE_CONSTRACTA_AND_DESTRACTA(DirectXInputDevices)
-	HRESULT Init();
+	DirectXInputDevices();
+	~DirectXInputDevices() {};
+	HRESULT Initialize();
 	VOID GetInputStates();
 	VOID UpdateInputStates();
 
-	IDirectXInitializer* m_pDirectXInputDevicesInitializer;
-	KeyBoardState m_keyBoardState;
-	MouseState m_mouseState;
-
+	IDirectXInputDevicesInitializer* m_pDirectXInputDevicesInitializer;
+	IInputStatesGetter* m_pInputStatesGetter;
+	IInputStatesUpdater* m_pInputStatesUpdater;
+	InputData m_InputData;
 private:
 };
 
@@ -177,6 +206,7 @@ class DirectXInstances
 {
 public:
 	CREATE_CONSTRACTA_AND_DESTRACTA(DirectXInstances)
+	static HWND* m_pHWnd;
 	static LPDIRECT3D9 m_pDirectX;
 	static LPDIRECT3DDEVICE9 m_pDirectX3DDevice;
 	static LPDIRECTINPUT8 m_pDirectXInput;
@@ -195,7 +225,6 @@ public:
 	DirectXObject m_DirectXObject;
 	DirectX3DDevice m_DirectX3DDevice;
 	DirectXInputDevices m_DirectXInputDevices;
-	static HWND* m_pHWnd;
 
 private:
 	CREATE_CONSTRACTA_AND_DESTRACTA(DirectX)
@@ -211,4 +240,3 @@ struct CustomVertex
 	FLOAT m_tu;
 	FLOAT m_tv;
 };
-//全体的にカプセル化ができていない

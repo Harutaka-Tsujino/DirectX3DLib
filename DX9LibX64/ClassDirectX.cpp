@@ -3,6 +3,7 @@
 #include <dinput.h>
 #include"ClassDirectX.h"
 
+HWND* DirectXInstances::m_pHWnd;
 LPDIRECT3D9 DirectXInstances::m_pDirectX;
 LPDIRECT3DDEVICE9 DirectXInstances::m_pDirectX3DDevice;
 LPDIRECTINPUT8 DirectXInstances::m_pDirectXInput;
@@ -11,11 +12,7 @@ LPD3DXFONT DirectXInstances::m_pDirectXFont;
 D3DPRESENT_PARAMETERS DirectXInstances::m_DirectXPresentParam;
 DirectX* DirectXInstances::m_pDirectXClass;
 
-HWND* DirectX::m_pHWnd;
-
-BOOL DirectXObjectDatas::m_window;
-
-HRESULT DirectXObjectInitializer::Init()
+HRESULT DirectXObjectInitializer::Initialize(BOOL window)
 {
 	if (NULL == (DirectXInstances::m_pDirectX = Direct3DCreate9(D3D_SDK_VERSION)))
 	{
@@ -25,14 +22,14 @@ HRESULT DirectXObjectInitializer::Init()
 
 	ZeroMemory(&DirectXInstances::m_DirectXPresentParam, sizeof(DirectXInstances::m_DirectXPresentParam));
 
-	SetBuckBufferOverall();
+	SetBuckBufferOverall(window);
 
-	DirectXInstances::m_DirectXPresentParam.Windowed = DirectXObjectDatas::m_window;
+	DirectXInstances::m_DirectXPresentParam.Windowed = window;
 
 	return S_OK;
 }
 
-VOID DirectXObjectInitializer::SetBuckBufferOverall()
+VOID DirectXObjectInitializer::SetBuckBufferOverall(BOOL window)
 {
 	D3DPRESENT_PARAMETERS directXPresentParam = DirectXInstances::m_DirectXPresentParam;
 
@@ -43,40 +40,45 @@ VOID DirectXObjectInitializer::SetBuckBufferOverall()
 	const INT WIDTH_FULLSCREEN = 1920;
 	const INT HEIGHT_FULLSCREEN = 1080;
 
-	if (!DirectXObjectDatas::m_window)
+	if (!window)
 	{
 		directXPresentParam.BackBufferWidth = WIDTH_FULLSCREEN;
 		directXPresentParam.BackBufferHeight = HEIGHT_FULLSCREEN;
-		directXPresentParam.hDeviceWindow = *DirectX::m_pHWnd;
+		directXPresentParam.hDeviceWindow = *DirectXInstances::m_pHWnd;
 		directXPresentParam.PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
 	}
 
 	return;
 }
 
-HRESULT DirectXObject::Init()
+DirectXObject::DirectXObject()
 {
-	IDirectXInitializer* pDirectXObjectInitializer = m_pDirectXObjectInitializer;
+	m_window = FALSE;
+}
 
-	return pDirectXObjectInitializer->Init();
+HRESULT DirectXObject::Initialize()
+{
+	m_pDirectXObjectInitializer= new DirectXObjectInitializer;
+
+	return m_pDirectXObjectInitializer->Initialize(m_window);
 }
 
 VOID DirectXObject::SetWindowMode(BOOL window)
 {
-	DirectXObjectDatas::m_window = window;
+	m_window = window;
 
 	return;
 }
 
-VOID DirectX3DDeviceInitializer::SetRenderState()
+VOID DirectX3DDeviceInitializer::SetRenderState(BOOL cullPollygon)
 {
-	const LPDIRECT3DDEVICE9 pDirectX3DDevice = DirectXInstances::m_pDirectX3DDevice;
+	LPDIRECT3DDEVICE9 pDirectX3DDevice = DirectXInstances::m_pDirectX3DDevice;
 
 	pDirectX3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, true);
 	pDirectX3DDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 	pDirectX3DDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 
-	if (DirectX3DDeviceDatas::m_cullPolygon)
+	if (cullPollygon)
 	{
 		pDirectX3DDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 	}
@@ -86,7 +88,7 @@ VOID DirectX3DDeviceInitializer::SetRenderState()
 
 VOID DirectX3DDeviceInitializer::SetTextureStageState()
 {
-	const LPDIRECT3DDEVICE9 pDirectX3DDevice = DirectXInstances::m_pDirectX3DDevice;
+	LPDIRECT3DDEVICE9 pDirectX3DDevice = DirectXInstances::m_pDirectX3DDevice;
 
 	pDirectX3DDevice->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
 	pDirectX3DDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
@@ -96,13 +98,13 @@ VOID DirectX3DDeviceInitializer::SetTextureStageState()
 	return;
 }
 
-HRESULT DirectX3DDeviceInitializer::Init()
+HRESULT DirectX3DDeviceInitializer::Initialize(t_VERTEX_FORMAT d3DFVF, BOOL cullPollygon)
 {
-	if (FAILED(DirectXInstances::m_pDirectX->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, *DirectX::m_pHWnd,
+	if (FAILED(DirectXInstances::m_pDirectX->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, *DirectXInstances::m_pHWnd,
 		D3DCREATE_HARDWARE_VERTEXPROCESSING, &DirectXInstances::m_DirectXPresentParam, &DirectXInstances::m_pDirectX3DDevice)))
 	{
 		MessageBox(0, "HALモードでDIRECT3Dデバイスを作成できません\nREFモードで再試行します", NULL, MB_OK);
-		if (FAILED(DirectXInstances::m_pDirectX->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_REF, *DirectX::m_pHWnd,
+		if (FAILED(DirectXInstances::m_pDirectX->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_REF, *DirectXInstances::m_pHWnd,
 			D3DCREATE_MIXED_VERTEXPROCESSING,
 			&DirectXInstances::m_DirectXPresentParam, &DirectXInstances::m_pDirectX3DDevice)))
 		{
@@ -111,34 +113,38 @@ HRESULT DirectX3DDeviceInitializer::Init()
 		}
 	}
 
-	SetRenderState();
+	SetRenderState(cullPollygon);
 	SetTextureStageState();
 
-	DirectXInstances::m_pDirectX3DDevice->SetFVF(DirectX3DDeviceDatas::m_d3DFVF);
+	DirectXInstances::m_pDirectX3DDevice->SetFVF(d3DFVF);
 
 	return S_OK;
 }
 
-BOOL DirectX3DDeviceDatas::m_cullPolygon;
-t_VERTEX_FOTMAT DirectX3DDeviceDatas::m_d3DFVF;
+DirectX3DDevice::DirectX3DDevice()
+{
+	m_cullPolygon = true;
 
-HRESULT DirectX3DDevice::Init()
+	m_d3DFVF = (D3DFVF_XYZ | D3DFVF_DIFFUSE);
+}
+
+HRESULT DirectX3DDevice::Initialize()
 {
 	m_pDirectX3DDeviceInitializer = new DirectX3DDeviceInitializer;
 
-	return m_pDirectX3DDeviceInitializer->Init();
+	return m_pDirectX3DDeviceInitializer->Initialize(m_d3DFVF,m_cullPolygon);
 }
 
 VOID DirectX3DDevice::SetCullPolygon(const BOOL cullPolygon)
 {
-	DirectX3DDeviceDatas::m_cullPolygon = cullPolygon;
+	m_cullPolygon = cullPolygon;
 
 	return;
 }
 
-VOID DirectX3DDevice::SetVertexFormat(t_VERTEX_FOTMAT d3DFVF)
+VOID DirectX3DDevice::SetVertexFormat(t_VERTEX_FORMAT d3DFVF)
 {
-	DirectX3DDeviceDatas::m_d3DFVF = d3DFVF;
+	m_d3DFVF = d3DFVF;
 
 	return;
 }
@@ -159,7 +165,7 @@ VOID DirectX3DDevice::CleanUpRender()
 	return;
 }
 
-HRESULT DirectXInputDevicesInitializer::Init()
+HRESULT DirectXInputDevicesInitializer::Initialize()
 {
 	HRESULT hr;
 
@@ -181,7 +187,7 @@ HRESULT DirectXInputDevicesInitializer::Init()
 	}
 
 	if (FAILED(hr = (DirectXInstances::m_pDirectXInputDevices[(ULONGLONG)INPUT_DEVICES::KEY_BOARD])->SetCooperativeLevel(
-		*DirectX::m_pHWnd, DISCL_NONEXCLUSIVE | DISCL_BACKGROUND)))
+		*DirectXInstances::m_pHWnd, DISCL_NONEXCLUSIVE | DISCL_BACKGROUND)))
 	{
 		return hr;
 	}
@@ -198,7 +204,7 @@ HRESULT DirectXInputDevicesInitializer::Init()
 	}
 
 	if (FAILED(hr = (DirectXInstances::m_pDirectXInputDevices[(ULONGLONG)INPUT_DEVICES::MOUSE])->SetCooperativeLevel(
-		*DirectX::m_pHWnd, DISCL_NONEXCLUSIVE | DISCL_FOREGROUND)))
+		*DirectXInstances::m_pHWnd, DISCL_NONEXCLUSIVE | DISCL_FOREGROUND)))
 	{
 		return hr;
 	}
@@ -218,103 +224,116 @@ HRESULT DirectXInputDevicesInitializer::Init()
 	return S_OK;
 }
 
-HRESULT DirectXInputDevices::Init()
+DirectXInputDevices::DirectXInputDevices()
+{
+	ZeroMemory(&m_InputData, sizeof(InputData));
+}
+
+HRESULT DirectXInputDevices::Initialize()
 {
 	m_pDirectXInputDevicesInitializer = new DirectXInputDevicesInitializer;
 
-	return m_pDirectXInputDevicesInitializer->Init();
+	return m_pDirectXInputDevicesInitializer->Initialize();
+}
+
+VOID MouseAndKeyBoardStatesGetter::Get(InputData& rInputData)
+{
+	memcpy(rInputData.m_keyBoardState.m_prevDiks, rInputData.m_keyBoardState.m_diks, sizeof(BYTE) * 256);
+	memcpy(&rInputData.m_mouseState.m_prevDirectInputMouseState, &rInputData.m_mouseState.m_directInputMouseState, sizeof(DIMOUSESTATE));
+	return;
 }
 
 VOID DirectXInputDevices::GetInputStates()
 {
-	memcpy(m_keyBoardState.m_prevDiks, m_keyBoardState.m_diks, sizeof(BYTE) * 256);
-	memcpy(&m_mouseState.m_prevDirectInputMouseState, &m_mouseState.m_directInputMouseState, sizeof(DIMOUSESTATE));
+	m_pInputStatesGetter = new MouseAndKeyBoardStatesGetter;
+
+	m_pInputStatesGetter->Get(m_InputData);
+
+	return;
+}
+
+VOID MouseAndKeyBoardStatesUpdater::Update(InputData& rInputData)
+{
+	DirectXInstances::m_pDirectXInputDevices[(ULONGLONG)INPUT_DEVICES::MOUSE]->Acquire();
+	DirectXInstances::m_pDirectXInputDevices[(ULONGLONG)INPUT_DEVICES::MOUSE]->GetDeviceState(sizeof(DIMOUSESTATE), &rInputData.m_mouseState.m_directInputMouseState);
+
+	GetCursorPos(&rInputData.m_mouseState.m_absolutePos);
+
+	ScreenToClient(*DirectXInstances::m_pHWnd, &rInputData.m_mouseState.m_absolutePos);
+
+	memset(rInputData.m_mouseState.m_buttonPush, 0, sizeof(BOOL) * 4 * 4);
+
+	for (INT button = 0; button < 4; button++)
+	{
+		if (rInputData.m_mouseState.m_directInputMouseState.rgbButtons[button])
+		{
+			if (rInputData.m_mouseState.m_prevDirectInputMouseState.rgbButtons[button])
+			{
+				rInputData.m_mouseState.m_buttonHold[button] = TRUE;
+			}
+
+			else
+			{
+				rInputData.m_mouseState.m_buttonRelease[button] = TRUE;
+			}
+		}
+
+		else
+		{
+			if (rInputData.m_mouseState.m_prevDirectInputMouseState.rgbButtons[button])
+			{
+				rInputData.m_mouseState.m_buttonPush[button] = TRUE;
+			}
+
+			else
+			{
+				rInputData.m_mouseState.m_buttonUninput[button] = TRUE;
+			}
+		}
+	}
+
+	DirectXInstances::m_pDirectXInputDevices[(ULONGLONG)INPUT_DEVICES::KEY_BOARD]->Acquire();
+	DirectXInstances::m_pDirectXInputDevices[(ULONGLONG)INPUT_DEVICES::KEY_BOARD]->GetDeviceState(sizeof(BYTE) * 256, rInputData.m_keyBoardState.m_diks);
+
+	memset(rInputData.m_keyBoardState.m_keyPush, NULL, sizeof(BOOL) * 256 * 4);
+
+	for (INT key = 0; key < 256; key++)
+	{
+		if (rInputData.m_keyBoardState.m_prevDiks[key] & 0x80)
+		{
+			if (rInputData.m_keyBoardState.m_diks[key] & 0x80)
+			{
+				rInputData.m_keyBoardState.m_keyHold[key] = TRUE;
+			}
+
+			else
+			{
+				rInputData.m_keyBoardState.m_keyRelease[key] = TRUE;
+			}
+		}
+
+		else
+		{
+			if (rInputData.m_keyBoardState.m_diks[key] & 0x80)
+			{
+				rInputData.m_keyBoardState.m_keyPush[key] = TRUE;
+			}
+
+			else
+			{
+				rInputData.m_keyBoardState.m_keyUninput[key] = TRUE;
+			}
+		}
+	}
 
 	return;
 }
 
 VOID DirectXInputDevices::UpdateInputStates()
 {
-	static BOOL isFirst = TRUE;
-	if (isFirst)
-	{
-		ZeroMemory(m_keyBoardState.m_prevDiks, sizeof(BYTE) * 256);
-		ZeroMemory(&m_mouseState.m_prevDirectInputMouseState, sizeof(DIMOUSESTATE));
+	m_pInputStatesUpdater = new MouseAndKeyBoardStatesUpdater;
 
-		isFirst = FALSE;
-	}
-
-	DirectXInstances::m_pDirectXInputDevices[(ULONGLONG)INPUT_DEVICES::MOUSE]->Acquire();
-	DirectXInstances::m_pDirectXInputDevices[(ULONGLONG)INPUT_DEVICES::MOUSE]->GetDeviceState(sizeof(DIMOUSESTATE), &m_mouseState.m_directInputMouseState);
-
-	GetCursorPos(&m_mouseState.m_absolutePos);
-
-	ScreenToClient(*DirectX::m_pHWnd, &m_mouseState.m_absolutePos);
-
-	memset(m_mouseState.m_buttonPush, 0, sizeof(BOOL) * 4 * 4);
-
-	for (INT button = 0; button < 4; button++)
-	{
-		if (m_mouseState.m_directInputMouseState.rgbButtons[button])
-		{
-			if (m_mouseState.m_prevDirectInputMouseState.rgbButtons[button])
-			{
-				m_mouseState.m_buttonHold[button] = TRUE;
-			}
-
-			else
-			{
-				m_mouseState.m_buttonRelease[button] = TRUE;
-			}
-		}
-
-		else
-		{
-			if (m_mouseState.m_prevDirectInputMouseState.rgbButtons[button])
-			{
-				m_mouseState.m_buttonPush[button] = TRUE;
-			}
-
-			else
-			{
-				m_mouseState.m_buttonUninput[button] = TRUE;
-			}
-		}
-	}
-
-	DirectXInstances::m_pDirectXInputDevices[(ULONGLONG)INPUT_DEVICES::KEY_BOARD]->Acquire();
-	DirectXInstances::m_pDirectXInputDevices[(ULONGLONG)INPUT_DEVICES::KEY_BOARD]->GetDeviceState(sizeof(BYTE) * 256, m_keyBoardState.m_diks);
-
-	memset(m_keyBoardState.m_keyPush, NULL, sizeof(BOOL) * 256 * 4);
-
-	for (INT key = 0; key < 256; key++)
-	{
-		if (m_keyBoardState.m_prevDiks[key] & 0x80)
-		{
-			if (m_keyBoardState.m_diks[key] & 0x80)
-			{
-				m_keyBoardState.m_keyHold[key] = TRUE;
-			}
-
-			else
-			{
-				m_keyBoardState.m_keyRelease[key] = TRUE;
-			}
-		}
-
-		else
-		{
-			if (m_keyBoardState.m_diks[key] & 0x80)
-			{
-				m_keyBoardState.m_keyPush[key] = TRUE;
-			}
-
-			else
-			{
-				m_keyBoardState.m_keyUninput[key] = TRUE;
-			}
-		}
-	}
+	m_pInputStatesUpdater->Update(m_InputData);
 
 	return;
 }
