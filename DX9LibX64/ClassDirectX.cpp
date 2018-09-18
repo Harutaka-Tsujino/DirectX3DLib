@@ -46,16 +46,15 @@ VOID DirectXObjectInitializer::SetBuckBuffer(BOOL window)
 	return;
 }
 
-DirectXObject::DirectXObject()
-{
-	m_window = FALSE;
-}
-
 HRESULT DirectXObject::Initialize()
 {
 	m_pDirectXObjectInitializer = new DirectXObjectInitializer;
 
-	return m_pDirectXObjectInitializer->Initialize(m_window);
+	HRESULT hr = m_pDirectXObjectInitializer->Initialize(m_window);
+
+	delete m_pDirectXObjectInitializer;
+
+	return hr;
 }
 
 VOID DirectXObject::SetWindowMode(BOOL window)
@@ -118,18 +117,15 @@ HRESULT DirectX3DDeviceInitializer::Initialize(t_VERTEX_FORMAT d3DFVF, BOOL cull
 	return S_OK;
 }
 
-DirectX3DDevice::DirectX3DDevice()
-{
-	m_cullPolygon = true;
-
-	m_d3DFVF = (D3DFVF_XYZ | D3DFVF_DIFFUSE);
-}
-
 HRESULT DirectX3DDevice::Initialize()
 {
 	m_pDirectX3DDeviceInitializer = new DirectX3DDeviceInitializer;
 
-	return m_pDirectX3DDeviceInitializer->Initialize(m_d3DFVF, m_cullPolygon);
+	HRESULT hr = m_pDirectX3DDeviceInitializer->Initialize(m_d3DFVF, m_cullPolygon);
+
+	delete m_pDirectX3DDeviceInitializer;
+
+	return hr;
 }
 
 VOID DirectX3DDevice::SetCullPolygon(const BOOL cullPolygon)
@@ -236,13 +232,18 @@ HRESULT DirectXInputDevices::Initialize()
 {
 	m_pDirectXInputDevicesInitializer = new DirectXInputDevicesInitializer;
 
-	return m_pDirectXInputDevicesInitializer->Initialize();
+	HRESULT hr = m_pDirectXInputDevicesInitializer->Initialize();
+
+	delete m_pDirectXInputDevicesInitializer;
+
+	return hr;
 }
 
 VOID MouseAndKeyboardStatesStorage::Store(InputData& rInputData)
 {
 	memcpy(rInputData.m_keyBoardState.m_diksPrev, rInputData.m_keyBoardState.m_diks, sizeof(BYTE) * 256);
 	memcpy(&rInputData.m_mouseState.m_mouseStatePrev, &rInputData.m_mouseState.m_mouseState, sizeof(DIMOUSESTATE));
+
 	return;
 }
 
@@ -336,9 +337,11 @@ VOID MouseAndKeyboardStatesGetter::Get(InputData& rInputData)
 
 VOID DirectXInputDevices::GetInputStates()
 {
-	m_pInputStatesGetr = new MouseAndKeyboardStatesGetter;
+	m_pInputStatesGetter = new MouseAndKeyboardStatesGetter;
 
-	m_pInputStatesGetr->Get(m_InputData);
+	m_pInputStatesGetter->Get(m_InputData);
+
+	delete m_pInputStatesGetter;
 
 	return;
 }
@@ -353,4 +356,18 @@ DirectX* DirectX::GetInstance()
 	}
 
 	return rDirectXInstances.m_pDirectXClass;
+}
+
+VOID DirectX::DeleteInstance()
+{
+	delete DirectX::m_directXInstances.m_pDirectXClass;
+
+	return;
+}
+
+VOID DirectX::SetHWND(HWND* pHWnd)
+{
+	m_directXInstances.m_pHWnd = pHWnd;
+
+	return;
 }

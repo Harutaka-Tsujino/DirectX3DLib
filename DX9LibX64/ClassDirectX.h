@@ -96,7 +96,7 @@ private:
 class DirectXObject
 {
 public:
-	DirectXObject();
+	DirectXObject() :m_window(FALSE) {};
 	~DirectXObject() {};
 
 	HRESULT Initialize();
@@ -137,7 +137,7 @@ private:
 class DirectX3DDevice
 {
 public:
-	DirectX3DDevice();
+	DirectX3DDevice() :m_cullPolygon(TRUE), m_d3DFVF((D3DFVF_XYZ | D3DFVF_DIFFUSE)) {};
 	~DirectX3DDevice() {};
 
 	HRESULT Initialize();
@@ -227,7 +227,7 @@ public:
 private:
 	IDirectXInputDevicesInitializer * m_pDirectXInputDevicesInitializer;
 	IInputStatesStorage* m_pInputStatesStoreter;
-	IInputStatesGetter* m_pInputStatesGetr;
+	IInputStatesGetter* m_pInputStatesGetter;
 };
 
 //DirectX関係のインスタンス構造体
@@ -249,6 +249,7 @@ class DirectX
 {
 public:
 	static DirectX* GetInstance();
+	VOID DeleteInstance();
 	VOID SetHWND(HWND* pHWnd);
 
 	DirectXObject m_DirectXObject;
