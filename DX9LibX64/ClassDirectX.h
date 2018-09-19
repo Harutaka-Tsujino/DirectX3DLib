@@ -234,7 +234,7 @@ class DirectX;
 struct DirectXInstances
 {
 public:
-	HWND * m_pHWnd;
+	HWND* m_pHWnd;
 	LPDIRECT3D9 m_pDirectX;
 	LPDIRECT3DDEVICE9 m_pDirectX3DDevice;
 	LPDIRECTINPUT8 m_pDirectXInput;

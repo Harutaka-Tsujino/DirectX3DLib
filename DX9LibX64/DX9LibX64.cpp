@@ -16,6 +16,8 @@
 
 INT LoopMainFunc(VOID(*func)(), Window* pWindow, DirectX* pDirectX)
 {
+	pWindow->SetSizeDisplay<INT,INT>(1920, 1080);
+
 	pWindow->MakeWindow();
 
 	pDirectX->SetHWND(&pWindow->m_hWnd);

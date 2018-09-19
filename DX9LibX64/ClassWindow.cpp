@@ -33,6 +33,8 @@ VOID Window::SetSizeDisplay(const T1 widthDisplay, const T2 heightDisplay)
 	return;
 }
 
+template VOID Window::SetSizeDisplay<INT, INT>(INT, INT);
+
 LRESULT CALLBACK Window::WndProc(HWND hWnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 {
 	switch (iMsg)
