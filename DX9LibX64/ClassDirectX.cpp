@@ -1,9 +1,11 @@
-#include<windows.h>
-#include<d3dx9.h>
+#include <windows.h>
+#include <d3dx9.h>
 #include <dinput.h>
-#include"ClassDirectX.h"
+#include "ClassDirectX.h"
 
-HRESULT DirectXObjectInitializer::Initialize(BOOL window)
+DirectXInstances DirectX::m_directXInstances;
+
+HRESULT DirectXObjectInitializer::Initialize(BOOL canWindow)
 {
 	DirectXInstances& rDirectXInstances = DirectX::m_directXInstances;
 
@@ -15,32 +17,30 @@ HRESULT DirectXObjectInitializer::Initialize(BOOL window)
 
 	ZeroMemory(&rDirectXInstances.m_DirectXPresentParam, sizeof(rDirectXInstances.m_DirectXPresentParam));
 
-	SetBuckBuffer(window);
+	SetBuckBuffer(canWindow);
 
-	rDirectXInstances.m_DirectXPresentParam.Windowed = window;
+	rDirectXInstances.m_DirectXPresentParam.Windowed = canWindow;
 
 	return S_OK;
 }
 
-VOID DirectXObjectInitializer::SetBuckBuffer(BOOL window)
+VOID DirectXObjectInitializer::SetBuckBuffer(BOOL canWindow)
 {
-	DirectXInstances& rDirectXInstances = DirectX::m_directXInstances;
+	D3DPRESENT_PARAMETERS& rDirectXPresentParam = DirectX::m_directXInstances.m_DirectXPresentParam;
 
-	D3DPRESENT_PARAMETERS directXPresentParam = rDirectXInstances.m_DirectXPresentParam;
-
-	directXPresentParam.BackBufferFormat = D3DFMT_X8R8G8B8;
-	directXPresentParam.BackBufferCount = 1;
-	directXPresentParam.SwapEffect = D3DSWAPEFFECT_DISCARD;
+	rDirectXPresentParam.BackBufferFormat = D3DFMT_X8R8G8B8;
+	rDirectXPresentParam.BackBufferCount = 1;
+	rDirectXPresentParam.SwapEffect = D3DSWAPEFFECT_DISCARD;
 
 	const INT WIDTH_FULLSCREEN = 1920;
 	const INT HEIGHT_FULLSCREEN = 1080;
 
-	if (!window)
+	if (!canWindow)
 	{
-		directXPresentParam.BackBufferWidth = WIDTH_FULLSCREEN;
-		directXPresentParam.BackBufferHeight = HEIGHT_FULLSCREEN;
-		directXPresentParam.hDeviceWindow = *rDirectXInstances.m_pHWnd;
-		directXPresentParam.PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
+		rDirectXPresentParam.BackBufferWidth = WIDTH_FULLSCREEN;
+		rDirectXPresentParam.BackBufferHeight = HEIGHT_FULLSCREEN;
+		rDirectXPresentParam.hDeviceWindow = *DirectX::m_directXInstances.m_pHWnd;
+		rDirectXPresentParam.PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
 	}
 
 	return;
@@ -50,21 +50,21 @@ HRESULT DirectXObject::Initialize()
 {
 	m_pDirectXObjectInitializer = new DirectXObjectInitializer;
 
-	HRESULT hr = m_pDirectXObjectInitializer->Initialize(m_window);
+	HRESULT hr = m_pDirectXObjectInitializer->Initialize(m_canWindow);
 
 	delete m_pDirectXObjectInitializer;
 
 	return hr;
 }
 
-VOID DirectXObject::SetWindowMode(BOOL window)
+VOID DirectXObject::SetWindowMode(BOOL canWindow)
 {
-	m_window = window;
+	m_canWindow = canWindow;
 
 	return;
 }
 
-VOID DirectX3DDeviceInitializer::SetRenderState(BOOL cullPollygon)
+VOID DirectX3DDeviceInitializer::SetRenderState(BOOL canCullPolygon)
 {
 	LPDIRECT3DDEVICE9& rpDirectX3DDevice = DirectX::m_directXInstances.m_pDirectX3DDevice;
 
@@ -72,7 +72,7 @@ VOID DirectX3DDeviceInitializer::SetRenderState(BOOL cullPollygon)
 	rpDirectX3DDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 	rpDirectX3DDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 
-	if (cullPollygon)
+	if (canCullPolygon)
 	{
 		rpDirectX3DDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 	}
@@ -92,16 +92,16 @@ VOID DirectX3DDeviceInitializer::SetTextureStageState()
 	return;
 }
 
-HRESULT DirectX3DDeviceInitializer::Initialize(t_VERTEX_FORMAT d3DFVF, BOOL cullPollygon)
+HRESULT DirectX3DDeviceInitializer::Initialize(t_VERTEX_FORMAT d3DFVF, BOOL canCullPolygon)
 {
 	DirectXInstances& rDirectXInstances = DirectX::m_directXInstances;
 
 	if (FAILED(rDirectXInstances.m_pDirectX->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, *rDirectXInstances.m_pHWnd,
-		D3DCREATE_HARDWARE_VERTEXPROCESSING, &rDirectXInstances.m_DirectXPresentParam, &rDirectXInstances.m_pDirectX3DDevice)))
+		D3DCREATE_HARDWARE_VERTEXPROCESSING | D3DCREATE_MULTITHREADED, &rDirectXInstances.m_DirectXPresentParam, &rDirectXInstances.m_pDirectX3DDevice)))
 	{
 		MessageBox(0, "HALモードでDIRECT3Dデバイスを作成できません\nREFモードで再試行します", NULL, MB_OK);
 		if (FAILED(rDirectXInstances.m_pDirectX->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_REF, *rDirectXInstances.m_pHWnd,
-			D3DCREATE_MIXED_VERTEXPROCESSING,
+			D3DCREATE_MIXED_VERTEXPROCESSING | D3DCREATE_MULTITHREADED,
 			&rDirectXInstances.m_DirectXPresentParam, &rDirectXInstances.m_pDirectX3DDevice)))
 		{
 			MessageBox(0, "DIRECT3Dデバイスの作成に失敗しました", NULL, MB_OK);
@@ -109,7 +109,7 @@ HRESULT DirectX3DDeviceInitializer::Initialize(t_VERTEX_FORMAT d3DFVF, BOOL cull
 		}
 	}
 
-	SetRenderState(cullPollygon);
+	SetRenderState(canCullPolygon);
 	SetTextureStageState();
 
 	rDirectXInstances.m_pDirectX3DDevice->SetFVF(d3DFVF);
@@ -121,16 +121,16 @@ HRESULT DirectX3DDevice::Initialize()
 {
 	m_pDirectX3DDeviceInitializer = new DirectX3DDeviceInitializer;
 
-	HRESULT hr = m_pDirectX3DDeviceInitializer->Initialize(m_d3DFVF, m_cullPolygon);
+	HRESULT hr = m_pDirectX3DDeviceInitializer->Initialize(m_d3DFVF, m_canCullPolygon);
 
 	delete m_pDirectX3DDeviceInitializer;
 
 	return hr;
 }
 
-VOID DirectX3DDevice::SetCullPolygon(const BOOL cullPolygon)
+VOID DirectX3DDevice::SetCullPolygon(const BOOL canCullPolygon)
 {
-	m_cullPolygon = cullPolygon;
+	m_canCullPolygon = canCullPolygon;
 
 	return;
 }

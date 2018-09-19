@@ -1,34 +1,25 @@
-#include<windows.h>
-#include"ClassWindow.h"
+#include <windows.h>
+#include "ClassWindow.h"
 
 Window* Window::m_pWindowClass;
 
-Window* Window::GetInstance()
+Window* Window::GetInstance(const HINSTANCE hInst, const CHAR* nameApp)
 {
-	if (!m_pWindowClass)m_pWindowClass = new(Window);
+	if (!m_pWindowClass)m_pWindowClass = new Window(hInst, nameApp);
 
 	return m_pWindowClass;
 }
 
-template<typename T1, typename T2>
-VOID Window::Init(const HINSTANCE hInst, const CHAR* nameApp, const T1 widthDisplay, const T2 heightDisplay, const BOOL window)
+Window::Window(const HINSTANCE hInst, const CHAR* nameApp) :m_widthDisplay(1280), m_heightDisplay(720), m_canWindow(TRUE), m_hWnd(NULL)
 {
-	m_widthDisplay = (INT)widthDisplay;
-	m_heightDisplay = (INT)heightDisplay;
-	m_window = window;
 	m_nameApp = nameApp;
 	m_hInst = hInst;
-	m_hWnd = 0;
 	ZeroMemory(&m_msg, sizeof(m_msg));
-
-	return;
 }
 
-template VOID Window::Init<INT, INT>(const HINSTANCE hInst, const CHAR* nameApp, const INT widthDisplay, const INT heightDisplay, const BOOL window);
-
-VOID Window::SetWindowMode(const BOOL window)
+VOID Window::SetWindowMode(const BOOL canWindow)
 {
-	m_window = window;
+	m_canWindow = canWindow;
 
 	return;
 }
@@ -90,7 +81,7 @@ VOID Window::MakeWindow()
 	const INT WIDTH_FULLSCREEN = 1920;
 	const INT HEIGHT_FULLSCREEN = 1080;
 
-	if (m_window)
+	if (m_canWindow)
 	{
 		m_hWnd = CreateWindow(m_nameApp, m_nameApp, WS_OVERLAPPEDWINDOW | WS_VISIBLE,
 			CW_USEDEFAULT, CW_USEDEFAULT, m_widthDisplay, m_heightDisplay, NULL, NULL, m_hInst, NULL);

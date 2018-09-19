@@ -3,28 +3,29 @@
 
 FPS* FPS::m_pFPSClass;
 
-FPS* FPS::GetInstance ()
+FPS* FPS::GetInstance()
 {
-	if (!m_pFPSClass)m_pFPSClass = new(FPS);
+	if (!m_pFPSClass)
+	{
+		m_pFPSClass = new FPS;
+	}
 
 	return m_pFPSClass;
 }
 
-FPS::FPS()
+FPS::FPS() :m_timePrev(0)
 {
 	timeBeginPeriod(1);
 
 	m_timeCurrent = timeGetTime();
 
 	timeEndPeriod(1);
-
-	m_timePrev = 0;
 }
 
 BOOL FPS::CoordinateFrame()
 {
 	timeBeginPeriod(1);
-	
+
 	const INT DEFAULT_FPS = 60;
 
 	if (m_timeCurrent - m_timePrev >= 1000 / DEFAULT_FPS)

@@ -1,6 +1,8 @@
 #pragma once
-#include<windows.h>
-#include"DX9LibX64.h"
+#include <windows.h>
+#include "DX9LibX64.h"
+
+typedef DWORD t_TIME;
 
 class FPS
 {
@@ -16,8 +18,6 @@ private:
 	~FPS() {};
 
 	static FPS* m_pFPSClass;
-
-	typedef DWORD t_TIME;
 	t_TIME m_timeCurrent;
 	t_TIME m_timePrev;
 };

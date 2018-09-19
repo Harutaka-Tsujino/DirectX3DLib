@@ -1,5 +1,4 @@
 #pragma once
-
 #include <windows.h>
 #include <d3dx9.h>
 #include <dinput.h>
@@ -79,31 +78,31 @@ public:
 	IDirectXObjectInitializer() {};
 	~IDirectXObjectInitializer() {};
 
-	virtual HRESULT Initialize(BOOL window) = 0;
+	virtual HRESULT Initialize(BOOL canWindow) = 0;
 };
 
 //DirectXのオブジェクト初期化クラス
 class DirectXObjectInitializer :public IDirectXObjectInitializer
 {
 public:
-	HRESULT Initialize(BOOL window);
+	HRESULT Initialize(BOOL canWindow);
 
 private:
-	VOID SetBuckBuffer(BOOL window);
+	VOID SetBuckBuffer(BOOL canWindow);
 };
 
 //DirectXのオブジェクトクラス
 class DirectXObject
 {
 public:
-	DirectXObject() :m_window(FALSE) {};
+	DirectXObject() :m_canWindow(TRUE) {};
 	~DirectXObject() {};
 
 	HRESULT Initialize();
-	VOID SetWindowMode(BOOL window);
+	VOID SetWindowMode(BOOL canWindow);
 
 private:
-	BOOL m_window;
+	BOOL m_canWindow;
 	IDirectXObjectInitializer* m_pDirectXObjectInitializer;
 };
 
@@ -117,7 +116,7 @@ public:
 	IDirectX3DDeviceInitializer() {};
 	~IDirectX3DDeviceInitializer() {};
 
-	virtual HRESULT Initialize(t_VERTEX_FORMAT d3DFVF, BOOL cullPollygon) = 0;
+	virtual HRESULT Initialize(t_VERTEX_FORMAT d3DFVF, BOOL canCullPolygon) = 0;
 
 private:
 };
@@ -126,10 +125,10 @@ private:
 class DirectX3DDeviceInitializer :public IDirectX3DDeviceInitializer
 {
 public:
-	HRESULT Initialize(t_VERTEX_FORMAT d3DFVF, BOOL cullPollygon);
+	HRESULT Initialize(t_VERTEX_FORMAT d3DFVF, BOOL canCullPolygon);
 
 private:
-	VOID SetRenderState(BOOL cullPollygon);
+	VOID SetRenderState(BOOL canCullPolygon);
 	VOID SetTextureStageState();
 };
 
@@ -137,17 +136,17 @@ private:
 class DirectX3DDevice
 {
 public:
-	DirectX3DDevice() :m_cullPolygon(TRUE), m_d3DFVF((D3DFVF_XYZ | D3DFVF_DIFFUSE)) {};
+	DirectX3DDevice() :m_canCullPolygon(TRUE), m_d3DFVF(D3DFVF_XYZ | D3DFVF_DIFFUSE) {};
 	~DirectX3DDevice() {};
 
 	HRESULT Initialize();
-	VOID SetCullPolygon(BOOL cullPolygon);
+	VOID SetCullPolygon(BOOL canCullPolygon);
 	VOID SetVertexFormat(t_VERTEX_FORMAT d3DFVF);
 	VOID PrepareRender();
 	VOID CleanUpRender();
 
 private:
-	BOOL m_cullPolygon;
+	BOOL m_canCullPolygon;
 	t_VERTEX_FORMAT m_d3DFVF;
 	IDirectX3DDeviceInitializer* m_pDirectX3DDeviceInitializer;
 };
@@ -162,12 +161,19 @@ public:
 	virtual HRESULT Initialize() = 0;
 };
 
-
 //DirectXInput初期化クラス
 class DirectXInputDevicesInitializer :public IDirectXInputDevicesInitializer
 {
 public:
 	HRESULT Initialize();
+};
+
+//入力デバイスのデータ構造体
+struct InputData
+{
+public:
+	KeyBoardState m_keyBoardState;
+	MouseState m_mouseState;
 };
 
 //入力デバイスデータ保存インターフェイス
@@ -200,16 +206,8 @@ public:
 //マウスキーボード の入力データ取得クラス
 class MouseAndKeyboardStatesGetter :public IInputStatesGetter
 {
-private:
-	VOID Get(InputData& rInputData);
-};
-
-//入力デバイスのデータ構造体
-struct InputData
-{
 public:
-	KeyBoardState m_keyBoardState;
-	MouseState m_mouseState;
+	VOID Get(InputData& rInputData);
 };
 
 //DirectXInputクラス
@@ -229,6 +227,8 @@ private:
 	IInputStatesStorage* m_pInputStatesStoreter;
 	IInputStatesGetter* m_pInputStatesGetter;
 };
+
+class DirectX;
 
 //DirectX関係のインスタンス構造体
 struct DirectXInstances
