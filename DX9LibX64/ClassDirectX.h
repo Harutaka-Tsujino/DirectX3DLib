@@ -130,6 +130,23 @@ public:
 private:
 	VOID SetRenderState(BOOL canCullPolygon);
 	VOID SetTextureStageState();
+	VOID SetViewPort();
+};
+
+class Camera
+{
+public:
+	Camera();
+	~Camera() {};
+
+	VOID SetTransform();
+	VOID SetCameraPos(FLOAT x, FLOAT y, FLOAT z);
+	VOID SetEyePoint(FLOAT x, FLOAT y, FLOAT z);
+
+private:
+	D3DXVECTOR3 m_cameraPos;
+	D3DXVECTOR3 m_eyePoint;
+	D3DXVECTOR3 m_cameraOverhead;
 };
 
 //DirectXの3Dデバイスクラス
@@ -144,6 +161,8 @@ public:
 	VOID SetVertexFormat(t_VERTEX_FORMAT d3DFVF);
 	VOID PrepareRender();
 	VOID CleanUpRender();
+
+	Camera camera;
 
 private:
 	BOOL m_canCullPolygon;
@@ -234,7 +253,7 @@ class DirectX;
 struct DirectXInstances
 {
 public:
-	HWND* m_pHWnd;
+	HWND * m_pHWnd;
 	LPDIRECT3D9 m_pDirectX;
 	LPDIRECT3DDEVICE9 m_pDirectX3DDevice;
 	LPDIRECTINPUT8 m_pDirectXInput;

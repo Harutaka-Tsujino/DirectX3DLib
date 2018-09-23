@@ -92,6 +92,24 @@ VOID DirectX3DDeviceInitializer::SetTextureStageState()
 	return;
 }
 
+VOID DirectX3DDeviceInitializer::SetViewPort()
+{
+	D3DVIEWPORT9 viewPort;
+
+	D3DPRESENT_PARAMETERS& rDirectXPresentParam = DirectX::m_directXInstances.m_DirectXPresentParam;
+
+	viewPort.Width = rDirectXPresentParam.BackBufferWidth;
+	viewPort.Height = rDirectXPresentParam.BackBufferHeight;
+	viewPort.MinZ = 0.f;
+	viewPort.MaxZ = 1.0f;
+	viewPort.X = 0;
+	viewPort.Y = 0;
+
+	DirectX::m_directXInstances.m_pDirectX3DDevice->SetViewport(&viewPort);
+
+	return;
+}
+
 HRESULT DirectX3DDeviceInitializer::Initialize(t_VERTEX_FORMAT d3DFVF, BOOL canCullPolygon)
 {
 	DirectXInstances& rDirectXInstances = DirectX::m_directXInstances;
@@ -111,6 +129,7 @@ HRESULT DirectX3DDeviceInitializer::Initialize(t_VERTEX_FORMAT d3DFVF, BOOL canC
 
 	SetRenderState(canCullPolygon);
 	SetTextureStageState();
+	SetViewPort();
 
 	rDirectXInstances.m_pDirectX3DDevice->SetFVF(d3DFVF);
 
@@ -342,6 +361,74 @@ VOID DirectXInputDevices::GetInputStates()
 	m_pInputStatesGetter->Get(m_InputData);
 
 	delete m_pInputStatesGetter;
+
+	return;
+}
+
+Camera::Camera()
+{
+	m_cameraPos.x = 0.f;
+	m_cameraPos.y = 0.f;
+	m_cameraPos.z = -10.f;
+
+	m_eyePoint.x = 0.f;
+	m_eyePoint.y = 0.f;
+	m_eyePoint.z = 0.f;
+
+	m_cameraOverhead.x = 0.f;
+	m_cameraOverhead.y = 1.f;
+	m_cameraOverhead.z = 0.f;
+}
+
+VOID Camera::SetCameraPos(FLOAT x, FLOAT y, FLOAT z)
+{
+	m_cameraPos.x = x;
+	m_cameraPos.y = y;
+	m_cameraPos.z = z;
+
+	return;
+}
+
+VOID Camera::SetEyePoint(FLOAT x, FLOAT y, FLOAT z)
+{
+	m_eyePoint.x = x;
+	m_eyePoint.y = y;
+	m_eyePoint.z = z;
+
+	return;
+}
+
+VOID Camera::SetTransform()
+{
+	D3DXMATRIX view;
+	D3DXMATRIX projection;
+
+	LPDIRECT3DDEVICE9& rpDirectX3DDevice = DirectX::m_directXInstances.m_pDirectX3DDevice;
+
+	D3DXMatrixIdentity(&view);
+
+	D3DXMatrixLookAtLH(&view,
+		&m_cameraPos,
+		&m_eyePoint,
+		&m_cameraOverhead);
+	rpDirectX3DDevice->SetTransform(D3DTS_VIEW, &view);
+
+	D3DVIEWPORT9 viewPort;
+	rpDirectX3DDevice->GetViewport(&viewPort);
+
+	float aspect = (float)viewPort.Width / (float)viewPort.Height;
+
+	const INT DEFAULT_EYE_RADIAN = 90;
+	const FLOAT DEFAULT_FAR = 500.f;
+
+	D3DXMatrixPerspectiveFovLH(
+		&projection,
+		D3DXToRadian(DEFAULT_EYE_RADIAN),
+		aspect,
+		0.f,
+		DEFAULT_FAR);
+
+	rpDirectX3DDevice->SetTransform(D3DTS_PROJECTION, &projection);
 
 	return;
 }
