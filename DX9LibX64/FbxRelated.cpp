@@ -4,7 +4,10 @@
 * @author	kawaguchi
 */
 
+#include <fbxsdk.h>
 #include "FbxRelated.h"
+
+#pragma comment(lib,"libfbxsdk-md.lib")
 
 FbxRelated::FbxRelated()
 {
@@ -53,7 +56,6 @@ void FbxRelated::Release()
 	delete m_pModel->m_pFbxModelData;
 	delete m_pModel;
 }
-
 
 void FbxRelated::TriangulateRecursive(FbxNode* pNode, FbxScene* pScene)
 {
@@ -111,7 +113,6 @@ bool FbxRelated::InitializeFbxSdkObjects()
 
 bool FbxRelated::LoadFbx(const char* pName)
 {
-
 	int sFileFormat = -1;
 
 	// FBX SDK オブジェクトの初期化。 
@@ -171,10 +172,9 @@ bool FbxRelated::LoadFbx(const char* pName)
 			GetMesh(pRootNode->GetChild(i));
 		}
 	}
+
 	return true;
-
 }
-
 
 void FbxRelated::GetMesh(fbxsdk::FbxNode* pNode)
 {
@@ -409,7 +409,6 @@ void FbxRelated::GetVertexNormal(fbxsdk::FbxMesh* pMesh)
 	}
 }
 
-
 //	UV取得関数
 void FbxRelated::GetVertexUV(fbxsdk::FbxMesh* pMesh)
 {
@@ -483,12 +482,11 @@ void FbxRelated::GetVertexUV(fbxsdk::FbxMesh* pMesh)
 	}
 	for (int i = 0; i < m_pModel->m_pFbxModelData->indexCount; i++)
 	{
-		m_pModel->m_pFbxModelData->pVertex[i].tu = m_pModel->m_pFbxModelData->uvSet.uvBuffer[0][i].x;
-		m_pModel->m_pFbxModelData->pVertex[i].tv = m_pModel->m_pFbxModelData->uvSet.uvBuffer[0][i].y;
+		m_pModel->m_pFbxModelData->pVertex[i].tu = m_pModel->m_pFbxModelData->uvSet.uvBuffer[i]->x;///////////////////////////////---エラーVector---///////////////////////////////
+		m_pModel->m_pFbxModelData->pVertex[i].tv = m_pModel->m_pFbxModelData->uvSet.uvBuffer[i]->y;
 	}
 
 }
-
 
 void FbxRelated::GetMaterialData(fbxsdk::FbxMesh* pMesh)
 {
@@ -626,7 +624,7 @@ void FbxRelated::GetTextureName(fbxsdk::FbxSurfaceMaterial* pMaterial, const cha
 				{
 					//	テクスチャ名を取得
 					//	std::string textureName = texture->GetName();
-					LPCSTR textureName = pFbxFileTexture->GetRelativeFileName();
+					LPCWSTR textureName = (LPCWSTR)pFbxFileTexture->GetRelativeFileName();
 
 					//	UVSet名を取得
 					std::string UVSetName = pFbxFileTexture->UVSet.Get().Buffer();
@@ -635,15 +633,15 @@ void FbxRelated::GetTextureName(fbxsdk::FbxSurfaceMaterial* pMaterial, const cha
 					if (m_pModel->m_pFbxModelData->uvSet.uvSetName == UVSetName)
 					{
 						m_pModel->m_pFbxModelData->pTmpTexture = new FbxModel::TextureData();
-						m_pModel->m_pFbxModelData->pTmpTexture->TextureName = textureName;
+						m_pModel->m_pFbxModelData->pTmpTexture->m_TextureName = textureName;
 						m_pModel->m_pFbxModelData->pTextureData.push_back(m_pModel->m_pFbxModelData->pTmpTexture);
 
 						if (FAILED(D3DXCreateTextureFromFile(
 							m_pModel->m_pDevice,
-							m_pModel->m_pFbxModelData->pTextureData[m_pModel->m_pFbxModelData->fileTextureCount]->TextureName,
-							&m_pModel->m_pFbxModelData->pTextureData[m_pModel->m_pFbxModelData->fileTextureCount]->pTexture)))
+							m_pModel->m_pFbxModelData->pTextureData[m_pModel->m_pFbxModelData->fileTextureCount]->m_TextureName,
+							&m_pModel->m_pFbxModelData->pTextureData[m_pModel->m_pFbxModelData->fileTextureCount]->m_pTexture)))
 						{
-							m_pModel->m_pFbxModelData->pTextureData[m_pModel->m_pFbxModelData->fileTextureCount]->pTexture = NULL;
+							m_pModel->m_pFbxModelData->pTextureData[m_pModel->m_pFbxModelData->fileTextureCount]->m_pTexture = NULL;
 						}
 						m_pModel->m_pFbxModelData->fileTextureCount++;
 					}
@@ -668,7 +666,7 @@ void FbxRelated::GetTextureName(fbxsdk::FbxSurfaceMaterial* pMaterial, const cha
 				{
 					//	テクスチャ名を取得
 					//	std::string textureName = texture->GetName();
-					LPCSTR textureName = pFbxFileTexture->GetRelativeFileName();
+					LPCWSTR textureName = (LPCWSTR)pFbxFileTexture->GetRelativeFileName();
 
 					//	UVSet名を取得
 					std::string UVSetName = pFbxFileTexture->UVSet.Get().Buffer();
@@ -677,15 +675,15 @@ void FbxRelated::GetTextureName(fbxsdk::FbxSurfaceMaterial* pMaterial, const cha
 					if (m_pModel->m_pFbxModelData->uvSet.uvSetName == UVSetName)
 					{
 						m_pModel->m_pFbxModelData->pTmpTexture = new FbxModel::TextureData();
-						m_pModel->m_pFbxModelData->pTmpTexture->TextureName = textureName;
+						m_pModel->m_pFbxModelData->pTmpTexture->m_TextureName = textureName;
 						m_pModel->m_pFbxModelData->pTextureData.push_back(m_pModel->m_pFbxModelData->pTmpTexture);
 
 						if (FAILED(D3DXCreateTextureFromFile(
 							m_pModel->m_pDevice,
-							m_pModel->m_pFbxModelData->pTextureData[m_pModel->m_pFbxModelData->fileTextureCount]->TextureName,
-							&m_pModel->m_pFbxModelData->pTextureData[m_pModel->m_pFbxModelData->fileTextureCount]->pTexture)))
+							m_pModel->m_pFbxModelData->pTextureData[m_pModel->m_pFbxModelData->fileTextureCount]->m_TextureName,
+							&m_pModel->m_pFbxModelData->pTextureData[m_pModel->m_pFbxModelData->fileTextureCount]->m_pTexture)))
 						{
-							m_pModel->m_pFbxModelData->pTextureData[m_pModel->m_pFbxModelData->fileTextureCount]->pTexture = NULL;
+							m_pModel->m_pFbxModelData->pTextureData[m_pModel->m_pFbxModelData->fileTextureCount]->m_pTexture = NULL;
 						}
 						m_pModel->m_pFbxModelData->fileTextureCount++;
 

@@ -4,12 +4,18 @@
 * @author	kawaguchi
 */
 
+#pragma comment(lib,"libfbxsdk-md.lib")
+
+#include <fbxsdk.h>
+#include"ClassDirectX.h"
 #include "FbxModel.h"
 
+
 FbxModel::FbxModel()
-	: m_pDevice(GraphicsDevice::GetInstance().GetDevice())
 {
-	m_pFbxModelData= NULL;
+	m_pDevice = DirectX::m_directXInstances.m_pDirectX3DDevice;
+
+	m_pFbxModelData = NULL;
 }
 
 FbxModel::~FbxModel()
@@ -19,7 +25,7 @@ FbxModel::~FbxModel()
 void FbxModel::DrawFbx()
 {
 	m_pDevice->SetFVF(MY_FVF);
-	
+
 	for (int i = 0; i < m_pFbxModelData->materialCount; i++)
 	{
 		m_pDevice->SetMaterial(&m_pFbxModelData->MaterialData[i]);
@@ -27,7 +33,7 @@ void FbxModel::DrawFbx()
 
 	for (unsigned int n = 0; n < m_pFbxModelData->pTextureData.size(); n++)
 	{
-		m_pDevice->SetTexture(n, m_pFbxModelData->pTextureData[n]->pTexture);
+		m_pDevice->SetTexture(n, m_pFbxModelData->pTextureData[n]->m_pTexture);
 	}
 
 	m_pDevice->DrawPrimitiveUP(

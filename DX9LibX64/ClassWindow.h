@@ -5,7 +5,7 @@
 class Window
 {
 public:
-	static Window* GetInstance(const HINSTANCE hInst, const CHAR* nameApp);
+	static Window* GetInstance(const HINSTANCE hInst, LPCWSTR nameApp);
 
 	template<typename T1, typename T2>
 	VOID SetSizeDisplay(const T1 widthDisplay, const T2 heightDisplay);
@@ -21,12 +21,12 @@ public:
 	HWND m_hWnd;
 
 private:
-	Window(const HINSTANCE hInst, const CHAR* nameApp);
+	Window(const HINSTANCE hInst, LPCWSTR nameApp);
 	~Window() {};
 
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT iMsg, WPARAM wParam, LPARAM lParam);
 
 	static Window* m_pWindowClass;
-	const CHAR* m_nameApp;
+	LPCWSTR m_nameApp;
 	HINSTANCE m_hInst;
 };

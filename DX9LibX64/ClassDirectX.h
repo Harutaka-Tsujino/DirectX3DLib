@@ -153,7 +153,7 @@ private:
 class DirectX3DDevice
 {
 public:
-	DirectX3DDevice() :m_canCullPolygon(TRUE), m_d3DFVF(D3DFVF_XYZ | D3DFVF_DIFFUSE) {};
+	DirectX3DDevice() :m_canCullPolygon(FALSE), m_d3DFVF(D3DFVF_XYZ | D3DFVF_DIFFUSE) {};
 	~DirectX3DDevice() {};
 
 	HRESULT Initialize();
@@ -287,6 +287,7 @@ struct CustomVertex
 	FLOAT m_x;
 	FLOAT m_y;
 	FLOAT m_z;
+	FLOAT m_rHW;
 	DWORD m_aRGB;
 	FLOAT m_tu;
 	FLOAT m_tv;

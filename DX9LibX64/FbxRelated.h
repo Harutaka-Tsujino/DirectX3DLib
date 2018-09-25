@@ -7,8 +7,8 @@
 #ifndef FBXRELATED_H
 #define FBXRELATED_H
 
+#include <fbxsdk.h>
 #include "FbxModel.h"
-
 
 class FbxRelated
 {

@@ -7,13 +7,12 @@
 #ifndef FBXMODEL_H
 #define FBXMODEL_H
 
-#include <fbxsdk.h>
 #include <d3d9.h>
 #include <d3dx9.h>
 #include <iostream>
 #include <list>
 #include <vector>
-#include "../GameLib/Lib/GraphicsDevice.h"
+#include <fbxsdk.h>
 
 #define MY_FVF (D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_TEX2)
 
@@ -49,8 +48,8 @@ private:
 
 	typedef struct TEXTURE_DATA
 	{
-		LPCSTR TextureName;
-		LPDIRECT3DTEXTURE9 pTexture;
+		LPCWSTR m_TextureName;
+		LPDIRECT3DTEXTURE9 m_pTexture;
 	}TextureData;
 
 	typedef struct FBXMODELDATA

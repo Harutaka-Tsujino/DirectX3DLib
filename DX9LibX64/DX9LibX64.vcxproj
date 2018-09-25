@@ -42,7 +42,7 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -70,8 +70,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>C:\Program Files\Autodesk\FBX\FBX SDK\2019.0\include;$(DXSDK_DIR)Include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Program Files\Autodesk\FBX\FBX SDK\2019.0\lib\vs2015\x64\release;$(DXSDK_DIR)Lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Program Files\Autodesk\FBX\FBX SDK\2016.1\include;$(DXSDK_DIR)Include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Program Files\Autodesk\FBX\FBX SDK\2016.1\lib\vs2013\x64\release;$(DXSDK_DIR)Lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>C:\Program Files\Autodesk\FBX\FBX SDK\2019.0\include;$(DXSDK_DIR)Include;$(IncludePath)</IncludePath>
@@ -126,14 +126,16 @@
     <ClCompile Include="ClassFPS.cpp" />
     <ClCompile Include="ClassWindow.cpp" />
     <ClCompile Include="DX9LibX64.cpp" />
-    <ClCompile Include="ClassFBX.cpp" />
+    <ClCompile Include="FbxModel.cpp" />
+    <ClCompile Include="FbxRelated.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ClassDirectX.h" />
     <ClInclude Include="ClassFPS.h" />
     <ClInclude Include="ClassWindow.h" />
     <ClInclude Include="DX9LibX64.h" />
-    <ClInclude Include="ClassFBX.h" />
+    <ClInclude Include="FbxModel.h" />
+    <ClInclude Include="FbxRelated.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\命名規則.md" />

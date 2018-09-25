@@ -11,7 +11,7 @@ HRESULT DirectXObjectInitializer::Initialize(BOOL canWindow)
 
 	if (NULL == (rDirectXInstances.m_pDirectX = Direct3DCreate9(D3D_SDK_VERSION)))
 	{
-		MessageBox(0, "Direct3Dの作成に失敗しました", "", MB_OK);
+		MessageBox(0, TEXT("Direct3Dの作成に失敗しました"), TEXT(""), MB_OK);
 		return E_FAIL;
 	}
 
@@ -31,6 +31,8 @@ VOID DirectXObjectInitializer::SetBuckBuffer(BOOL canWindow)
 	rDirectXPresentParam.BackBufferFormat = D3DFMT_X8R8G8B8;
 	rDirectXPresentParam.BackBufferCount = 1;
 	rDirectXPresentParam.SwapEffect = D3DSWAPEFFECT_DISCARD;
+	rDirectXPresentParam.EnableAutoDepthStencil = TRUE;
+	rDirectXPresentParam.AutoDepthStencilFormat = D3DFMT_D16;
 
 	const INT WIDTH_FULLSCREEN = 1920;
 	const INT HEIGHT_FULLSCREEN = 1080;
@@ -71,8 +73,12 @@ VOID DirectX3DDeviceInitializer::SetRenderState(BOOL canCullPolygon)
 	rpDirectX3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, true);
 	rpDirectX3DDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 	rpDirectX3DDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+	rpDirectX3DDevice->SetRenderState(D3DRS_ZENABLE, TRUE);
+	rpDirectX3DDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
+	rpDirectX3DDevice->SetRenderState(D3DRS_AMBIENT, 0x00111111);
+	rpDirectX3DDevice->SetRenderState(D3DRS_SPECULARENABLE, TRUE);
 
-	if (canCullPolygon)
+	if (!canCullPolygon)
 	{
 		rpDirectX3DDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 	}
@@ -94,7 +100,7 @@ VOID DirectX3DDeviceInitializer::SetTextureStageState()
 
 VOID DirectX3DDeviceInitializer::SetViewPort()
 {
-	D3DVIEWPORT9 viewPort;
+	/*D3DVIEWPORT9 viewPort;
 
 	D3DPRESENT_PARAMETERS& rDirectXPresentParam = DirectX::m_directXInstances.m_DirectXPresentParam;
 
@@ -105,7 +111,7 @@ VOID DirectX3DDeviceInitializer::SetViewPort()
 	viewPort.X = 0;
 	viewPort.Y = 0;
 
-	DirectX::m_directXInstances.m_pDirectX3DDevice->SetViewport(&viewPort);
+	DirectX::m_directXInstances.m_pDirectX3DDevice->SetViewport(&viewPort);*/
 
 	return;
 }
@@ -117,12 +123,12 @@ HRESULT DirectX3DDeviceInitializer::Initialize(t_VERTEX_FORMAT d3DFVF, BOOL canC
 	if (FAILED(rDirectXInstances.m_pDirectX->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, *rDirectXInstances.m_pHWnd,
 		D3DCREATE_HARDWARE_VERTEXPROCESSING | D3DCREATE_MULTITHREADED, &rDirectXInstances.m_DirectXPresentParam, &rDirectXInstances.m_pDirectX3DDevice)))
 	{
-		MessageBox(0, "HALモードでDIRECT3Dデバイスを作成できません\nREFモードで再試行します", NULL, MB_OK);
+		MessageBox(0, TEXT("HALモードでDIRECT3Dデバイスを作成できません\nREFモードで再試行します"), NULL, MB_OK);
 		if (FAILED(rDirectXInstances.m_pDirectX->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_REF, *rDirectXInstances.m_pHWnd,
 			D3DCREATE_MIXED_VERTEXPROCESSING | D3DCREATE_MULTITHREADED,
 			&rDirectXInstances.m_DirectXPresentParam, &rDirectXInstances.m_pDirectX3DDevice)))
 		{
-			MessageBox(0, "DIRECT3Dデバイスの作成に失敗しました", NULL, MB_OK);
+			MessageBox(0, TEXT("DIRECT3Dデバイスの作成に失敗しました"), NULL, MB_OK);
 			return E_FAIL;
 		}
 	}
@@ -165,7 +171,7 @@ VOID DirectX3DDevice::PrepareRender()
 {
 	LPDIRECT3DDEVICE9& rpDirectX3DDevice = DirectX::m_directXInstances.m_pDirectX3DDevice;
 
-	rpDirectX3DDevice->Clear(0, NULL, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0x00, 0x00, 0x00), 1.0, 0);
+	rpDirectX3DDevice->Clear(0, NULL, D3DCLEAR_TARGET|D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(100, 100, 100), 1.f, 0);
 	rpDirectX3DDevice->BeginScene();
 
 	return;
@@ -369,7 +375,7 @@ Camera::Camera()
 {
 	m_cameraPos.x = 0.f;
 	m_cameraPos.y = 0.f;
-	m_cameraPos.z = -10.f;
+	m_cameraPos.z = -2.f;
 
 	m_eyePoint.x = 0.f;
 	m_eyePoint.y = 0.f;
@@ -401,16 +407,16 @@ VOID Camera::SetEyePoint(FLOAT x, FLOAT y, FLOAT z)
 VOID Camera::SetTransform()
 {
 	D3DXMATRIX view;
-	D3DXMATRIX projection;
 
 	LPDIRECT3DDEVICE9& rpDirectX3DDevice = DirectX::m_directXInstances.m_pDirectX3DDevice;
 
-	D3DXMatrixIdentity(&view);
+	//D3DXMatrixIdentity(&view);
 
 	D3DXMatrixLookAtLH(&view,
 		&m_cameraPos,
 		&m_eyePoint,
 		&m_cameraOverhead);
+
 	rpDirectX3DDevice->SetTransform(D3DTS_VIEW, &view);
 
 	D3DVIEWPORT9 viewPort;
@@ -418,14 +424,16 @@ VOID Camera::SetTransform()
 
 	float aspect = (float)viewPort.Width / (float)viewPort.Height;
 
-	const INT DEFAULT_EYE_RADIAN = 90;
-	const FLOAT DEFAULT_FAR = 500.f;
+	const INT DEFAULT_EYE_RADIAN = 60;
+	const FLOAT DEFAULT_FAR = 100.f;
+
+	D3DXMATRIX projection;
 
 	D3DXMatrixPerspectiveFovLH(
 		&projection,
 		D3DXToRadian(DEFAULT_EYE_RADIAN),
 		aspect,
-		0.f,
+		1.f,
 		DEFAULT_FAR);
 
 	rpDirectX3DDevice->SetTransform(D3DTS_PROJECTION, &projection);
