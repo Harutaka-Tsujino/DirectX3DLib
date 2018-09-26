@@ -8,6 +8,7 @@
 #define FBXRELATED_H
 
 #include <fbxsdk.h>
+#include <vector>
 #include "FbxModel.h"
 
 class FbxRelated
@@ -41,7 +42,8 @@ public:
 	*/
 	bool LoadFbx(const char* pName);
 	
-	FbxModel* m_pModel;																	//!<	モデルデータを格納する場所
+	std::vector<FbxModel*> m_pModel;		//!<	モデルデータを格納する場所
+	int m_modelDataCount = 0;
 };
 
 #endif //	FBXRALATED_H

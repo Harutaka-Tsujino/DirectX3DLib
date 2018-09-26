@@ -18,7 +18,7 @@
 
 INT LoopMainFunc(VOID(*func)(), Window* pWindow, DirectX* pDirectX)
 {
-	pWindow->SetSizeDisplay<INT,INT>(1920, 1080);
+	pWindow->SetSizeDisplay<INT, INT>(1920, 1080);
 
 	pWindow->MakeWindow();
 
@@ -79,33 +79,21 @@ VOID MainFunc()
 {
 	static INT frameCount = -1;
 
+
+	//FBXインスタンスの生成
 	static FbxRelated fbxRelated;
 
 	if (frameCount == -1)
 	{
-		fbxRelated.LoadFbx("Sting-Sword lowpoly.fbx");
+		//FBXモデルの読み込み
+		fbxRelated.LoadFbx("Handgun_fbx_6.1_ASCII.fbx");
 
 		frameCount = 0;
 	}
 
 	static Camera camera;
 
-
-	D3DXMATRIX			m_MatWorld;
-	D3DXMatrixIdentity(&m_MatWorld);
-
 	camera.SetTransform();
-
-	// 回転
-	D3DXMATRIX			matHeading;
-	D3DXMatrixRotationX(&matHeading, 0);
-	D3DXMatrixMultiply(&m_MatWorld, &m_MatWorld, &matHeading);
-
-	// 移動
-	D3DXMATRIX			matPosition;	// 位置座標行列
-	D3DXMatrixTranslation(&matPosition, 0, 0, 70.f);
-	D3DXMatrixMultiply(&m_MatWorld, &m_MatWorld, &matPosition);
-	DirectX::m_directXInstances.m_pDirectX3DDevice->SetTransform(D3DTS_WORLD, &m_MatWorld);
 
 	D3DXVECTOR3 vecDirection(1, 1, 1);
 	D3DLIGHT9 light;
@@ -127,7 +115,82 @@ VOID MainFunc()
 	DirectX::m_directXInstances.m_pDirectX3DDevice->SetLight(0, &light);
 	DirectX::m_directXInstances.m_pDirectX3DDevice->LightEnable(0, TRUE);
 
-	fbxRelated.m_pModel->DrawFbx();
+	//for (int i = 4; i < 5/*fbxRelated.m_modelDataCount*/; ++i)
+	//{
+	//	fbxRelated.m_pModel[i]->DrawFbx();
+	//}
+
+	//FBXの描画
+	{
+		D3DXMATRIX			m_MatWorld;
+		D3DXMatrixIdentity(&m_MatWorld);
+
+		// 回転
+		D3DXMATRIX			matHeading;
+		D3DXMatrixRotationX(&matHeading, 270 * (3.145f / 180.f));
+		D3DXMatrixMultiply(&m_MatWorld, &m_MatWorld, &matHeading);
+
+		// 移動
+		D3DXMATRIX			matPosition;	// 位置座標行列
+		D3DXMatrixTranslation(&matPosition, -0.67f, -0.3f, 1.f);
+		D3DXMatrixMultiply(&m_MatWorld, &m_MatWorld, &matPosition);
+		DirectX::m_directXInstances.m_pDirectX3DDevice->SetTransform(D3DTS_WORLD, &m_MatWorld);
+
+		fbxRelated.m_pModel[1]->DrawFbx();//マガジン
+	}
+
+	{
+		D3DXMATRIX			m_MatWorld;
+		D3DXMatrixIdentity(&m_MatWorld);
+
+		// 回転
+		D3DXMATRIX			matHeading;
+		D3DXMatrixRotationX(&matHeading, 270 * (3.145f/180.f));
+		D3DXMatrixMultiply(&m_MatWorld, &m_MatWorld, &matHeading);
+
+		// 移動
+		D3DXMATRIX			matPosition;	// 位置座標行列
+		D3DXMatrixTranslation(&matPosition, 0.f, 0.f, 1.f);
+		D3DXMatrixMultiply(&m_MatWorld, &m_MatWorld, &matPosition);
+		DirectX::m_directXInstances.m_pDirectX3DDevice->SetTransform(D3DTS_WORLD, &m_MatWorld);
+		fbxRelated.m_pModel[6]->DrawFbx();
+	}
+
+	{
+		D3DXMATRIX			m_MatWorld;
+		D3DXMatrixIdentity(&m_MatWorld);
+
+		// 回転
+		D3DXMATRIX			matHeading;
+		D3DXMatrixRotationX(&matHeading, 270 * (3.145f / 180.f));
+		D3DXMatrixMultiply(&m_MatWorld, &m_MatWorld, &matHeading);
+
+		// 移動
+		D3DXMATRIX			matPosition;	// 位置座標行列
+		D3DXMatrixTranslation(&matPosition, 0.f, 0.f, 1.f);
+		D3DXMatrixMultiply(&m_MatWorld, &m_MatWorld, &matPosition);
+		DirectX::m_directXInstances.m_pDirectX3DDevice->SetTransform(D3DTS_WORLD, &m_MatWorld);
+
+		fbxRelated.m_pModel[3]->DrawFbx();
+	}
+
+	{
+		D3DXMATRIX			m_MatWorld;
+		D3DXMatrixIdentity(&m_MatWorld);
+
+		// 回転
+		D3DXMATRIX			matHeading;
+		D3DXMatrixRotationX(&matHeading, 270 * (3.145f / 180.f));
+		D3DXMatrixMultiply(&m_MatWorld, &m_MatWorld, &matHeading);
+
+		// 移動
+		D3DXMATRIX			matPosition;	// 位置座標行列
+		D3DXMatrixTranslation(&matPosition, -0.4f, 0.f, 1.f);
+		D3DXMatrixMultiply(&m_MatWorld, &m_MatWorld, &matPosition);
+		DirectX::m_directXInstances.m_pDirectX3DDevice->SetTransform(D3DTS_WORLD, &m_MatWorld);
+
+		fbxRelated.m_pModel[4]->DrawFbx();
+	}
 
 	return;
 }
