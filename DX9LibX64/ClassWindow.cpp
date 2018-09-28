@@ -10,7 +10,7 @@ Window* Window::GetInstance(const HINSTANCE hInst, LPCWSTR nameApp)
 	return m_pWindowClass;
 }
 
-Window::Window(const HINSTANCE hInst, LPCWSTR nameApp) :m_widthDisplay(1280), m_heightDisplay(720), m_canWindow(TRUE), m_hWnd(NULL)
+Window::Window(const HINSTANCE hInst, LPCWSTR nameApp) :m_widthDisplay(1920), m_heightDisplay(1080), m_canWindow(TRUE), m_hWnd(NULL)
 {
 	m_nameApp = nameApp;
 	m_hInst = hInst;
@@ -73,7 +73,7 @@ VOID Window::MakeWindow()
 	wndclass.hInstance = m_hInst;
 	wndclass.hIcon = LoadIcon(NULL, IDI_APPLICATION);
 	wndclass.hCursor = LoadCursor(NULL, IDC_ARROW);
-	wndclass.hbrBackground = (HBRUSH)GetStockObject(LTGRAY_BRUSH);
+	wndclass.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
 	wndclass.lpszMenuName = NULL;
 	wndclass.lpszClassName = m_nameApp;
 	wndclass.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
@@ -115,4 +115,14 @@ BOOL Window::ConfirmMessage()
 	}
 
 	return TRUE;
+}
+
+HWND* Window::GetHWNDPtr()
+{
+	return &m_hWnd;
+}
+
+MSG Window::GetMSG()
+{
+	return m_msg;
 }

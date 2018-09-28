@@ -27,7 +27,7 @@ private:
 	void GetVertexUV(fbxsdk::FbxMesh* pMesh);											//!<	UV取得関数
 	void GetMaterialData(fbxsdk::FbxMesh* pMesh);										//!<	マテリアルとテクスチャ名取得関数
 	void GetTextureName(fbxsdk::FbxSurfaceMaterial* pMaterial, const char* pMatAttr);	//!<	テクスチャ名取得関数
-//	void GetVertexColor(fbxsdk::FbxMesh* pMesh);										//!<	頂点カラー取得関数	未使用
+	void GetVertexColor(fbxsdk::FbxMesh* pMesh);										//!<	頂点カラー取得関数	未使用
 
 public:
 	FbxRelated();

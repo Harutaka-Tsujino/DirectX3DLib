@@ -1,13 +1,53 @@
 #include <windows.h>
+#include <tchar.h>
 #include <d3dx9.h>
 #include <dinput.h>
 #include "ClassDirectX.h"
 
 DirectXInstances DirectX::m_directXInstances;
 
+typedef LPD3DXFONT FONTID;
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+VOID SetFont(INT scaleX, UINT scaleY, const CHAR *pFontType, FONTID *pFontId, UINT thickness, INT charSet)
+{
+	DirectX* pDirectX = DirectX::GetInstance();
+	DirectXInstances& rDirectXInstances = pDirectX->GetDirectXInstances();
+	LPDIRECT3DDEVICE9& rpDirectX3DDevice = rDirectXInstances.m_pDirectX3DDevice;
+
+	if (FAILED(D3DXCreateFontA(rpDirectX3DDevice, scaleY, scaleX, thickness, 0, 0, charSet, 0, 0, 0, pFontType, pFontId)))
+	{
+		return;
+	}
+
+	return;
+}
+
+VOID WriteText(INT posX, INT posY, const CHAR *pText, UINT format, FONTID pFontId, DWORD color)
+{
+	D3DXFONT_DESC fontSetting;
+
+	pFontId->GetDesc(&fontSetting);
+
+	const FLOAT charSpace = 1.3f;
+	INT textScaleX = (INT)(fontSetting.Width* charSpace * strlen(pText)) / 2;
+	INT textScaleY = fontSetting.Height / 2;
+
+	RECT rcText = { posX - textScaleX ,posY - textScaleY ,posX + textScaleX ,posY + textScaleY };
+
+	if (FAILED(pFontId->DrawTextA(NULL, pText, -1, &rcText, format, color)))
+	{
+		return;
+	}
+
+	return;
+}
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 HRESULT DirectXObjectInitializer::Initialize(BOOL canWindow)
 {
-	DirectXInstances& rDirectXInstances = DirectX::m_directXInstances;
+	DirectX* pDirectX = DirectX::GetInstance();
+	DirectXInstances& rDirectXInstances = pDirectX->GetDirectXInstances();
 
 	if (NULL == (rDirectXInstances.m_pDirectX = Direct3DCreate9(D3D_SDK_VERSION)))
 	{
@@ -26,7 +66,9 @@ HRESULT DirectXObjectInitializer::Initialize(BOOL canWindow)
 
 VOID DirectXObjectInitializer::SetBuckBuffer(BOOL canWindow)
 {
-	D3DPRESENT_PARAMETERS& rDirectXPresentParam = DirectX::m_directXInstances.m_DirectXPresentParam;
+	DirectX* pDirectX = DirectX::GetInstance();
+	DirectXInstances& rDirectXInstances = pDirectX->GetDirectXInstances();
+	D3DPRESENT_PARAMETERS& rDirectXPresentParam = rDirectXInstances.m_DirectXPresentParam;
 
 	rDirectXPresentParam.BackBufferFormat = D3DFMT_X8R8G8B8;
 	rDirectXPresentParam.BackBufferCount = 1;
@@ -41,7 +83,7 @@ VOID DirectXObjectInitializer::SetBuckBuffer(BOOL canWindow)
 	{
 		rDirectXPresentParam.BackBufferWidth = WIDTH_FULLSCREEN;
 		rDirectXPresentParam.BackBufferHeight = HEIGHT_FULLSCREEN;
-		rDirectXPresentParam.hDeviceWindow = *DirectX::m_directXInstances.m_pHWnd;
+		rDirectXPresentParam.hDeviceWindow = *rDirectXInstances.m_pHWnd;
 		rDirectXPresentParam.PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
 	}
 
@@ -68,15 +110,20 @@ VOID DirectXObject::SetWindowMode(BOOL canWindow)
 
 VOID DirectX3DDeviceInitializer::SetRenderState(BOOL canCullPolygon)
 {
-	LPDIRECT3DDEVICE9& rpDirectX3DDevice = DirectX::m_directXInstances.m_pDirectX3DDevice;
+	DirectX* pDirectX = DirectX::GetInstance();
+	DirectXInstances& rDirectXInstances = pDirectX->GetDirectXInstances();
+	LPDIRECT3DDEVICE9& rpDirectX3DDevice = rDirectXInstances.m_pDirectX3DDevice;
 
 	rpDirectX3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, true);
 	rpDirectX3DDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 	rpDirectX3DDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 	rpDirectX3DDevice->SetRenderState(D3DRS_ZENABLE, TRUE);
 	rpDirectX3DDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
-	rpDirectX3DDevice->SetRenderState(D3DRS_AMBIENT, 0x00111111);
+	rpDirectX3DDevice->SetRenderState(D3DRS_AMBIENT, 0x00BBBBBB);
 	rpDirectX3DDevice->SetRenderState(D3DRS_SPECULARENABLE, TRUE);
+	rpDirectX3DDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
+	rpDirectX3DDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATEREQUAL);
+	rpDirectX3DDevice->SetRenderState(D3DRS_ALPHAREF, 0x33);
 
 	if (!canCullPolygon)
 	{
@@ -88,7 +135,9 @@ VOID DirectX3DDeviceInitializer::SetRenderState(BOOL canCullPolygon)
 
 VOID DirectX3DDeviceInitializer::SetTextureStageState()
 {
-	LPDIRECT3DDEVICE9& rpDirectX3DDevice = DirectX::m_directXInstances.m_pDirectX3DDevice;
+	DirectX* pDirectX = DirectX::GetInstance();
+	DirectXInstances& rDirectXInstances = pDirectX->GetDirectXInstances();
+	LPDIRECT3DDEVICE9& rpDirectX3DDevice = rDirectXInstances.m_pDirectX3DDevice;
 
 	rpDirectX3DDevice->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
 	rpDirectX3DDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
@@ -100,9 +149,12 @@ VOID DirectX3DDeviceInitializer::SetTextureStageState()
 
 VOID DirectX3DDeviceInitializer::SetViewPort()
 {
-	/*D3DVIEWPORT9 viewPort;
+	D3DVIEWPORT9 viewPort;
 
-	D3DPRESENT_PARAMETERS& rDirectXPresentParam = DirectX::m_directXInstances.m_DirectXPresentParam;
+	DirectX* pDirectX = DirectX::GetInstance();
+	DirectXInstances& rDirectXInstances = pDirectX->GetDirectXInstances();
+	D3DPRESENT_PARAMETERS& rDirectXPresentParam = rDirectXInstances.m_DirectXPresentParam;
+	LPDIRECT3DDEVICE9& rpDirectX3DDevice = rDirectXInstances.m_pDirectX3DDevice;
 
 	viewPort.Width = rDirectXPresentParam.BackBufferWidth;
 	viewPort.Height = rDirectXPresentParam.BackBufferHeight;
@@ -111,22 +163,26 @@ VOID DirectX3DDeviceInitializer::SetViewPort()
 	viewPort.X = 0;
 	viewPort.Y = 0;
 
-	DirectX::m_directXInstances.m_pDirectX3DDevice->SetViewport(&viewPort);*/
+	rpDirectX3DDevice->SetViewport(&viewPort);
 
 	return;
 }
 
 HRESULT DirectX3DDeviceInitializer::Initialize(t_VERTEX_FORMAT d3DFVF, BOOL canCullPolygon)
 {
-	DirectXInstances& rDirectXInstances = DirectX::m_directXInstances;
+	DirectX* pDirectX = DirectX::GetInstance();
+	DirectXInstances& rDirectXInstances = pDirectX->GetDirectXInstances();
+	D3DPRESENT_PARAMETERS& rDirectXPresentParam = rDirectXInstances.m_DirectXPresentParam;
+	LPDIRECT3DDEVICE9& rpDirectX3DDevice = rDirectXInstances.m_pDirectX3DDevice;
+	HWND& rHWnd = *rDirectXInstances.m_pHWnd;
 
-	if (FAILED(rDirectXInstances.m_pDirectX->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, *rDirectXInstances.m_pHWnd,
-		D3DCREATE_HARDWARE_VERTEXPROCESSING | D3DCREATE_MULTITHREADED, &rDirectXInstances.m_DirectXPresentParam, &rDirectXInstances.m_pDirectX3DDevice)))
+	if (FAILED(rDirectXInstances.m_pDirectX->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, rHWnd,
+		D3DCREATE_HARDWARE_VERTEXPROCESSING | D3DCREATE_MULTITHREADED, &rDirectXPresentParam, &rpDirectX3DDevice)))
 	{
 		MessageBox(0, TEXT("HALモードでDIRECT3Dデバイスを作成できません\nREFモードで再試行します"), NULL, MB_OK);
-		if (FAILED(rDirectXInstances.m_pDirectX->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_REF, *rDirectXInstances.m_pHWnd,
+		if (FAILED(rDirectXInstances.m_pDirectX->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_REF, rHWnd,
 			D3DCREATE_MIXED_VERTEXPROCESSING | D3DCREATE_MULTITHREADED,
-			&rDirectXInstances.m_DirectXPresentParam, &rDirectXInstances.m_pDirectX3DDevice)))
+			&rDirectXPresentParam, &rpDirectX3DDevice)))
 		{
 			MessageBox(0, TEXT("DIRECT3Dデバイスの作成に失敗しました"), NULL, MB_OK);
 			return E_FAIL;
@@ -169,9 +225,11 @@ VOID DirectX3DDevice::SetVertexFormat(t_VERTEX_FORMAT d3DFVF)
 
 VOID DirectX3DDevice::PrepareRender()
 {
-	LPDIRECT3DDEVICE9& rpDirectX3DDevice = DirectX::m_directXInstances.m_pDirectX3DDevice;
+	DirectX* pDirectX = DirectX::GetInstance();
+	DirectXInstances& rDirectXInstances = pDirectX->GetDirectXInstances();
+	LPDIRECT3DDEVICE9& rpDirectX3DDevice = rDirectXInstances.m_pDirectX3DDevice;
 
-	rpDirectX3DDevice->Clear(0, NULL, D3DCLEAR_TARGET|D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(100, 100, 100), 1.f, 0);
+	rpDirectX3DDevice->Clear(0, NULL, D3DCLEAR_TARGET|D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0xE0, 0xF8, 0xF7), 1.f, 0);
 	rpDirectX3DDevice->BeginScene();
 
 	return;
@@ -179,7 +237,9 @@ VOID DirectX3DDevice::PrepareRender()
 
 VOID DirectX3DDevice::CleanUpRender()
 {
-	LPDIRECT3DDEVICE9& rpDirectX3DDevice = DirectX::m_directXInstances.m_pDirectX3DDevice;
+	DirectX* pDirectX = DirectX::GetInstance();
+	DirectXInstances& rDirectXInstances = pDirectX->GetDirectXInstances();
+	LPDIRECT3DDEVICE9& rpDirectX3DDevice = rDirectXInstances.m_pDirectX3DDevice;
 
 	rpDirectX3DDevice->EndScene();
 	rpDirectX3DDevice->Present(NULL, NULL, NULL, NULL);
@@ -191,44 +251,48 @@ HRESULT DirectXInputDevicesInitializer::Initialize()
 {
 	HRESULT hr;
 
-	DirectXInstances& rDirectXInstances = DirectX::m_directXInstances;
+	DirectX* pDirectX = DirectX::GetInstance();
+	DirectXInstances& rDirectXInstances = pDirectX->GetDirectXInstances();
+	LPDIRECTINPUT8& rDirectXInput = rDirectXInstances.m_pDirectXInput;
+	LPDIRECTINPUTDEVICE8* pDirectXInputDevices = rDirectXInstances.m_pDirectXInputDevices;
+	HWND& rHWnd = *rDirectXInstances.m_pHWnd;
 
 	if (FAILED(hr = DirectInput8Create(GetModuleHandle(NULL),
-		DIRECTINPUT_VERSION, IID_IDirectInput8, (VOID**)&rDirectXInstances.m_pDirectXInput, NULL)))
+		DIRECTINPUT_VERSION, IID_IDirectInput8, (VOID**)&rDirectXInput, NULL)))
 	{
 		return hr;
 	}
 
 	if (FAILED(hr = rDirectXInstances.m_pDirectXInput->CreateDevice(GUID_SysKeyboard,
-		&(rDirectXInstances.m_pDirectXInputDevices[(ULONGLONG)INPUT_DEVICES::KEYBOARD]), NULL)))
+		&(pDirectXInputDevices[(ULONGLONG)INPUT_DEVICES::KEYBOARD]), NULL)))
 	{
 		return hr;
 	}
 
-	if (FAILED(hr = (rDirectXInstances.m_pDirectXInputDevices[(ULONGLONG)INPUT_DEVICES::KEYBOARD])->SetDataFormat(&c_dfDIKeyboard)))
+	if (FAILED(hr = (pDirectXInputDevices[(ULONGLONG)INPUT_DEVICES::KEYBOARD])->SetDataFormat(&c_dfDIKeyboard)))
 	{
 		return hr;
 	}
 
-	if (FAILED(hr = (rDirectXInstances.m_pDirectXInputDevices[(ULONGLONG)INPUT_DEVICES::KEYBOARD])->SetCooperativeLevel(
-		*rDirectXInstances.m_pHWnd, DISCL_NONEXCLUSIVE | DISCL_BACKGROUND)))
+	if (FAILED(hr = (pDirectXInputDevices[(ULONGLONG)INPUT_DEVICES::KEYBOARD])->SetCooperativeLevel(
+		rHWnd, DISCL_NONEXCLUSIVE | DISCL_BACKGROUND)))
 	{
 		return hr;
 	}
 
 	if (FAILED(hr = rDirectXInstances.m_pDirectXInput->CreateDevice(GUID_SysMouse,
-		&(rDirectXInstances.m_pDirectXInputDevices[(ULONGLONG)INPUT_DEVICES::MOUSE]), NULL)))
+		&(pDirectXInputDevices[(ULONGLONG)INPUT_DEVICES::MOUSE]), NULL)))
 	{
 		return hr;
 	}
 
-	if (FAILED(hr = (rDirectXInstances.m_pDirectXInputDevices[(ULONGLONG)INPUT_DEVICES::MOUSE])->SetDataFormat(&c_dfDIMouse)))
+	if (FAILED(hr = (pDirectXInputDevices[(ULONGLONG)INPUT_DEVICES::MOUSE])->SetDataFormat(&c_dfDIMouse)))
 	{
 		return hr;
 	}
 
-	if (FAILED(hr = (rDirectXInstances.m_pDirectXInputDevices[(ULONGLONG)INPUT_DEVICES::MOUSE])->SetCooperativeLevel(
-		*rDirectXInstances.m_pHWnd, DISCL_NONEXCLUSIVE | DISCL_FOREGROUND)))
+	if (FAILED(hr = (pDirectXInputDevices[(ULONGLONG)INPUT_DEVICES::MOUSE])->SetCooperativeLevel(
+		rHWnd, DISCL_NONEXCLUSIVE | DISCL_FOREGROUND)))
 	{
 		return hr;
 	}
@@ -240,7 +304,7 @@ HRESULT DirectXInputDevicesInitializer::Initialize()
 	diprop.diph.dwHow = DIPH_DEVICE;
 	diprop.dwData = DIPROPAXISMODE_REL;
 
-	if (FAILED(hr = (rDirectXInstances.m_pDirectXInputDevices[(ULONGLONG)INPUT_DEVICES::MOUSE])->SetProperty(DIPROP_AXISMODE, &diprop.diph)))
+	if (FAILED(hr = (pDirectXInputDevices[(ULONGLONG)INPUT_DEVICES::MOUSE])->SetProperty(DIPROP_AXISMODE, &diprop.diph)))
 	{
 		return hr;
 	}
@@ -283,14 +347,17 @@ VOID DirectXInputDevices::StoreInputStates()
 
 VOID MouseAndKeyboardStatesGetter::Get(InputData& rInputData)
 {
-	DirectXInstances& rDirectXInstances = DirectX::m_directXInstances;
+	DirectX* pDirectX = DirectX::GetInstance();
+	DirectXInstances& rDirectXInstances = pDirectX->GetDirectXInstances();
+	LPDIRECTINPUTDEVICE8* pDirectXInputDevices = rDirectXInstances.m_pDirectXInputDevices;
+	HWND& rHWnd = *rDirectXInstances.m_pHWnd;
 
-	rDirectXInstances.m_pDirectXInputDevices[(ULONGLONG)INPUT_DEVICES::MOUSE]->Acquire();
-	rDirectXInstances.m_pDirectXInputDevices[(ULONGLONG)INPUT_DEVICES::MOUSE]->GetDeviceState(sizeof(DIMOUSESTATE), &rInputData.m_mouseState.m_mouseState);
+	pDirectXInputDevices[(ULONGLONG)INPUT_DEVICES::MOUSE]->Acquire();
+	pDirectXInputDevices[(ULONGLONG)INPUT_DEVICES::MOUSE]->GetDeviceState(sizeof(DIMOUSESTATE), &rInputData.m_mouseState.m_mouseState);
 
 	GetCursorPos(&rInputData.m_mouseState.m_absolutePos);
 
-	ScreenToClient(*rDirectXInstances.m_pHWnd, &rInputData.m_mouseState.m_absolutePos);
+	ScreenToClient(rHWnd, &rInputData.m_mouseState.m_absolutePos);
 
 	memset(rInputData.m_mouseState.m_buttonPush, 0, sizeof(BOOL) * 4 * 4);
 
@@ -323,8 +390,8 @@ VOID MouseAndKeyboardStatesGetter::Get(InputData& rInputData)
 		}
 	}
 
-	rDirectXInstances.m_pDirectXInputDevices[(ULONGLONG)INPUT_DEVICES::KEYBOARD]->Acquire();
-	rDirectXInstances.m_pDirectXInputDevices[(ULONGLONG)INPUT_DEVICES::KEYBOARD]->GetDeviceState(sizeof(BYTE) * 256, rInputData.m_keyBoardState.m_diks);
+	pDirectXInputDevices[(ULONGLONG)INPUT_DEVICES::KEYBOARD]->Acquire();
+	pDirectXInputDevices[(ULONGLONG)INPUT_DEVICES::KEYBOARD]->GetDeviceState(sizeof(BYTE) * 256, rInputData.m_keyBoardState.m_diks);
 
 	memset(rInputData.m_keyBoardState.m_keyPush, NULL, sizeof(BOOL) * 256 * 4);
 
@@ -373,17 +440,17 @@ VOID DirectXInputDevices::GetInputStates()
 
 Camera::Camera()
 {
-	m_cameraPos.x = 0.f;
-	m_cameraPos.y = 0.f;
-	m_cameraPos.z = -2.f;
+	m_cameraPos.x = 0.0f;
+	m_cameraPos.y = 0.0f;
+	m_cameraPos.z = -0.1f;
 
-	m_eyePoint.x = 0.f;
-	m_eyePoint.y = 0.f;
-	m_eyePoint.z = 0.f;
+	m_eyePoint.x = 0.0f;
+	m_eyePoint.y = 0.0f;
+	m_eyePoint.z = 0.0f;
 
-	m_cameraOverhead.x = 0.f;
-	m_cameraOverhead.y = 1.f;
-	m_cameraOverhead.z = 0.f;
+	m_cameraOverhead.x = 0.0f;
+	m_cameraOverhead.y = 1.0f;
+	m_cameraOverhead.z = 0.0f;
 }
 
 VOID Camera::SetCameraPos(FLOAT x, FLOAT y, FLOAT z)
@@ -408,9 +475,66 @@ VOID Camera::SetTransform()
 {
 	D3DXMATRIX view;
 
-	LPDIRECT3DDEVICE9& rpDirectX3DDevice = DirectX::m_directXInstances.m_pDirectX3DDevice;
+	DirectX* pDirectX = DirectX::GetInstance();
+	DirectXInstances& rDirectXInstances = pDirectX->GetDirectXInstances();
+	LPDIRECTINPUTDEVICE8* pDirectXInputDevices = rDirectXInstances.m_pDirectXInputDevices;
+	InputData inputData = pDirectX->m_DirectXInputDevices.m_InputData;
+	LPDIRECT3DDEVICE9& rpDirectX3DDevice = rDirectXInstances.m_pDirectX3DDevice;
 
-	//D3DXMatrixIdentity(&view);
+	D3DXMatrixIdentity(&view);
+
+	static int frameCount = 0;
+
+	
+
+	/*FONTID fontId;
+
+	if (!frameCount)
+	{
+		SetFont(40, 40, "Times New Roman", &fontId, 20,0);
+	}
+
+	WriteText(600,600,)*/
+
+	++frameCount;
+
+	//D3DXVECTOR3 vecCenter(0.f, 0.f, 0.f);
+
+	//D3DXMATRIX matRotation;
+	//D3DXMatrixIdentity(&matRotation);
+
+
+	//まず最初に、原点に半径を足しただけの座標を用意する
+	//D3DXVECTOR3 vecTarget(-30.0f, 0.f, 0.0f);
+	//次に、原点を中心とした回転（オイラー回転）の行列を作る
+	//D3DXMatrixRotationX(&matRotation, 0 *(3.145f / 180.f));
+
+	/*if (!(frameCount%90))
+	{
+		m_cameraOverhead.y *= -1;
+	}*/
+
+	//D3DXVec3TransformCoord(&vecTarget, &vecTarget, &matRotation);
+	////最後に本来の座標（回転対象の座標）を足す
+	//D3DXVec3Add(&vecTarget, &vecTarget, &vecCenter);
+	//m_cameraPos.x = vecTarget.x;
+	//m_cameraPos.y = vecTarget.y;
+	//m_cameraPos.z = vecTarget.z;
+
+	TCHAR buff[256];
+
+	_stprintf_s(buff, 256, _T("x:%f\n"), m_cameraPos.x);
+
+	OutputDebugString(buff);
+
+	_stprintf_s(buff, 256, _T("y:%f\n"), m_cameraPos.y);
+
+	OutputDebugString(buff);
+
+	_stprintf_s(buff, 256, _T("z:%f\n"), m_cameraPos.z);
+
+	OutputDebugString(buff);
+	//SetWindowText(*rDirectXInstances.m_pHWnd, buff);
 
 	D3DXMatrixLookAtLH(&view,
 		&m_cameraPos,
@@ -465,4 +589,9 @@ VOID DirectX::SetHWND(HWND* pHWnd)
 	m_directXInstances.m_pHWnd = pHWnd;
 
 	return;
+}
+
+DirectXInstances& DirectX::GetDirectXInstances()
+{
+	return m_directXInstances;
 }

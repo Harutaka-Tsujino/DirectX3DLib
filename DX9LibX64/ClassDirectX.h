@@ -84,24 +84,31 @@ public:
 //DirectXのオブジェクト初期化クラス
 class DirectXObjectInitializer :public IDirectXObjectInitializer
 {
+	friend class DirectXObject;
+
 public:
 	HRESULT Initialize(BOOL canWindow);
 
 private:
+	DirectXObjectInitializer() {};
+	~DirectXObjectInitializer() {};
+
 	VOID SetBuckBuffer(BOOL canWindow);
 };
 
 //DirectXのオブジェクトクラス
 class DirectXObject
 {
-public:
-	DirectXObject() :m_canWindow(TRUE) {};
-	~DirectXObject() {};
+	friend class DirectX;
 
+public:
 	HRESULT Initialize();
 	VOID SetWindowMode(BOOL canWindow);
 
 private:
+	DirectXObject() :m_canWindow(TRUE) {};
+	~DirectXObject() {};
+
 	BOOL m_canWindow;
 	IDirectXObjectInitializer* m_pDirectXObjectInitializer;
 };
@@ -124,10 +131,15 @@ private:
 //DirectXの3Dデバイス初期化クラス
 class DirectX3DDeviceInitializer :public IDirectX3DDeviceInitializer
 {
+	friend class DirectX3DDevice;
+
 public:
 	HRESULT Initialize(t_VERTEX_FORMAT d3DFVF, BOOL canCullPolygon);
 
 private:
+	DirectX3DDeviceInitializer() {};
+	~DirectX3DDeviceInitializer() {};
+
 	VOID SetRenderState(BOOL canCullPolygon);
 	VOID SetTextureStageState();
 	VOID SetViewPort();
@@ -135,15 +147,17 @@ private:
 
 class Camera
 {
-public:
-	Camera();
-	~Camera() {};
+	friend class DirectX3DDevice;
 
+public:
 	VOID SetTransform();
 	VOID SetCameraPos(FLOAT x, FLOAT y, FLOAT z);
 	VOID SetEyePoint(FLOAT x, FLOAT y, FLOAT z);
 
 private:
+	Camera();
+	~Camera() {};
+
 	D3DXVECTOR3 m_cameraPos;
 	D3DXVECTOR3 m_eyePoint;
 	D3DXVECTOR3 m_cameraOverhead;
@@ -152,19 +166,21 @@ private:
 //DirectXの3Dデバイスクラス
 class DirectX3DDevice
 {
-public:
-	DirectX3DDevice() :m_canCullPolygon(FALSE), m_d3DFVF(D3DFVF_XYZ | D3DFVF_DIFFUSE) {};
-	~DirectX3DDevice() {};
+	friend class DirectX;
 
+public:
 	HRESULT Initialize();
 	VOID SetCullPolygon(BOOL canCullPolygon);
 	VOID SetVertexFormat(t_VERTEX_FORMAT d3DFVF);
 	VOID PrepareRender();
 	VOID CleanUpRender();
 
-	Camera camera;
+	Camera m_camera;
 
 private:
+	DirectX3DDevice() :m_canCullPolygon(FALSE), m_d3DFVF(D3DFVF_XYZ | D3DFVF_DIFFUSE) {};
+	~DirectX3DDevice() {};
+
 	BOOL m_canCullPolygon;
 	t_VERTEX_FORMAT m_d3DFVF;
 	IDirectX3DDeviceInitializer* m_pDirectX3DDeviceInitializer;
@@ -183,7 +199,12 @@ public:
 //DirectXInput初期化クラス
 class DirectXInputDevicesInitializer :public IDirectXInputDevicesInitializer
 {
+	friend class DirectXInputDevices;
+
 public:
+	DirectXInputDevicesInitializer() {};
+	~DirectXInputDevicesInitializer() {};
+
 	HRESULT Initialize();
 };
 
@@ -208,7 +229,12 @@ public:
 //マウスキーボード の入力データ保存クラス
 class MouseAndKeyboardStatesStorage :public IInputStatesStorage
 {
+	friend class DirectXInputDevices;
+
 public:
+	MouseAndKeyboardStatesStorage() {};
+	~MouseAndKeyboardStatesStorage() {};
+
 	VOID Store(InputData& rInputData);
 };
 
@@ -225,16 +251,21 @@ public:
 //マウスキーボード の入力データ取得クラス
 class MouseAndKeyboardStatesGetter :public IInputStatesGetter
 {
+	friend class DirectXInputDevices;
+
 public:
+	MouseAndKeyboardStatesGetter() {};
+	~MouseAndKeyboardStatesGetter() {};
+
 	VOID Get(InputData& rInputData);
 };
 
 //DirectXInputクラス
 class DirectXInputDevices
 {
+	friend class DirectX;
+
 public:
-	DirectXInputDevices();
-	~DirectXInputDevices() {};
 	HRESULT Initialize();
 	VOID StoreInputStates();
 	VOID GetInputStates();
@@ -242,6 +273,9 @@ public:
 	InputData m_InputData;
 
 private:
+	DirectXInputDevices();
+	~DirectXInputDevices() {};
+
 	IDirectXInputDevicesInitializer * m_pDirectXInputDevicesInitializer;
 	IInputStatesStorage* m_pInputStatesStoreter;
 	IInputStatesGetter* m_pInputStatesGetter;
@@ -270,20 +304,23 @@ public:
 	static DirectX* GetInstance();
 	VOID DeleteInstance();
 	VOID SetHWND(HWND* pHWnd);
+	DirectXInstances& GetDirectXInstances();
 
 	DirectXObject m_DirectXObject;
 	DirectX3DDevice m_DirectX3DDevice;
 	DirectXInputDevices m_DirectXInputDevices;
-	static DirectXInstances m_directXInstances;
 
 private:
 	DirectX() {};
 	~DirectX() {};
+
+	static DirectXInstances m_directXInstances;
 };
 
 //ポリゴンの頂点情報構造体
 struct CustomVertex
 {
+public:
 	FLOAT m_x;
 	FLOAT m_y;
 	FLOAT m_z;

@@ -48,7 +48,7 @@ private:
 
 	typedef struct TEXTURE_DATA
 	{
-		LPCWSTR m_TextureName;
+		LPCSTR m_TextureName;
 		LPDIRECT3DTEXTURE9 m_pTexture;
 	}TextureData;
 

@@ -12,13 +12,14 @@ public:
 
 	VOID SetWindowMode(const BOOL canWindow);
 	VOID MakeWindow();
+	HWND* GetHWNDPtr();
+	MSG GetMSG();
+
 	BOOL ConfirmMessage();
 
 	INT m_widthDisplay;
 	INT m_heightDisplay;
 	BOOL m_canWindow;
-	MSG m_msg;
-	HWND m_hWnd;
 
 private:
 	Window(const HINSTANCE hInst, LPCWSTR nameApp);
@@ -29,4 +30,6 @@ private:
 	static Window* m_pWindowClass;
 	LPCWSTR m_nameApp;
 	HINSTANCE m_hInst;
+	HWND m_hWnd;
+	MSG m_msg;
 };

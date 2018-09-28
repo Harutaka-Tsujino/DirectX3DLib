@@ -70,7 +70,7 @@ void FbxRelated::Release()
 		delete m_pModel[j];
 	}
 
-		std::vector<FbxModel*>().swap(m_pModel);
+	std::vector<FbxModel*>().swap(m_pModel);
 }
 
 void FbxRelated::TriangulateRecursive(FbxNode* pNode, FbxScene* pScene)
@@ -218,7 +218,7 @@ void FbxRelated::GetMesh(fbxsdk::FbxNode* pNode)
 			GetMaterialData(pMesh);
 
 			//	頂点カラーを取得
-			//			GetVertexColor(pMesh);
+			GetVertexColor(pMesh);
 		}
 		break;
 		}
@@ -248,21 +248,21 @@ void FbxRelated::GetPosition(fbxsdk::FbxMesh* pMesh)
 	}
 
 	//	ポリゴン数を取得
-	m_pModel[m_modelDataCount-1]->m_pFbxModelData->polygonCount = pMesh->GetPolygonCount();
+	m_pModel[m_modelDataCount - 1]->m_pFbxModelData->polygonCount = pMesh->GetPolygonCount();
 
 	//	ポリゴンサイズを取得
-	m_pModel[m_modelDataCount-1]->m_pFbxModelData->pPolygonSize = new int[m_pModel[m_modelDataCount-1]->m_pFbxModelData->polygonCount];
+	m_pModel[m_modelDataCount - 1]->m_pFbxModelData->pPolygonSize = new int[m_pModel[m_modelDataCount - 1]->m_pFbxModelData->polygonCount];
 
-	for (int i = 0; m_pModel[m_modelDataCount-1]->m_pFbxModelData->polygonCount > i; i++)
+	for (int i = 0; m_pModel[m_modelDataCount - 1]->m_pFbxModelData->polygonCount > i; i++)
 	{
-		m_pModel[m_modelDataCount-1]->m_pFbxModelData->pPolygonSize[i] = pMesh->GetPolygonSize(i);
+		m_pModel[m_modelDataCount - 1]->m_pFbxModelData->pPolygonSize[i] = pMesh->GetPolygonSize(i);
 	}
 
 	//	総頂点数を取得
-	m_pModel[m_modelDataCount-1]->m_pFbxModelData->vertexCount = pMesh->GetControlPointsCount();
+	m_pModel[m_modelDataCount - 1]->m_pFbxModelData->vertexCount = pMesh->GetControlPointsCount();
 
 	//	インデックス数を取得
-	m_pModel[m_modelDataCount-1]->m_pFbxModelData->indexCount = pMesh->GetPolygonVertexCount();
+	m_pModel[m_modelDataCount - 1]->m_pFbxModelData->indexCount = pMesh->GetPolygonVertexCount();
 
 	//	頂点バッファの取得
 	fbxsdk::FbxVector4* pVertex = pMesh->GetControlPoints();
@@ -271,80 +271,80 @@ void FbxRelated::GetPosition(fbxsdk::FbxMesh* pMesh)
 	int* pIndex = pMesh->GetPolygonVertices();
 
 	//	頂点座標のキャストとハードコピー
-	D3DXVECTOR3* pTmpVertex = new D3DXVECTOR3[m_pModel[m_modelDataCount-1]->m_pFbxModelData->vertexCount];
+	D3DXVECTOR3* pTmpVertex = new D3DXVECTOR3[m_pModel[m_modelDataCount - 1]->m_pFbxModelData->vertexCount];
 
-	for (int i = 0; m_pModel[m_modelDataCount-1]->m_pFbxModelData->vertexCount > i; i++)
+	for (int i = 0; m_pModel[m_modelDataCount - 1]->m_pFbxModelData->vertexCount > i; i++)
 	{
 		//	i番目の頂点の座標Xを取得
 		pTmpVertex[i].x = (float)pVertex[i][0];
 
-		if (m_pModel[m_modelDataCount-1]->maxX < pTmpVertex[i].x)
+		if (m_pModel[m_modelDataCount - 1]->maxX < pTmpVertex[i].x)
 		{
-			m_pModel[m_modelDataCount-1]->maxX = pTmpVertex[i].x;
+			m_pModel[m_modelDataCount - 1]->maxX = pTmpVertex[i].x;
 		}
-		if (m_pModel[m_modelDataCount-1]->minX > pTmpVertex[i].x)
+		if (m_pModel[m_modelDataCount - 1]->minX > pTmpVertex[i].x)
 		{
-			m_pModel[m_modelDataCount-1]->minX = pTmpVertex[i].x;
+			m_pModel[m_modelDataCount - 1]->minX = pTmpVertex[i].x;
 		}
 
 		//	i番目の頂点の座標Yを取得
 		pTmpVertex[i].y = (float)pVertex[i][1];
 
-		if (m_pModel[m_modelDataCount-1]->maxY < pTmpVertex[i].y)
+		if (m_pModel[m_modelDataCount - 1]->maxY < pTmpVertex[i].y)
 		{
-			m_pModel[m_modelDataCount-1]->maxY = pTmpVertex[i].y;
+			m_pModel[m_modelDataCount - 1]->maxY = pTmpVertex[i].y;
 		}
-		if (m_pModel[m_modelDataCount-1]->minY > pTmpVertex[i].y)
+		if (m_pModel[m_modelDataCount - 1]->minY > pTmpVertex[i].y)
 		{
-			m_pModel[m_modelDataCount-1]->minY = pTmpVertex[i].y;
+			m_pModel[m_modelDataCount - 1]->minY = pTmpVertex[i].y;
 		}
 
 		//	i番目の頂点の座標Zを取得
 		pTmpVertex[i].z = (float)pVertex[i][2];
 
-		if (m_pModel[m_modelDataCount-1]->maxZ < pTmpVertex[i].z)
+		if (m_pModel[m_modelDataCount - 1]->maxZ < pTmpVertex[i].z)
 		{
-			m_pModel[m_modelDataCount-1]->maxZ = pTmpVertex[i].z;
+			m_pModel[m_modelDataCount - 1]->maxZ = pTmpVertex[i].z;
 		}
-		if (m_pModel[m_modelDataCount-1]->minZ > pTmpVertex[i].z)
+		if (m_pModel[m_modelDataCount - 1]->minZ > pTmpVertex[i].z)
 		{
-			m_pModel[m_modelDataCount-1]->minZ = pTmpVertex[i].z;
+			m_pModel[m_modelDataCount - 1]->minZ = pTmpVertex[i].z;
 		}
 
-		if (m_pModel[m_modelDataCount-1]->maxR < pTmpVertex[i].x)
+		if (m_pModel[m_modelDataCount - 1]->maxR < pTmpVertex[i].x)
 		{
-			m_pModel[m_modelDataCount-1]->maxR = pTmpVertex[i].x;
+			m_pModel[m_modelDataCount - 1]->maxR = pTmpVertex[i].x;
 		}
-		if (m_pModel[m_modelDataCount-1]->maxR < pTmpVertex[i].y)
+		if (m_pModel[m_modelDataCount - 1]->maxR < pTmpVertex[i].y)
 		{
-			m_pModel[m_modelDataCount-1]->maxR = pTmpVertex[i].y;
+			m_pModel[m_modelDataCount - 1]->maxR = pTmpVertex[i].y;
 		}
-		if (m_pModel[m_modelDataCount-1]->maxR < pTmpVertex[i].z)
+		if (m_pModel[m_modelDataCount - 1]->maxR < pTmpVertex[i].z)
 		{
-			m_pModel[m_modelDataCount-1]->maxR = pTmpVertex[i].z;
+			m_pModel[m_modelDataCount - 1]->maxR = pTmpVertex[i].z;
 		}
 	}
 
-	m_pModel[m_modelDataCount-1]->m_pFbxModelData->pVertex = new FbxModel::Vertex[m_pModel[m_modelDataCount-1]->m_pFbxModelData->indexCount];
+	m_pModel[m_modelDataCount - 1]->m_pFbxModelData->pVertex = new FbxModel::Vertex[m_pModel[m_modelDataCount - 1]->m_pFbxModelData->indexCount];
 
-	for (int i = 0; m_pModel[m_modelDataCount-1]->m_pFbxModelData->indexCount > i; i++)
+	for (int i = 0; m_pModel[m_modelDataCount - 1]->m_pFbxModelData->indexCount > i; i++)
 	{
 		//	i番目の頂点の座標Xを取得
-		m_pModel[m_modelDataCount-1]->m_pFbxModelData->pVertex[i].Vec.x = pTmpVertex[pIndex[i]].x;
+		m_pModel[m_modelDataCount - 1]->m_pFbxModelData->pVertex[i].Vec.x = pTmpVertex[pIndex[i]].x;
 
 		//	i番目の頂点の座標Yを取得
-		m_pModel[m_modelDataCount-1]->m_pFbxModelData->pVertex[i].Vec.y = pTmpVertex[pIndex[i]].y;
+		m_pModel[m_modelDataCount - 1]->m_pFbxModelData->pVertex[i].Vec.y = pTmpVertex[pIndex[i]].y;
 
 		//	i番目の頂点の座標Zを取得
-		m_pModel[m_modelDataCount-1]->m_pFbxModelData->pVertex[i].Vec.z = pTmpVertex[pIndex[i]].z;
+		m_pModel[m_modelDataCount - 1]->m_pFbxModelData->pVertex[i].Vec.z = pTmpVertex[pIndex[i]].z;
 	}
 
 	//	インデックスバッファのハードコピー
-	m_pModel[m_modelDataCount-1]->m_pFbxModelData->pIndexBuffer = new int[m_pModel[m_modelDataCount-1]->m_pFbxModelData->indexCount];
+	m_pModel[m_modelDataCount - 1]->m_pFbxModelData->pIndexBuffer = new int[m_pModel[m_modelDataCount - 1]->m_pFbxModelData->indexCount];
 
-	for (int i = 0; m_pModel[m_modelDataCount-1]->m_pFbxModelData->indexCount > i; i++)
+	for (int i = 0; m_pModel[m_modelDataCount - 1]->m_pFbxModelData->indexCount > i; i++)
 	{
-		m_pModel[m_modelDataCount-1]->m_pFbxModelData->pIndexBuffer[i] = pIndex[i];
+		m_pModel[m_modelDataCount - 1]->m_pFbxModelData->pIndexBuffer[i] = pIndex[i];
 	}
 	delete pTmpVertex;
 }
@@ -383,9 +383,9 @@ void FbxRelated::GetVertexNormal(fbxsdk::FbxMesh* pMesh)
 				for (int i = 0; normalCount > i; i++)
 				{
 					//	法線の取得
-					m_pModel[m_modelDataCount-1]->m_pFbxModelData->pVertex[i].Normal.x = (float)pNormal->GetDirectArray().GetAt(i)[0];
-					m_pModel[m_modelDataCount-1]->m_pFbxModelData->pVertex[i].Normal.y = (float)pNormal->GetDirectArray().GetAt(i)[1];
-					m_pModel[m_modelDataCount-1]->m_pFbxModelData->pVertex[i].Normal.z = (float)pNormal->GetDirectArray().GetAt(i)[2];
+					m_pModel[m_modelDataCount - 1]->m_pFbxModelData->pVertex[i].Normal.x = (float)pNormal->GetDirectArray().GetAt(i)[0];
+					m_pModel[m_modelDataCount - 1]->m_pFbxModelData->pVertex[i].Normal.y = (float)pNormal->GetDirectArray().GetAt(i)[1];
+					m_pModel[m_modelDataCount - 1]->m_pFbxModelData->pVertex[i].Normal.z = (float)pNormal->GetDirectArray().GetAt(i)[2];
 				}
 			}
 			break;
@@ -412,9 +412,9 @@ void FbxRelated::GetVertexNormal(fbxsdk::FbxMesh* pMesh)
 				for (int i = 0; normalCount > i; i++)
 				{
 					//	法線の取得
-					m_pModel[m_modelDataCount-1]->m_pFbxModelData->pVertex[i].Normal.x = (float)pNormal->GetDirectArray().GetAt(i)[0];
-					m_pModel[m_modelDataCount-1]->m_pFbxModelData->pVertex[i].Normal.y = (float)pNormal->GetDirectArray().GetAt(i)[1];
-					m_pModel[m_modelDataCount-1]->m_pFbxModelData->pVertex[i].Normal.z = (float)pNormal->GetDirectArray().GetAt(i)[2];
+					m_pModel[m_modelDataCount - 1]->m_pFbxModelData->pVertex[i].Normal.x = (float)pNormal->GetDirectArray().GetAt(i)[0];
+					m_pModel[m_modelDataCount - 1]->m_pFbxModelData->pVertex[i].Normal.y = (float)pNormal->GetDirectArray().GetAt(i)[1];
+					m_pModel[m_modelDataCount - 1]->m_pFbxModelData->pVertex[i].Normal.z = (float)pNormal->GetDirectArray().GetAt(i)[2];
 				}
 			}
 			break;
@@ -441,9 +441,9 @@ void FbxRelated::GetVertexNormal(fbxsdk::FbxMesh* pMesh)
 void FbxRelated::GetVertexUV(fbxsdk::FbxMesh* pMesh)
 {
 	//	UVセット数を取得
-	m_pModel[m_modelDataCount-1]->m_pFbxModelData->UvLayerCount = pMesh->GetElementUVCount();
+	m_pModel[m_modelDataCount - 1]->m_pFbxModelData->UvLayerCount = pMesh->GetElementUVCount();
 
-	for (int i = 0; m_pModel[m_modelDataCount-1]->m_pFbxModelData->UvLayerCount > i; i++)
+	for (int i = 0; m_pModel[m_modelDataCount - 1]->m_pFbxModelData->UvLayerCount > i; i++)
 	{
 		//	UVバッファを取得
 		fbxsdk::FbxGeometryElementUV* pUV = pMesh->GetElementUV(i);
@@ -475,21 +475,29 @@ void FbxRelated::GetVertexUV(fbxsdk::FbxMesh* pMesh)
 			{
 				fbxsdk::FbxLayerElementArrayTemplate<int>* pUvIndex = &pUV->GetIndexArray();
 
-				m_pModel[m_modelDataCount-1]->m_pFbxModelData->uvIndexCount = pUvIndex->GetCount();
+				m_pModel[m_modelDataCount - 1]->m_pFbxModelData->uvIndexCount = pUvIndex->GetCount();
 
 				//	UVを保持
 				std::vector<D3DXVECTOR2*> temp;
-				temp.push_back(new D3DXVECTOR2[m_pModel[m_modelDataCount-1]->m_pFbxModelData->uvIndexCount]);
 
-				for (int j = 0; m_pModel[m_modelDataCount-1]->m_pFbxModelData->uvIndexCount > j; j++)
+				int uVCount = 0;
+
+				temp.push_back(new D3DXVECTOR2[uVCount = m_pModel[m_modelDataCount - 1]->m_pFbxModelData->uvIndexCount]);
+
+				for (int j = 0; uVCount > j; j++)
 				{
-					temp[i][j].x = (float)pUV->GetDirectArray().GetAt(pUvIndex->GetAt(j))[0];
-					temp[i][j].y = 1.f - (float)pUV->GetDirectArray().GetAt(pUvIndex->GetAt(j))[1];
-					m_pModel[m_modelDataCount-1]->m_pFbxModelData->uvSet.uvBuffer.push_back(temp[i]);
+					fbxsdk::FbxVector2&  rFbxVector2 = pUV->GetDirectArray().GetAt(pUvIndex->GetAt(j));
+
+					temp[0][j].x = (float)rFbxVector2[0];
+					temp[0][j].y = 1.f - (float)rFbxVector2[1];
+
+					FbxModel::FBXMODELDATA*& pModeldata = m_pModel[m_modelDataCount - 1]->m_pFbxModelData;
+
+					pModeldata->uvSet.uvBuffer.push_back(temp[0]);
 				}
 
 				//	UVSet名を取得
-				m_pModel[m_modelDataCount-1]->m_pFbxModelData->uvSet.uvSetName = pUV->GetName();
+				m_pModel[m_modelDataCount - 1]->m_pFbxModelData->uvSet.uvSetName = pUV->GetName();
 			}
 			break;
 
@@ -514,13 +522,13 @@ void FbxRelated::GetVertexUV(fbxsdk::FbxMesh* pMesh)
 		return;
 	}
 
-	for (int i = 0; i < (m_pModel[m_modelDataCount-1]->m_pFbxModelData->indexCount); ++i)
+	for (int i = 0; i < (m_pModel[m_modelDataCount - 1]->m_pFbxModelData->indexCount); ++i)
 	{
 		//	コードを短縮するためのバッファのバッファ
 		D3DXVECTOR2* pUVBufferBuffer = m_pModel[m_modelDataCount - 1]->m_pFbxModelData->uvSet.uvBuffer[0];
 
-		m_pModel[m_modelDataCount-1]->m_pFbxModelData->pVertex[i].tu = pUVBufferBuffer[i].x;///////////////////////////////---エラーVector---///////////////////////////////
-		m_pModel[m_modelDataCount-1]->m_pFbxModelData->pVertex[i].tv = pUVBufferBuffer[i].y;
+		m_pModel[m_modelDataCount - 1]->m_pFbxModelData->pVertex[i].tu = pUVBufferBuffer[i].x;///////////////////////////////---エラーVector---///////////////////////////////
+		m_pModel[m_modelDataCount - 1]->m_pFbxModelData->pVertex[i].tv = pUVBufferBuffer[i].y;
 	}
 
 }
@@ -531,13 +539,13 @@ void FbxRelated::GetMaterialData(fbxsdk::FbxMesh* pMesh)
 	fbxsdk::FbxNode* pNode = pMesh->GetNode();
 
 	//	マテリアルの数を取得
-	m_pModel[m_modelDataCount-1]->m_pFbxModelData->materialCount = pNode->GetMaterialCount();
+	m_pModel[m_modelDataCount - 1]->m_pFbxModelData->materialCount = pNode->GetMaterialCount();
 
 	//	テクスチァの数をカウントする
 	static int fileTextureCount = 0;
 
 	//	マテリアルの数だけ繰り返す
-	for (int i = 0; m_pModel[m_modelDataCount-1]->m_pFbxModelData->materialCount > i; i++)
+	for (int i = 0; m_pModel[m_modelDataCount - 1]->m_pFbxModelData->materialCount > i; i++)
 	{
 		//	マテリアルを取得
 		fbxsdk::FbxSurfaceMaterial* pMaterial = pNode->GetMaterial(i);
@@ -573,10 +581,9 @@ void FbxRelated::GetMaterialData(fbxsdk::FbxMesh* pMesh)
 			MaterialData.Emissive.a = 0.f;
 			GetTextureName(lambert, fbxsdk::FbxSurfaceMaterial::sTransparentColor);
 
-
 			GetTextureName(lambert, fbxsdk::FbxSurfaceMaterial::sNormalMap);
 
-			m_pModel[m_modelDataCount-1]->m_pFbxModelData->MaterialData.push_back(MaterialData);
+			m_pModel[m_modelDataCount - 1]->m_pFbxModelData->MaterialData.push_back(MaterialData);
 		}
 		else if (pMaterial->GetClassId().Is(fbxsdk::FbxSurfacePhong::ClassId))
 		{
@@ -624,7 +631,7 @@ void FbxRelated::GetMaterialData(fbxsdk::FbxMesh* pMesh)
 
 			GetTextureName(phong, fbxsdk::FbxSurfaceMaterial::sNormalMap);
 
-			m_pModel[m_modelDataCount-1]->m_pFbxModelData->MaterialData.push_back(MaterialData);
+			m_pModel[m_modelDataCount - 1]->m_pFbxModelData->MaterialData.push_back(MaterialData);
 		}
 
 	}
@@ -660,32 +667,33 @@ void FbxRelated::GetTextureName(fbxsdk::FbxSurfaceMaterial* pMaterial, const cha
 				if (pFbxFileTexture)
 				{
 					//	テクスチャ名を取得
-					//	std::string textureName = texture->GetName();
-					LPCWSTR textureName = (LPCWSTR)pFbxFileTexture->GetRelativeFileName();
+					//std::string textureName = pFbxFileTexture->GetName();
+					const char* textureName = pFbxFileTexture->GetRelativeFileName();
 
 					//	UVSet名を取得
 					std::string UVSetName = pFbxFileTexture->UVSet.Get().Buffer();
 
 					//	UVSet名を比較し対応しているテクスチャなら保持してデータクラスにUV座標をいれる
-					if (m_pModel[m_modelDataCount-1]->m_pFbxModelData->uvSet.uvSetName == UVSetName)
+					if (m_pModel[m_modelDataCount - 1]->m_pFbxModelData->uvSet.uvSetName == UVSetName)
 					{
-						m_pModel[m_modelDataCount-1]->m_pFbxModelData->pTmpTexture = new FbxModel::TextureData();
-						m_pModel[m_modelDataCount-1]->m_pFbxModelData->pTmpTexture->m_TextureName = textureName;
-						m_pModel[m_modelDataCount-1]->m_pFbxModelData->pTextureData.push_back(m_pModel[m_modelDataCount-1]->m_pFbxModelData->pTmpTexture);
+						m_pModel[m_modelDataCount - 1]->m_pFbxModelData->pTmpTexture = new FbxModel::TextureData();
+						m_pModel[m_modelDataCount - 1]->m_pFbxModelData->pTmpTexture->m_TextureName = textureName;
+						m_pModel[m_modelDataCount - 1]->m_pFbxModelData->pTextureData.push_back(m_pModel[m_modelDataCount - 1]->m_pFbxModelData->pTmpTexture);
 
-						if (FAILED(D3DXCreateTextureFromFile(
-							m_pModel[m_modelDataCount-1]->m_pDevice,
-							m_pModel[m_modelDataCount-1]->m_pFbxModelData->pTextureData[m_pModel[m_modelDataCount-1]->m_pFbxModelData->fileTextureCount]->m_TextureName,
-							&m_pModel[m_modelDataCount-1]->m_pFbxModelData->pTextureData[m_pModel[m_modelDataCount-1]->m_pFbxModelData->fileTextureCount]->m_pTexture)))
+						if (FAILED(D3DXCreateTextureFromFileA(
+							m_pModel[m_modelDataCount - 1]->m_pDevice,
+							m_pModel[m_modelDataCount - 1]->m_pFbxModelData->pTextureData[m_pModel[m_modelDataCount - 1]->m_pFbxModelData->fileTextureCount]->m_TextureName,
+							&m_pModel[m_modelDataCount - 1]->m_pFbxModelData->pTextureData[m_pModel[m_modelDataCount - 1]->m_pFbxModelData->fileTextureCount]->m_pTexture)))
 						{
-							m_pModel[m_modelDataCount-1]->m_pFbxModelData->pTextureData[m_pModel[m_modelDataCount-1]->m_pFbxModelData->fileTextureCount]->m_pTexture = NULL;
+							m_pModel[m_modelDataCount - 1]->m_pFbxModelData->pTextureData[m_pModel[m_modelDataCount - 1]->m_pFbxModelData->fileTextureCount]->m_pTexture = NULL;
 						}
-						m_pModel[m_modelDataCount-1]->m_pFbxModelData->fileTextureCount++;
+						m_pModel[m_modelDataCount - 1]->m_pFbxModelData->fileTextureCount++;
 					}
 				}
 			}
 		}
 	}
+
 	else
 	{
 		//	テクスチャ数を取得
@@ -703,26 +711,26 @@ void FbxRelated::GetTextureName(fbxsdk::FbxSurfaceMaterial* pMaterial, const cha
 				{
 					//	テクスチャ名を取得
 					//	std::string textureName = texture->GetName();
-					LPCWSTR textureName = (LPCWSTR)pFbxFileTexture->GetRelativeFileName();
+					const char* textureName = pFbxFileTexture->GetRelativeFileName();
 
 					//	UVSet名を取得
 					std::string UVSetName = pFbxFileTexture->UVSet.Get().Buffer();
 
 					//	UVSet名を比較し対応しているテクスチャなら保持
-					if (m_pModel[m_modelDataCount-1]->m_pFbxModelData->uvSet.uvSetName == UVSetName)
+					if (m_pModel[m_modelDataCount - 1]->m_pFbxModelData->uvSet.uvSetName == UVSetName)
 					{
-						m_pModel[m_modelDataCount-1]->m_pFbxModelData->pTmpTexture = new FbxModel::TextureData();
-						m_pModel[m_modelDataCount-1]->m_pFbxModelData->pTmpTexture->m_TextureName = textureName;
-						m_pModel[m_modelDataCount-1]->m_pFbxModelData->pTextureData.push_back(m_pModel[m_modelDataCount-1]->m_pFbxModelData->pTmpTexture);
+						m_pModel[m_modelDataCount - 1]->m_pFbxModelData->pTmpTexture = new FbxModel::TextureData();
+						m_pModel[m_modelDataCount - 1]->m_pFbxModelData->pTmpTexture->m_TextureName = textureName;
+						m_pModel[m_modelDataCount - 1]->m_pFbxModelData->pTextureData.push_back(m_pModel[m_modelDataCount - 1]->m_pFbxModelData->pTmpTexture);
 
-						if (FAILED(D3DXCreateTextureFromFile(
-							m_pModel[m_modelDataCount-1]->m_pDevice,
-							m_pModel[m_modelDataCount-1]->m_pFbxModelData->pTextureData[m_pModel[m_modelDataCount-1]->m_pFbxModelData->fileTextureCount]->m_TextureName,
-							&m_pModel[m_modelDataCount-1]->m_pFbxModelData->pTextureData[m_pModel[m_modelDataCount-1]->m_pFbxModelData->fileTextureCount]->m_pTexture)))
+						if (FAILED(D3DXCreateTextureFromFileA(
+							m_pModel[m_modelDataCount - 1]->m_pDevice,
+							m_pModel[m_modelDataCount - 1]->m_pFbxModelData->pTextureData[m_pModel[m_modelDataCount - 1]->m_pFbxModelData->fileTextureCount]->m_TextureName,
+							&m_pModel[m_modelDataCount - 1]->m_pFbxModelData->pTextureData[m_pModel[m_modelDataCount - 1]->m_pFbxModelData->fileTextureCount]->m_pTexture)))
 						{
-							m_pModel[m_modelDataCount-1]->m_pFbxModelData->pTextureData[m_pModel[m_modelDataCount-1]->m_pFbxModelData->fileTextureCount]->m_pTexture = NULL;
+							m_pModel[m_modelDataCount - 1]->m_pFbxModelData->pTextureData[m_pModel[m_modelDataCount - 1]->m_pFbxModelData->fileTextureCount]->m_pTexture = NULL;
 						}
-						m_pModel[m_modelDataCount-1]->m_pFbxModelData->fileTextureCount++;
+						m_pModel[m_modelDataCount - 1]->m_pFbxModelData->fileTextureCount++;
 
 					}
 				}
@@ -730,70 +738,71 @@ void FbxRelated::GetTextureName(fbxsdk::FbxSurfaceMaterial* pMaterial, const cha
 		}
 	}
 }
-/*
+
+
 void FbxRelated::GetVertexColor(fbxsdk::FbxMesh* pMesh)
 {
-//	頂点カラーセット数を取得
-int vColorLayerCount = pMesh->GetElementVertexColorCount();
+	//	頂点カラーセット数を取得
+	int vColorLayerCount = pMesh->GetElementVertexColorCount();
 
-//	レイヤー数だけ回る
-for (int i = 0; vColorLayerCount > i; i++)
-{
-//	法線セットを取得
-fbxsdk::FbxGeometryElementVertexColor* pColor = pMesh->GetElementVertexColor(i);
+	//	レイヤー数だけ回る
+	for (int i = 0; vColorLayerCount > i; i++)
+	{
+		//	法線セットを取得
+		fbxsdk::FbxGeometryElementVertexColor* pColor = pMesh->GetElementVertexColor(i);
 
-//	マッピングモードの取得
-fbxsdk::FbxGeometryElement::EMappingMode mappingMode = pColor->GetMappingMode();
+		//	マッピングモードの取得
+		fbxsdk::FbxGeometryElement::EMappingMode mappingMode = pColor->GetMappingMode();
 
-//	リファレンスモードの取得
-fbxsdk::FbxGeometryElement::EReferenceMode referenceMode = pColor->GetReferenceMode();
+		//	リファレンスモードの取得
+		fbxsdk::FbxGeometryElement::EReferenceMode referenceMode = pColor->GetReferenceMode();
 
-//	マッピングモードの判別
-switch (mappingMode)
-{
-case fbxsdk::FbxGeometryElement::eByControlPoint:
-break;
+		//	マッピングモードの判別
+		switch (mappingMode)
+		{
+		case fbxsdk::FbxGeometryElement::eByControlPoint:
+			break;
 
-case fbxsdk::FbxGeometryElement::eByPolygon:
-break;
+		case fbxsdk::FbxGeometryElement::eByPolygon:
+			break;
 
-case fbxsdk::FbxGeometryElement::eByPolygonVertex:
+		case fbxsdk::FbxGeometryElement::eByPolygonVertex:
 
-//	リファレンスモードの判別
-switch (referenceMode)
-{
-case fbxsdk::FbxGeometryElement::eIndexToDirect:
-{
-fbxsdk::FbxLayerElementArrayTemplate<int>* pIndex = &pColor->GetIndexArray();
-int indexCount = pIndex->GetCount();
+			//	リファレンスモードの判別
+			switch (referenceMode)
+			{
+			case fbxsdk::FbxGeometryElement::eIndexToDirect:
+			{
+				fbxsdk::FbxLayerElementArrayTemplate<int>* pIndex = &pColor->GetIndexArray();
+				int indexCount = pIndex->GetCount();
 
-m_pModel[m_modelDataCount-1]->m_pFbxModelData->pVertexColor = new FbxModel::ColorRGBA[indexCount];
+				m_pModel[m_modelDataCount - 1]->m_pFbxModelData->pVertexColor = new FbxModel::ColorRGBA[indexCount];
 
-//	頂点の数だけ頂点カラーを取得
-for (int j = 0; indexCount > j; j++)
-{
-m_pModel[m_modelDataCount-1]->m_pFbxModelData->pVertexColor[j].r = (float)pColor->GetDirectArray().GetAt(pIndex->GetAt(j))[0];
-m_pModel[m_modelDataCount-1]->m_pFbxModelData->pVertexColor[j].g = (float)pColor->GetDirectArray().GetAt(pIndex->GetAt(j))[1];
-m_pModel[m_modelDataCount-1]->m_pFbxModelData->pVertexColor[j].b = (float)pColor->GetDirectArray().GetAt(pIndex->GetAt(j))[2];
-m_pModel[m_modelDataCount-1]->m_pFbxModelData->pVertexColor[j].a = (float)pColor->GetDirectArray().GetAt(pIndex->GetAt(j))[3];
+				//	頂点の数だけ頂点カラーを取得
+				for (int j = 0; indexCount > j; j++)
+				{
+					m_pModel[m_modelDataCount - 1]->m_pFbxModelData->pVertexColor[j].r = (float)pColor->GetDirectArray().GetAt(pIndex->GetAt(j))[0];
+					m_pModel[m_modelDataCount - 1]->m_pFbxModelData->pVertexColor[j].g = (float)pColor->GetDirectArray().GetAt(pIndex->GetAt(j))[1];
+					m_pModel[m_modelDataCount - 1]->m_pFbxModelData->pVertexColor[j].b = (float)pColor->GetDirectArray().GetAt(pIndex->GetAt(j))[2];
+					m_pModel[m_modelDataCount - 1]->m_pFbxModelData->pVertexColor[j].a = (float)pColor->GetDirectArray().GetAt(pIndex->GetAt(j))[3];
+				}
+			}
+			break;
+
+			case fbxsdk::FbxGeometryElement::eDirect:
+				break;
+
+			case fbxsdk::FbxGeometryElement::eIndex:
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		default:
+			break;
+		}
+	}
 }
-}
-break;
 
-case fbxsdk::FbxGeometryElement::eDirect:
-break;
-
-case fbxsdk::FbxGeometryElement::eIndex:
-break;
-
-default:
-break;
-}
-break;
-
-default:
-break;
-}
-}
-}
-*/

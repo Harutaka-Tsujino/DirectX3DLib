@@ -10,10 +10,13 @@
 #include"ClassDirectX.h"
 #include "FbxModel.h"
 
-
 FbxModel::FbxModel()
 {
-	m_pDevice = DirectX::m_directXInstances.m_pDirectX3DDevice;
+	DirectX* pDirectX = DirectX::GetInstance();
+	DirectXInstances& rDirectXInstances = pDirectX->GetDirectXInstances();
+	LPDIRECT3DDEVICE9& rpDirectX3DDevice = rDirectXInstances.m_pDirectX3DDevice;
+
+	m_pDevice = rpDirectX3DDevice;
 
 	m_pFbxModelData = NULL;
 }
@@ -28,6 +31,8 @@ void FbxModel::DrawFbx()
 
 	for (int i = 0; i < m_pFbxModelData->materialCount; i++)
 	{
+		if (!m_pFbxModelData->MaterialData.size())continue;
+
 		m_pDevice->SetMaterial(&m_pFbxModelData->MaterialData[i]);
 	}
 
