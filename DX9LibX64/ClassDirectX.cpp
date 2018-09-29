@@ -481,11 +481,11 @@ VOID Camera::SetTransform()
 	InputData inputData = pDirectX->m_DirectXInputDevices.m_InputData;
 	LPDIRECT3DDEVICE9& rpDirectX3DDevice = rDirectXInstances.m_pDirectX3DDevice;
 
+	MouseState& rMouseState = inputData.m_mouseState;
+
 	D3DXMatrixIdentity(&view);
 
 	static int frameCount = 0;
-
-	
 
 	/*FONTID fontId;
 
@@ -498,40 +498,43 @@ VOID Camera::SetTransform()
 
 	++frameCount;
 
-	//D3DXVECTOR3 vecCenter(0.f, 0.f, 0.f);
+	D3DXVECTOR3 vecCenter(0.0f,0.0f,-0.1f);
 
-	//D3DXMATRIX matRotation;
-	//D3DXMatrixIdentity(&matRotation);
-
+	D3DXMATRIX matRotation;
+	D3DXMatrixIdentity(&matRotation);
 
 	//まず最初に、原点に半径を足しただけの座標を用意する
-	//D3DXVECTOR3 vecTarget(-30.0f, 0.f, 0.0f);
+	D3DXVECTOR3 vecTarget(0.0f, 0.f, 60.0f);
+
+	static int degree = 0;
+	degree -= rMouseState.m_mouseState.lX*0.01f;
+
 	//次に、原点を中心とした回転（オイラー回転）の行列を作る
-	//D3DXMatrixRotationX(&matRotation, 0 *(3.145f / 180.f));
+	D3DXMatrixRotationY(&matRotation, degree*(3.145f / 180.f));
 
 	/*if (!(frameCount%90))
 	{
 		m_cameraOverhead.y *= -1;
 	}*/
 
-	//D3DXVec3TransformCoord(&vecTarget, &vecTarget, &matRotation);
-	////最後に本来の座標（回転対象の座標）を足す
-	//D3DXVec3Add(&vecTarget, &vecTarget, &vecCenter);
-	//m_cameraPos.x = vecTarget.x;
-	//m_cameraPos.y = vecTarget.y;
-	//m_cameraPos.z = vecTarget.z;
+	D3DXVec3TransformCoord(&vecTarget, &vecTarget, &matRotation);
+	//最後に本来の座標（回転対象の座標）を足す
+	D3DXVec3Add(&vecTarget, &vecTarget, &vecCenter);
+	m_eyePoint.x = vecTarget.x;
+	m_eyePoint.y = vecTarget.y;
+	m_eyePoint.z = vecTarget.z;
 
 	TCHAR buff[256];
 
-	_stprintf_s(buff, 256, _T("x:%f\n"), m_cameraPos.x);
+	_stprintf_s(buff, 256, _T("x:%f\n"), m_eyePoint.x);
 
 	OutputDebugString(buff);
 
-	_stprintf_s(buff, 256, _T("y:%f\n"), m_cameraPos.y);
+	_stprintf_s(buff, 256, _T("y:%f\n"), m_eyePoint.y);
 
 	OutputDebugString(buff);
 
-	_stprintf_s(buff, 256, _T("z:%f\n"), m_cameraPos.z);
+	_stprintf_s(buff, 256, _T("z:%f\n"), m_eyePoint.z);
 
 	OutputDebugString(buff);
 	//SetWindowText(*rDirectXInstances.m_pHWnd, buff);

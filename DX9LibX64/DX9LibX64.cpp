@@ -192,13 +192,18 @@ VOID MainFunc()
 
 	rpDirectX3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, backVertices, sizeof(CustomVertex));
 
-	static float diffusionCount = 0.0f;
+	static float diffusionCount = 1.0f;
 
 	MouseState& rMouseState = pDirectX->m_DirectXInputDevices.m_InputData.m_mouseState;
 
 	if (rMouseState.m_buttonHold[0])
 	{
-		diffusionCount += (diffusionCount*0.3f) + 1.0f;
+		diffusionCount = diffusionCount*2.0f;
+	}
+
+	if (rMouseState.m_buttonRelease[0])
+	{
+		diffusionCount -= 30.0f;
 	}
 
 	if (rMouseState.m_buttonUninput[0])
@@ -210,7 +215,7 @@ VOID MainFunc()
 
 	const INT RETICLE_LENGTH_COUNT = 2;
 
-	diffusionCount = max(min(diffusionCount, 300.0f), 0.0f);
+	diffusionCount = max(min(diffusionCount, 300.0f), 1.0f);
 
 	for (int i = 0; i < RETICLE_LENGTH_COUNT; ++i)
 	{
@@ -253,7 +258,7 @@ VOID MainFunc()
 
 
 	static int renderCount = 0;
-	if (pDirectX->m_DirectXInputDevices.m_InputData.m_mouseState.m_buttonHold[0] && !renderCount)
+	if (rMouseState.m_buttonHold[0] && !renderCount)
 	{
 		renderCount = 1;
 	}
@@ -346,7 +351,7 @@ VOID MainFunc()
 		D3DXMatrixMultiply(&m_MatWorld, &m_MatWorld, &matHeading);
 
 		static int renderCount = 0;
-		if (pDirectX->m_DirectXInputDevices.m_InputData.m_mouseState.m_buttonHold[0] && !renderCount)
+		if (rMouseState.m_buttonHold[0] && !renderCount)
 		{
 			renderCount = 1;
 		}
@@ -407,7 +412,7 @@ VOID MainFunc()
 
 		static int cartridgeRenderRand = 0;
 
-		if (pDirectX->m_DirectXInputDevices.m_InputData.m_mouseState.m_buttonHold[0] && !renderCount)
+		if (rMouseState.m_buttonHold[0] && !renderCount)
 		{
 			renderCount = 1;
 		}
