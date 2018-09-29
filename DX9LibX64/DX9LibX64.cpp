@@ -97,13 +97,14 @@ VOID MainFunc()
 	DirectX* pDirectX = DirectX::GetInstance();
 	DirectXInstances& rDirectXInstances = pDirectX->GetDirectXInstances();
 	LPDIRECT3DDEVICE9& rpDirectX3DDevice = rDirectXInstances.m_pDirectX3DDevice;
+	Camera& rCamera = pDirectX->m_DirectX3DDevice.m_camera;
 
 	const INT INIT_FRAME = -1;
 
 	static INT frameCount = INIT_FRAME;
 
 	//FBXインスタンスの生成
-	static FbxRelated fbxRelated;
+	static FbxRelated mP7;
 
 	static FbxRelated cartridgeFbx;
 
@@ -112,7 +113,7 @@ VOID MainFunc()
 	if (frameCount == INIT_FRAME)
 	{
 		//FBXモデルの読み込み
-		fbxRelated.LoadFbx("MP7.fbx");
+		mP7.LoadFbx("MP7.fbx");
 
 		cartridgeFbx.LoadFbx("Cartridge.45ACP/SA_45ACP_Example.fbx");
 
@@ -190,7 +191,7 @@ VOID MainFunc()
 
 	rpDirectX3DDevice->SetTexture(0, textures[_T("testBack")]);
 
-	rpDirectX3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, backVertices, sizeof(CustomVertex));
+	//rpDirectX3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, backVertices, sizeof(CustomVertex));
 
 	static float diffusionCount = 1.0f;
 
@@ -198,7 +199,7 @@ VOID MainFunc()
 
 	if (rMouseState.m_buttonHold[0])
 	{
-		diffusionCount = diffusionCount*2.0f;
+		diffusionCount = diffusionCount * 2.0f;
 	}
 
 	if (rMouseState.m_buttonRelease[0])
@@ -235,7 +236,7 @@ VOID MainFunc()
 
 	for (int i = 0; i < RETICLE_WIDTH_COUNT; ++i)
 	{
-		CustomImageVerticies(reticleWidthVertices, (1920.0f*0.5f + 1080.0f*0.04f*((i == 0) ? -1.0f : 1.0f)) + ((i == 0) ? -diffusionCount : diffusionCount), 1080.0f*0.50f,0.0f,
+		CustomImageVerticies(reticleWidthVertices, (1920.0f*0.5f + 1080.0f*0.04f*((i == 0) ? -1.0f : 1.0f)) + ((i == 0) ? -diffusionCount : diffusionCount), 1080.0f*0.50f, 0.0f,
 			18.0f, 12.0f,
 			0xFF22BB22,
 			0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f);
@@ -248,14 +249,13 @@ VOID MainFunc()
 	CustomVertex reticleDotVertices[4];
 
 	CustomImageVerticies(reticleDotVertices, 1920.0f*0.5f, 1080.0f*0.5f, 0.0f,
-		30.0f, 30.0f, 
+		30.0f, 30.0f,
 		0xFF22BB22,
 		0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f);
 
 	rpDirectX3DDevice->SetTexture(0, textures[_T("reticle_dot")]);
 
 	rpDirectX3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, reticleDotVertices, sizeof(CustomVertex));
-
 
 	static int renderCount = 0;
 	if (rMouseState.m_buttonHold[0] && !renderCount)
@@ -319,7 +319,7 @@ VOID MainFunc()
 
 	pDirectX->m_DirectX3DDevice.m_camera.SetTransform();
 
-	D3DXVECTOR3 vecDirection(1, 1, 1);
+	D3DXVECTOR3 vecDirection(0.01f, 0.05f, 0.3f);
 	D3DLIGHT9 light;
 
 	ZeroMemory(&light, sizeof(D3DLIGHT9));
@@ -340,62 +340,85 @@ VOID MainFunc()
 	rpDirectX3DDevice->LightEnable(0, TRUE);
 
 	//FBXの描画
-	for (int i = 0; i < fbxRelated.m_modelDataCount; ++i)
+	for (int i = 0; i < mP7.m_modelDataCount; ++i)
 	{
 		D3DXMATRIX			m_MatWorld;
 		D3DXMatrixIdentity(&m_MatWorld);
 
-		// 回転
-		D3DXMATRIX			matHeading;
-		D3DXMatrixRotationY(&matHeading, 170.0f * (3.145f / 180.f));//180.3f真後ろに来る角度
-		D3DXMatrixMultiply(&m_MatWorld, &m_MatWorld, &matHeading);
+		D3DXMATRIX			matScal;
+		D3DXMatrixScaling(&matScal, 0.003f,0.003f,0.003f);
+		D3DXMatrixMultiply(&m_MatWorld, &m_MatWorld, &matScal);
 
-		static int renderCount = 0;
-		if (rMouseState.m_buttonHold[0] && !renderCount)
+		D3DXMATRIX			matRoll;
+		D3DXMatrixRotationZ(&matRoll, 0.0f * (D3DX_PI / 180.f));
+		D3DXMatrixMultiply(&m_MatWorld, &m_MatWorld, &matRoll);
+
+		D3DXMATRIX			matPitch;
+		D3DXMatrixRotationX(&matPitch, 0.0f * (D3DX_PI / 180.f));
+		D3DXMatrixMultiply(&m_MatWorld, &m_MatWorld, &matPitch);
+
+		D3DXMATRIX			matYaw;
+		D3DXMatrixRotationY(&matYaw, 180.0f * (D3DX_PI / 180.0f));
+		D3DXMatrixMultiply(&m_MatWorld, &m_MatWorld, &matYaw);
+
+		//850/60/60*4 =0.94444444
+		//銃を撃った時の演出フレーム
+		static const int SHOT_RENDER_TIME = 4;
+
+		//演出を測るカウント
+		static int shotRenderCount = 0;
+
+		if (rMouseState.m_buttonHold[0]&& !shotRenderCount)
 		{
-			renderCount = 1;
+			shotRenderCount = 1;
 		}
 
-		if (0 < renderCount&&renderCount < 5)
+		//反動の表現
+		D3DXMATRIX			matGunShock;
+		D3DXMatrixRotationX(&matGunShock, -2.5f*shotRenderCount * (D3DX_PI / 180.f));
+		D3DXMatrixMultiply(&m_MatWorld, &m_MatWorld, &matGunShock);
+
+		//視点変更
+		D3DXMatrixRotationY(&matYaw, -20.0f * (D3DX_PI / 180.0f));
+		D3DXMatrixMultiply(&m_MatWorld, &m_MatWorld, &matYaw);
+
+		D3DXVECTOR3 gunPos(0.05f, -0.06f, 0.1f - shotRenderCount * 0.005f);
+
+		D3DXMATRIX			matLookPtMove;
+
+		D3DXMatrixRotationY(&matLookPtMove, -20.0f * (D3DX_PI / 180.f));
+
+		D3DXVec3TransformCoord(&gunPos, &gunPos, &matLookPtMove);
+
+		D3DXVECTOR3 cameraPos;
+
+		rCamera.GetCameraPos(&cameraPos);
+
+		D3DXVec3Add(&gunPos, &gunPos, &cameraPos);
+
+		D3DXMATRIX			matPosition;	// 位置座標行列
+		D3DXMatrixTranslation(&matPosition, gunPos.x, gunPos.y, gunPos.z);
+		D3DXMatrixMultiply(&m_MatWorld, &m_MatWorld, &matPosition);
+		rpDirectX3DDevice->SetTransform(D3DTS_WORLD, &m_MatWorld);
+	
+		if (shotRenderCount)
 		{
-			renderCount += 1;
+			++shotRenderCount;
 		}
 
-		if (renderCount >= 5)
+		if (shotRenderCount > SHOT_RENDER_TIME&&rMouseState.m_buttonHold[0])
 		{
-			renderCount = 0;
+			shotRenderCount = SHOT_RENDER_TIME-2;
 		}
 
-		if (renderCount)
+		if (shotRenderCount > SHOT_RENDER_TIME&&rMouseState.m_buttonUninput[0])
 		{
-			// 回転
-			D3DXMATRIX			matPitching;
-			D3DXMatrixRotationX(&matPitching, (-renderCount) * (3.145f / 180.f));//180.3f真後ろに来る角度
-			D3DXMatrixMultiply(&m_MatWorld, &m_MatWorld, &matPitching);
-
-			D3DXMATRIX			matPosition;	// 位置座標行列
-			D3DXMatrixTranslation(&matPosition, 14.0f, -19.0f, 22.0f - (float)renderCount*0.7f);
-			D3DXMatrixMultiply(&m_MatWorld, &m_MatWorld, &matPosition);
-			rpDirectX3DDevice->SetTransform(D3DTS_WORLD, &m_MatWorld);
-
+			shotRenderCount = 0;
 		}
 
-		if (!renderCount)
-		{
-			/*D3DXMATRIX			matRoll;
-			D3DXMatrixRotationZ(&matRoll, 90.f * (3.145f / 180.f));
-			D3DXMatrixMultiply(&m_MatWorld, &m_MatWorld, &matRoll);*/
+		rpDirectX3DDevice->SetTexture(0, textures[_T("matBlack")]);
 
-			// 移動
-			D3DXMATRIX			matPosition2;	// 位置座標行列
-			D3DXMatrixTranslation(&matPosition2, 14.0f, -19.0f, 22.0f);
-			D3DXMatrixMultiply(&m_MatWorld, &m_MatWorld, &matPosition2);
-			rpDirectX3DDevice->SetTransform(D3DTS_WORLD, &m_MatWorld);
-		}
-
-		//rpDirectX3DDevice->SetTexture(0, textures[_T("matBlack")]);
-
-		fbxRelated.m_pModel[i]->DrawFbx();
+		mP7.m_pModel[i]->DrawFbx();
 	}
 
 	for (int i = 0; i < cartridgeFbx.m_modelDataCount; ++i)
@@ -433,11 +456,11 @@ VOID MainFunc()
 		{
 			// 回転
 			D3DXMATRIX			matPitching;
-			D3DXMatrixRotationY(&matPitching, (20.0f*renderCount+ cartridgeRenderRand) * (3.145f / 180.f));//180.3f真後ろに来る角度
+			D3DXMatrixRotationY(&matPitching, (20.0f*renderCount + cartridgeRenderRand) * (3.145f / 180.f));//180.3f真後ろに来る角度
 			D3DXMatrixMultiply(&m_MatWorld, &m_MatWorld, &matPitching);
 
 			D3DXMATRIX			matPosition;	// 位置座標行列
-			D3DXMatrixTranslation(&matPosition,7.9f+ renderCount*0.8f, -4.9f+ renderCount*0.1f+ cartridgeRenderRand*0.005f, 11.0f);
+			D3DXMatrixTranslation(&matPosition, 7.9f + renderCount * 0.8f, -4.9f + renderCount * 0.1f + cartridgeRenderRand * 0.005f, 11.0f);
 			D3DXMatrixMultiply(&m_MatWorld, &m_MatWorld, &matPosition);
 			rpDirectX3DDevice->SetTransform(D3DTS_WORLD, &m_MatWorld);
 
@@ -447,93 +470,6 @@ VOID MainFunc()
 
 		cartridgeFbx.m_pModel[i]->DrawFbx();
 	}
-
-	//{
-	//	D3DXMATRIX			m_MatWorld;
-	//	D3DXMatrixIdentity(&m_MatWorld);
-
-	//	// 回転
-	//	D3DXMATRIX			matHeading;
-	//	D3DXMatrixRotationX(&matHeading, 270 * (3.145f / 180.f));
-	//	D3DXMatrixMultiply(&m_MatWorld, &m_MatWorld, &matHeading);
-
-	//	static int frameCount = 0;
-	//	static float xSliderPos = -0.29f;
-
-	//	if (frameCount < 30)
-	//	{
-	//		++frameCount;
-
-	//		xSliderPos = -0.29f + 0.15f*(frameCount / 30.f);
-	//	}
-
-	//	else
-	//	{
-	//		frameCount = 0;
-	//		xSliderPos = -0.29f;
-	//	}
-
-	//	// 移動
-	//	D3DXMATRIX			matPosition;	// 位置座標行列
-	//	D3DXMatrixTranslation(&matPosition, xSliderPos, 0.244f, 1.0f);
-	//	D3DXMatrixMultiply(&m_MatWorld, &m_MatWorld, &matPosition);
-	//	rpDirectX3DDevice->SetTransform(D3DTS_WORLD, &m_MatWorld);
-
-	//	fbxRelated.m_pModel[6]->DrawFbx();//トリガー
-	//}
-
-	//{
-	//	D3DXMATRIX			m_MatWorld;
-	//	D3DXMatrixIdentity(&m_MatWorld);
-
-	//	// 回転
-	//	D3DXMATRIX			matHeading;
-	//	D3DXMatrixRotationX(&matHeading, 270 * (3.145f / 180.f));
-	//	D3DXMatrixMultiply(&m_MatWorld, &m_MatWorld, &matHeading);
-
-	//	// 移動
-	//	D3DXMATRIX			matPosition;	// 位置座標行列
-	//	D3DXMatrixTranslation(&matPosition, 0.f, 0.f, 1.f);
-	//	D3DXMatrixMultiply(&m_MatWorld, &m_MatWorld, &matPosition);
-	//	rpDirectX3DDevice->SetTransform(D3DTS_WORLD, &m_MatWorld);
-
-	//	fbxRelated.m_pModel[3]->DrawFbx();//本体
-	//}
-
-	//{
-	//	D3DXMATRIX			m_MatWorld;
-	//	D3DXMatrixIdentity(&m_MatWorld);
-
-	//	// 回転
-	//	D3DXMATRIX			matHeading;
-	//	D3DXMatrixRotationX(&matHeading, 270 * (3.145f / 180.f));
-	//	D3DXMatrixMultiply(&m_MatWorld, &m_MatWorld, &matHeading);
-
-	//	// 移動
-	//	D3DXMATRIX			matPosition;	// 位置座標行列
-
-	//	static int frameCount = 0;
-	//	static float xSliderPos = -0.4f;
-
-	//	if (frameCount < 30)
-	//	{
-	//		++frameCount;
-
-	//		xSliderPos = -0.4f*(1.f - frameCount / 30.f);
-	//	}
-
-	//	else
-	//	{
-	//		frameCount = 0;
-	//		xSliderPos = -0.4f;
-	//	}
-
-	//	D3DXMatrixTranslation(&matPosition, xSliderPos, 0.f, 1.f);
-	//	D3DXMatrixMultiply(&m_MatWorld, &m_MatWorld, &matPosition);
-	//	rpDirectX3DDevice->SetTransform(D3DTS_WORLD, &m_MatWorld);
-
-	//	fbxRelated.m_pModel[4]->DrawFbx();//スライダー
-	//}
 
 	return;
 }

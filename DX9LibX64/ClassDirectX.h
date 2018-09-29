@@ -152,7 +152,9 @@ class Camera
 public:
 	VOID SetTransform();
 	VOID SetCameraPos(FLOAT x, FLOAT y, FLOAT z);
+	VOID GetCameraPos(D3DXVECTOR3* pCameraPos);
 	VOID SetEyePoint(FLOAT x, FLOAT y, FLOAT z);
+	VOID GetEyePoint(D3DXVECTOR3* pEyePoint);
 
 private:
 	Camera();

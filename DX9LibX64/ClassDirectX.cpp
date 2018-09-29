@@ -119,7 +119,7 @@ VOID DirectX3DDeviceInitializer::SetRenderState(BOOL canCullPolygon)
 	rpDirectX3DDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 	rpDirectX3DDevice->SetRenderState(D3DRS_ZENABLE, TRUE);
 	rpDirectX3DDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
-	rpDirectX3DDevice->SetRenderState(D3DRS_AMBIENT, 0x00BBBBBB);
+	rpDirectX3DDevice->SetRenderState(D3DRS_AMBIENT, 0x00CCCCCC);
 	rpDirectX3DDevice->SetRenderState(D3DRS_SPECULARENABLE, TRUE);
 	rpDirectX3DDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
 	rpDirectX3DDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATEREQUAL);
@@ -442,11 +442,11 @@ Camera::Camera()
 {
 	m_cameraPos.x = 0.0f;
 	m_cameraPos.y = 0.0f;
-	m_cameraPos.z = -0.1f;
+	m_cameraPos.z = 0.0f;
 
 	m_eyePoint.x = 0.0f;
 	m_eyePoint.y = 0.0f;
-	m_eyePoint.z = 0.0f;
+	m_eyePoint.z = 1.0f;
 
 	m_cameraOverhead.x = 0.0f;
 	m_cameraOverhead.y = 1.0f;
@@ -462,11 +462,29 @@ VOID Camera::SetCameraPos(FLOAT x, FLOAT y, FLOAT z)
 	return;
 }
 
+VOID Camera::GetCameraPos(D3DXVECTOR3* pCameraPos)
+{
+	pCameraPos->x = m_cameraPos.x;
+	pCameraPos->y = m_cameraPos.y;
+	pCameraPos->z = m_cameraPos.z;
+
+	return;
+}
+
 VOID Camera::SetEyePoint(FLOAT x, FLOAT y, FLOAT z)
 {
 	m_eyePoint.x = x;
 	m_eyePoint.y = y;
 	m_eyePoint.z = z;
+
+	return;
+}
+
+VOID Camera::GetEyePoint(D3DXVECTOR3* pEyePoint)
+{
+	pEyePoint->x = m_eyePoint.x;
+	pEyePoint->y = m_eyePoint.y;
+	pEyePoint->z = m_eyePoint.z;
 
 	return;
 }
@@ -498,31 +516,31 @@ VOID Camera::SetTransform()
 
 	++frameCount;
 
-	D3DXVECTOR3 vecCenter(0.0f,0.0f,-0.1f);
+	//D3DXVECTOR3 vecCenter(0.0f,0.0f,0.0f);
 
-	D3DXMATRIX matRotation;
-	D3DXMatrixIdentity(&matRotation);
+	//D3DXMATRIX matRotation;
+	//D3DXMatrixIdentity(&matRotation);
 
-	//まず最初に、原点に半径を足しただけの座標を用意する
-	D3DXVECTOR3 vecTarget(0.0f, 0.f, 60.0f);
+	////まず最初に、原点に半径を足しただけの座標を用意する
+	//D3DXVECTOR3 vecTarget(0.0f, 0.f, 60.0f);
 
-	static int degree = 0;
-	degree -= rMouseState.m_mouseState.lX*0.01f;
+	//static int degree = 0;
+	//degree -= rMouseState.m_mouseState.lX*0.01f;
 
-	//次に、原点を中心とした回転（オイラー回転）の行列を作る
-	D3DXMatrixRotationY(&matRotation, degree*(3.145f / 180.f));
+	////次に、原点を中心とした回転（オイラー回転）の行列を作る
+	//D3DXMatrixRotationY(&matRotation, degree*(3.145f / 180.f));
 
-	/*if (!(frameCount%90))
-	{
-		m_cameraOverhead.y *= -1;
-	}*/
+	///*if (!(frameCount%90))
+	//{
+	//	m_cameraOverhead.y *= -1;
+	//}*/
 
-	D3DXVec3TransformCoord(&vecTarget, &vecTarget, &matRotation);
-	//最後に本来の座標（回転対象の座標）を足す
-	D3DXVec3Add(&vecTarget, &vecTarget, &vecCenter);
-	m_eyePoint.x = vecTarget.x;
-	m_eyePoint.y = vecTarget.y;
-	m_eyePoint.z = vecTarget.z;
+	//D3DXVec3TransformCoord(&vecTarget, &vecTarget, &matRotation);
+	////最後に本来の座標（回転対象の座標）を足す
+	//D3DXVec3Add(&vecTarget, &vecTarget, &vecCenter);
+	//m_eyePoint.x = vecTarget.x;
+	//m_eyePoint.y = vecTarget.y;
+	//m_eyePoint.z = vecTarget.z;
 
 	TCHAR buff[256];
 
@@ -560,7 +578,7 @@ VOID Camera::SetTransform()
 		&projection,
 		D3DXToRadian(DEFAULT_EYE_RADIAN),
 		aspect,
-		1.f,
+		0.f,
 		DEFAULT_FAR);
 
 	rpDirectX3DDevice->SetTransform(D3DTS_PROJECTION, &projection);
