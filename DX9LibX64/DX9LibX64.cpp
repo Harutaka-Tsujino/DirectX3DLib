@@ -11,6 +11,7 @@
 #include "ClassDirectX.h"
 #include "ClassFBX.h"
 #include "FbxRelated.h"
+#include <crtdbg.h>
 
 #pragma comment(lib,"d3dx9d.lib")
 #pragma comment(lib,"d3d9.lib")
@@ -72,9 +73,12 @@ INT LoopMainFunc(VOID(*func)(), Window* pWindow, DirectX* pDirectX)
 
 INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR szStr, INT iCmdShow)
 {
+	// メモリリーク検出
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+
 	Window* pWindow = Window::GetInstance(hInst, TEXT("TestApp"));
 
-	pWindow->SetWindowMode(FALSE);
+	pWindow->SetWindowMode(TRUE);
 
 	DirectX* pDirectX = DirectX::GetInstance();
 
@@ -92,6 +96,13 @@ VOID CustomImageVerticies(CustomVertex *pCustomVertex, FLOAT posX, FLOAT posY, F
 	return;
 }
 
+struct Vertex3D
+{
+public:
+	D3DXVECTOR3 m_pos;
+	DWORD m_aRBG = 0xFFFFFFFF;
+};
+
 VOID MainFunc()
 {
 	DirectX* pDirectX = DirectX::GetInstance();
@@ -108,6 +119,8 @@ VOID MainFunc()
 
 	static FbxRelated cartridgeFbx;
 
+	static FbxRelated boardFbx;
+
 	static std::map<TCHAR*, LPDIRECT3DTEXTURE9> textures;
 
 	if (frameCount == INIT_FRAME)
@@ -116,6 +129,8 @@ VOID MainFunc()
 		mP7.LoadFbx("MP7.fbx");
 
 		cartridgeFbx.LoadFbx("Cartridge.45ACP/SA_45ACP_Example.fbx");
+
+		boardFbx.LoadFbx("boad.fbx");
 
 		textures[_T("reticle_line")] = nullptr;
 
@@ -144,7 +159,7 @@ VOID MainFunc()
 		textures[_T("matBlack")] = nullptr;
 
 		D3DXCreateTextureFromFile(rpDirectX3DDevice,
-			TEXT("textures/matBlack.png"),
+			TEXT("textures/handgun_S.jpg"),
 			&textures[_T("matBlack")]);
 
 		textures[_T("testBack")] = nullptr;
@@ -159,23 +174,29 @@ VOID MainFunc()
 			TEXT("Cartridge.45ACP/SA_45ACP_Specular.png"),
 			&textures[_T("cartridge")]);
 
-		textures[_T("mazulFlash")] = nullptr;
+		textures[_T("mazulFlash0")] = nullptr;
 
 		D3DXCreateTextureFromFile(rpDirectX3DDevice,
-			TEXT("Cartridge.45ACP/mazulFlash.png"),
-			&textures[_T("mazulFlash")]);
+			TEXT("textures/mazulFlash0.png"),
+			&textures[_T("mazulFlash0")]);
 
 		textures[_T("mazulFlash1")] = nullptr;
 
 		D3DXCreateTextureFromFile(rpDirectX3DDevice,
-			TEXT("Cartridge.45ACP/mazulFlash1.png"),
+			TEXT("textures/mazulFlash1.png"),
 			&textures[_T("mazulFlash1")]);
 
 		textures[_T("mazulFlash2")] = nullptr;
 
 		D3DXCreateTextureFromFile(rpDirectX3DDevice,
-			TEXT("Cartridge.45ACP/mazulFlash2.png"),
+			TEXT("textures/mazulFlash2.png"),
 			&textures[_T("mazulFlash2")]);
+
+		textures[_T("mazulFlash3")] = nullptr;
+
+		D3DXCreateTextureFromFile(rpDirectX3DDevice,
+			TEXT("textures/mazulFlash3.png"),
+			&textures[_T("mazulFlash3")]);
 
 		frameCount = 0;
 	}
@@ -257,66 +278,16 @@ VOID MainFunc()
 
 	rpDirectX3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, reticleDotVertices, sizeof(CustomVertex));
 
-	static int renderCount = 0;
-	if (rMouseState.m_buttonHold[0] && !renderCount)
+	//銃を撃った時の演出フレーム
+	static const int SHOT_RENDER_TIME = 4;
+
+	//演出を測るカウント
+	static int shotRenderCount = 0;
+
+	if (rMouseState.m_buttonHold[0] && !shotRenderCount)
 	{
-		renderCount = 1;
+		shotRenderCount = 1;
 	}
-
-	if (0 < renderCount&&renderCount < 5)
-	{
-		renderCount += 1;
-	}
-
-	if (renderCount >= 5)
-	{
-		renderCount = 0;
-	}
-
-	if (renderCount)
-	{
-		switch (renderCount)
-		{
-		case 2:
-			rpDirectX3DDevice->SetTexture(0, textures[_T("mazulFlash")]);
-			break;
-		case 3:
-			rpDirectX3DDevice->SetTexture(0, textures[_T("mazulFlash1")]);
-			break;
-		case 4:
-			rpDirectX3DDevice->SetTexture(0, textures[_T("mazulFlash2")]);
-			break;
-		default:
-			rpDirectX3DDevice->SetTexture(0, NULL);
-			break;
-		}
-
-		CustomVertex mazulFlashVertices[4];
-
-		CustomImageVerticies(mazulFlashVertices, 1920.0f*0.60718f, 1080.0f*0.757f, 0.985f,
-			400.0f, 400.0f,
-			0x88FE9A2E,
-			0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f);
-
-		rpDirectX3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, mazulFlashVertices, sizeof(CustomVertex));
-
-		CustomImageVerticies(mazulFlashVertices, 1920.0f*0.60718f, 1080.0f*0.757f, 0.985f,
-			350.0f, 350.0f,
-			0xAAF3F781,
-			0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f);
-
-		rpDirectX3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, mazulFlashVertices, sizeof(CustomVertex));
-
-		CustomImageVerticies(mazulFlashVertices, 1920.0f*0.60718f, 1080.0f*0.757f, 0.985f,
-			230.0f, 230.0f,
-			0xEEFFFFFF,
-			0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f);
-
-		rpDirectX3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, mazulFlashVertices, sizeof(CustomVertex));
-	}
-
-	rpDirectX3DDevice->SetTexture(0, NULL);
-
 	pDirectX->m_DirectX3DDevice.m_camera.SetTransform();
 
 	D3DXVECTOR3 vecDirection(0.01f, 0.05f, 0.3f);
@@ -338,6 +309,119 @@ VOID MainFunc()
 	light.Range = 200.f;
 	rpDirectX3DDevice->SetLight(0, &light);
 	rpDirectX3DDevice->LightEnable(0, TRUE);
+
+	rpDirectX3DDevice->SetFVF(D3DFVF_XYZ | D3DFVF_NORMAL|D3DFVF_TEX2);
+
+	const int RECT_VERTICES_NUM = 4;
+
+	Vertex3D billBoard[RECT_VERTICES_NUM];
+
+	for (int i = 0; i < RECT_VERTICES_NUM; ++i)
+	{
+		billBoard[i].m_aRBG = D3DCOLOR_ARGB(255, 255, 255, 255);
+	}
+
+	billBoard[0].m_pos.x = 0.0f;
+	billBoard[0].m_pos.y = 0.0f;
+	billBoard[0].m_pos.z = 0.0f;
+
+	billBoard[1].m_pos.x = 6.0f;
+	billBoard[1].m_pos.y = 0.0f;
+	billBoard[1].m_pos.z = 0.0f;
+
+	billBoard[2].m_pos.x = 6.0f;
+	billBoard[2].m_pos.y = 6.0f;
+	billBoard[2].m_pos.z = 0.0f;
+
+	billBoard[3].m_pos.x = 0.0f;
+	billBoard[3].m_pos.y = 6.0f;
+	billBoard[3].m_pos.z = 0.0f;
+
+	//ワールド座標変換用の行列の算出 start
+	D3DXMATRIX mat_world, mat_trans, mat_rotx, mat_roty, mat_rotz, mat_scale;
+	D3DXMatrixIdentity(&mat_world);
+	D3DXMatrixIdentity(&mat_trans);
+	D3DXMatrixIdentity(&mat_scale);
+
+	// 拡大
+	D3DXMatrixScaling(&mat_scale, 1.0f, 1.0f, 1.0f);
+	
+	D3DXMatrixMultiply(&mat_world, &mat_world, &mat_scale);
+
+	// 回転
+	D3DXMatrixRotationX(&mat_rotx, D3DXToRadian(0.0f));
+	D3DXMatrixRotationY(&mat_roty, D3DXToRadian(0.0f));
+	D3DXMatrixRotationZ(&mat_rotz, D3DXToRadian(0.0f));
+
+	D3DXMatrixMultiply(&mat_world, &mat_world, &mat_roty);
+	D3DXMatrixMultiply(&mat_world, &mat_world, &mat_rotx);
+	D3DXMatrixMultiply(&mat_world, &mat_world, &mat_rotz);
+
+	// 移動
+	D3DXMatrixTranslation(&mat_trans, 0.0f, 0.0f, 100.0f);
+
+	// 掛け合わせ
+	D3DXMatrixMultiply(&mat_world, &mat_world, &mat_trans);
+
+	rpDirectX3DDevice->SetTransform(D3DTS_WORLD, &mat_world);
+	//ワールド座標変換用の行列の算出 end
+
+	rpDirectX3DDevice->SetTexture(0, textures[_T("matBlack")]);
+
+	rpDirectX3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLELIST, 2, billBoard, sizeof(Vertex3D));
+
+	rpDirectX3DDevice->SetTexture(0, NULL);
+
+	for (int i = 0; (i < boardFbx.m_modelDataCount)&&(TRUE/*shotRenderCount*/); ++i)
+	{
+		D3DXMATRIX			m_MatWorld;
+		D3DXMatrixIdentity(&m_MatWorld);
+
+		/*D3DXMATRIX			matScal;
+		D3DXMatrixScaling(&matScal, 0.006f, 0.006f, 0.006f);
+		D3DXMatrixMultiply(&m_MatWorld, &m_MatWorld, &matScal);
+*/
+		D3DXMATRIX			matRoll;
+		D3DXMatrixRotationZ(&matRoll, 0.0f * (D3DX_PI / 180.f));
+		D3DXMatrixMultiply(&m_MatWorld, &m_MatWorld, &matRoll);
+
+		D3DXMATRIX			matPitch;
+		D3DXMatrixRotationX(&matPitch, 0.0f * (D3DX_PI / 180.f));
+		D3DXMatrixMultiply(&m_MatWorld, &m_MatWorld, &matPitch);
+
+		D3DXMATRIX			matYaw;
+		D3DXMatrixRotationY(&matYaw, 90.0f * (D3DX_PI / 180.0f));
+		D3DXMatrixMultiply(&m_MatWorld, &m_MatWorld, &matYaw);
+
+		D3DXMATRIX			matPosition;	// 位置座標行列
+		D3DXMatrixTranslation(&matPosition, 0.0f, 0.0f, 1000.5f);
+		D3DXMatrixMultiply(&m_MatWorld, &m_MatWorld, &matPosition);
+
+		rCamera.NegateView(&m_MatWorld);
+
+		rpDirectX3DDevice->SetTransform(D3DTS_WORLD, &m_MatWorld);
+
+		switch (shotRenderCount)
+		{
+		case 1:
+			rpDirectX3DDevice->SetTexture(0, textures[_T("mazulFlash0")]);
+			break;
+		case 2:
+			rpDirectX3DDevice->SetTexture(0, textures[_T("mazulFlash1")]);
+			break;
+		case 3:
+			rpDirectX3DDevice->SetTexture(0, textures[_T("mazulFlash2")]);
+			break;
+		case 4:
+			rpDirectX3DDevice->SetTexture(0, textures[_T("mazulFlash3")]);
+			break;
+		default:
+			rpDirectX3DDevice->SetTexture(0, textures[_T("matBlack")]);
+			break;
+		}
+
+		boardFbx.m_pModel[i]->DrawFbx();
+	}
 
 	//FBXの描画
 	for (int i = 0; i < mP7.m_modelDataCount; ++i)
@@ -361,32 +445,24 @@ VOID MainFunc()
 		D3DXMatrixRotationY(&matYaw, 180.0f * (D3DX_PI / 180.0f));
 		D3DXMatrixMultiply(&m_MatWorld, &m_MatWorld, &matYaw);
 
-		//850/60/60*4 =0.94444444
-		//銃を撃った時の演出フレーム
-		static const int SHOT_RENDER_TIME = 4;
-
-		//演出を測るカウント
-		static int shotRenderCount = 0;
-
-		if (rMouseState.m_buttonHold[0]&& !shotRenderCount)
-		{
-			shotRenderCount = 1;
-		}
-
 		//反動の表現
 		D3DXMATRIX			matGunShock;
 		D3DXMatrixRotationX(&matGunShock, -2.5f*shotRenderCount * (D3DX_PI / 180.f));
 		D3DXMatrixMultiply(&m_MatWorld, &m_MatWorld, &matGunShock);
 
+		static int moveXMouse;
+
+		moveXMouse += rMouseState.m_mouseState.lX;
+
 		//視点変更
-		D3DXMatrixRotationY(&matYaw, -20.0f * (D3DX_PI / 180.0f));
+		D3DXMatrixRotationY(&matYaw, moveXMouse* 0.05f * (D3DX_PI / 180.0f));
 		D3DXMatrixMultiply(&m_MatWorld, &m_MatWorld, &matYaw);
 
 		D3DXVECTOR3 gunPos(0.05f, -0.06f, 0.1f - shotRenderCount * 0.005f);
 
 		D3DXMATRIX			matLookPtMove;
 
-		D3DXMatrixRotationY(&matLookPtMove, -20.0f * (D3DX_PI / 180.f));
+		D3DXMatrixRotationY(&matLookPtMove, moveXMouse* 0.05f * (D3DX_PI / 180.f));
 
 		D3DXVec3TransformCoord(&gunPos, &gunPos, &matLookPtMove);
 
@@ -400,25 +476,35 @@ VOID MainFunc()
 		D3DXMatrixTranslation(&matPosition, gunPos.x, gunPos.y, gunPos.z);
 		D3DXMatrixMultiply(&m_MatWorld, &m_MatWorld, &matPosition);
 		rpDirectX3DDevice->SetTransform(D3DTS_WORLD, &m_MatWorld);
-	
-		if (shotRenderCount)
-		{
-			++shotRenderCount;
-		}
-
-		if (shotRenderCount > SHOT_RENDER_TIME&&rMouseState.m_buttonHold[0])
-		{
-			shotRenderCount = SHOT_RENDER_TIME-2;
-		}
-
-		if (shotRenderCount > SHOT_RENDER_TIME&&rMouseState.m_buttonUninput[0])
-		{
-			shotRenderCount = 0;
-		}
 
 		rpDirectX3DDevice->SetTexture(0, textures[_T("matBlack")]);
 
 		mP7.m_pModel[i]->DrawFbx();
+	}
+
+	if (shotRenderCount)
+	{
+		++shotRenderCount;
+	}
+
+	if (shotRenderCount > SHOT_RENDER_TIME&&rMouseState.m_buttonHold[0])
+	{
+		shotRenderCount = SHOT_RENDER_TIME - 2;
+	}
+
+	if (shotRenderCount > SHOT_RENDER_TIME&&rMouseState.m_buttonPush[0])
+	{
+		shotRenderCount = SHOT_RENDER_TIME - 2;
+	}
+
+	if (shotRenderCount > SHOT_RENDER_TIME&&rMouseState.m_buttonRelease[0])
+	{
+		shotRenderCount = 0;
+	}
+
+	if (shotRenderCount > SHOT_RENDER_TIME&&rMouseState.m_buttonUninput[0])
+	{
+		shotRenderCount = 0;
 	}
 
 	for (int i = 0; i < cartridgeFbx.m_modelDataCount; ++i)
@@ -463,7 +549,6 @@ VOID MainFunc()
 			D3DXMatrixTranslation(&matPosition, 7.9f + renderCount * 0.8f, -4.9f + renderCount * 0.1f + cartridgeRenderRand * 0.005f, 11.0f);
 			D3DXMatrixMultiply(&m_MatWorld, &m_MatWorld, &matPosition);
 			rpDirectX3DDevice->SetTransform(D3DTS_WORLD, &m_MatWorld);
-
 		}
 
 		rpDirectX3DDevice->SetTexture(0, textures[_T("cartridge")]);

@@ -229,7 +229,7 @@ VOID DirectX3DDevice::PrepareRender()
 	DirectXInstances& rDirectXInstances = pDirectX->GetDirectXInstances();
 	LPDIRECT3DDEVICE9& rpDirectX3DDevice = rDirectXInstances.m_pDirectX3DDevice;
 
-	rpDirectX3DDevice->Clear(0, NULL, D3DCLEAR_TARGET|D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0xE0, 0xF8, 0xF7), 1.f, 0);
+	rpDirectX3DDevice->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0xE0, 0xF8, 0xF7), 1.f, 0);
 	rpDirectX3DDevice->BeginScene();
 
 	return;
@@ -356,16 +356,16 @@ VOID MouseAndKeyboardStatesGetter::Get(InputData& rInputData)
 	pDirectXInputDevices[(ULONGLONG)INPUT_DEVICES::MOUSE]->GetDeviceState(sizeof(DIMOUSESTATE), &rInputData.m_mouseState.m_mouseState);
 
 	GetCursorPos(&rInputData.m_mouseState.m_absolutePos);
-
+	
 	ScreenToClient(rHWnd, &rInputData.m_mouseState.m_absolutePos);
 
 	memset(rInputData.m_mouseState.m_buttonPush, 0, sizeof(BOOL) * 4 * 4);
 
-	for (INT button = 0; button < 4; button++)
+	for (INT button = 0; button < 4; ++button)
 	{
-		if (rInputData.m_mouseState.m_mouseState.rgbButtons[button])
+		if (rInputData.m_mouseState.m_mouseStatePrev.rgbButtons[button] & 0x80)
 		{
-			if (rInputData.m_mouseState.m_mouseStatePrev.rgbButtons[button])
+			if (rInputData.m_mouseState.m_mouseState.rgbButtons[button])
 			{
 				rInputData.m_mouseState.m_buttonHold[button] = TRUE;
 			}
@@ -378,7 +378,7 @@ VOID MouseAndKeyboardStatesGetter::Get(InputData& rInputData)
 
 		else
 		{
-			if (rInputData.m_mouseState.m_mouseStatePrev.rgbButtons[button])
+			if (rInputData.m_mouseState.m_mouseState.rgbButtons[button])
 			{
 				rInputData.m_mouseState.m_buttonPush[button] = TRUE;
 			}
@@ -491,8 +491,6 @@ VOID Camera::GetEyePoint(D3DXVECTOR3* pEyePoint)
 
 VOID Camera::SetTransform()
 {
-	D3DXMATRIX view;
-
 	DirectX* pDirectX = DirectX::GetInstance();
 	DirectXInstances& rDirectXInstances = pDirectX->GetDirectXInstances();
 	LPDIRECTINPUTDEVICE8* pDirectXInputDevices = rDirectXInstances.m_pDirectXInputDevices;
@@ -501,7 +499,7 @@ VOID Camera::SetTransform()
 
 	MouseState& rMouseState = inputData.m_mouseState;
 
-	D3DXMatrixIdentity(&view);
+	D3DXMatrixIdentity(&m_view);
 
 	static int frameCount = 0;
 
@@ -516,33 +514,34 @@ VOID Camera::SetTransform()
 
 	++frameCount;
 
-	//D3DXVECTOR3 vecCenter(0.0f,0.0f,0.0f);
+	D3DXVECTOR3 vecCenter(0.0f, 0.0f, 0.0f);
 
-	//D3DXMATRIX matRotation;
-	//D3DXMatrixIdentity(&matRotation);
+	D3DXMATRIX matRotation;
+	D3DXMatrixIdentity(&matRotation);
 
-	////まず最初に、原点に半径を足しただけの座標を用意する
-	//D3DXVECTOR3 vecTarget(0.0f, 0.f, 60.0f);
+	//まず最初に、原点に半径を足しただけの座標を用意する
+	D3DXVECTOR3 vecTarget(0.0f, 0.f, 60.0f);
 
-	//static int degree = 0;
-	//degree -= rMouseState.m_mouseState.lX*0.01f;
+	static int moveXMouse;
 
-	////次に、原点を中心とした回転（オイラー回転）の行列を作る
-	//D3DXMatrixRotationY(&matRotation, degree*(3.145f / 180.f));
+	moveXMouse += rMouseState.m_mouseState.lX;
 
-	///*if (!(frameCount%90))
-	//{
-	//	m_cameraOverhead.y *= -1;
-	//}*/
+	//次に、原点を中心とした回転（オイラー回転）の行列を作る
+	D3DXMatrixRotationY(&matRotation, moveXMouse* 0.05f*(D3DX_PI / 180.f));
 
-	//D3DXVec3TransformCoord(&vecTarget, &vecTarget, &matRotation);
-	////最後に本来の座標（回転対象の座標）を足す
-	//D3DXVec3Add(&vecTarget, &vecTarget, &vecCenter);
-	//m_eyePoint.x = vecTarget.x;
-	//m_eyePoint.y = vecTarget.y;
-	//m_eyePoint.z = vecTarget.z;
+	/*if (!(frameCount%90))
+	{
+		m_cameraOverhead.y *= -1;
+	}*/
 
-	TCHAR buff[256];
+	D3DXVec3TransformCoord(&vecTarget, &vecTarget, &matRotation);
+	//最後に本来の座標（回転対象の座標）を足す
+	D3DXVec3Add(&vecTarget, &vecTarget, &vecCenter);
+	m_eyePoint.x = vecTarget.x;
+	m_eyePoint.y = vecTarget.y;
+	m_eyePoint.z = vecTarget.z;
+
+	/*TCHAR buff[256];
 
 	_stprintf_s(buff, 256, _T("x:%f\n"), m_eyePoint.x);
 
@@ -554,15 +553,15 @@ VOID Camera::SetTransform()
 
 	_stprintf_s(buff, 256, _T("z:%f\n"), m_eyePoint.z);
 
-	OutputDebugString(buff);
+	OutputDebugString(buff);*/
 	//SetWindowText(*rDirectXInstances.m_pHWnd, buff);
 
-	D3DXMatrixLookAtLH(&view,
+	D3DXMatrixLookAtLH(&m_view,
 		&m_cameraPos,
 		&m_eyePoint,
 		&m_cameraOverhead);
 
-	rpDirectX3DDevice->SetTransform(D3DTS_VIEW, &view);
+	rpDirectX3DDevice->SetTransform(D3DTS_VIEW, &m_view);
 
 	D3DVIEWPORT9 viewPort;
 	rpDirectX3DDevice->GetViewport(&viewPort);
@@ -582,6 +581,15 @@ VOID Camera::SetTransform()
 		DEFAULT_FAR);
 
 	rpDirectX3DDevice->SetTransform(D3DTS_PROJECTION, &projection);
+
+	return;
+}
+
+VOID Camera::NegateView(D3DXMATRIX* pMatRotate)
+{
+	D3DXMATRIX viewInverse;
+	D3DXMatrixInverse(&viewInverse, NULL, &m_view);
+	D3DXMatrixMultiply(pMatRotate, pMatRotate, &viewInverse);
 
 	return;
 }

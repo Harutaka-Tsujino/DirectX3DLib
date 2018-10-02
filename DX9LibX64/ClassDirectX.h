@@ -155,6 +155,7 @@ public:
 	VOID GetCameraPos(D3DXVECTOR3* pCameraPos);
 	VOID SetEyePoint(FLOAT x, FLOAT y, FLOAT z);
 	VOID GetEyePoint(D3DXVECTOR3* pEyePoint);
+	VOID NegateView(D3DXMATRIX* pMatRotate);
 
 private:
 	Camera();
@@ -163,6 +164,7 @@ private:
 	D3DXVECTOR3 m_cameraPos;
 	D3DXVECTOR3 m_eyePoint;
 	D3DXVECTOR3 m_cameraOverhead;
+	D3DXMATRIX m_view;
 };
 
 //DirectXの3Dデバイスクラス
@@ -180,7 +182,7 @@ public:
 	Camera m_camera;
 
 private:
-	DirectX3DDevice() :m_canCullPolygon(FALSE), m_d3DFVF(D3DFVF_XYZ | D3DFVF_DIFFUSE) {};
+	DirectX3DDevice() :m_canCullPolygon(TRUE), m_d3DFVF(D3DFVF_XYZ | D3DFVF_DIFFUSE) {};
 	~DirectX3DDevice() {};
 
 	BOOL m_canCullPolygon;
