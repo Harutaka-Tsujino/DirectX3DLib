@@ -356,7 +356,7 @@ VOID MouseAndKeyboardStatesGetter::Get(InputData& rInputData)
 	pDirectXInputDevices[(ULONGLONG)INPUT_DEVICES::MOUSE]->GetDeviceState(sizeof(DIMOUSESTATE), &rInputData.m_mouseState.m_mouseState);
 
 	GetCursorPos(&rInputData.m_mouseState.m_absolutePos);
-	
+
 	ScreenToClient(rHWnd, &rInputData.m_mouseState.m_absolutePos);
 
 	memset(rInputData.m_mouseState.m_buttonPush, 0, sizeof(BOOL) * 4 * 4);
@@ -516,27 +516,49 @@ VOID Camera::SetTransform()
 
 	D3DXVECTOR3 vecCenter(0.0f, 0.0f, 0.0f);
 
-	D3DXMATRIX matRotation;
-	D3DXMatrixIdentity(&matRotation);
+	D3DXMATRIX matRotationX;
+	D3DXMatrixIdentity(&matRotationX);
 
 	//まず最初に、原点に半径を足しただけの座標を用意する
-	D3DXVECTOR3 vecTarget(0.0f, 0.f, 60.0f);
-
-	static int moveXMouse;
-
-	moveXMouse += rMouseState.m_mouseState.lX;
+	static D3DXVECTOR3 vecTarget(0.0f, 0.f, 10.0f);
 
 	//次に、原点を中心とした回転（オイラー回転）の行列を作る
-	D3DXMatrixRotationY(&matRotation, moveXMouse* 0.05f*(D3DX_PI / 180.f));
+	D3DXMatrixRotationY(&matRotationX, D3DXToRadian(rMouseState.m_mouseState.lX * 0.05f));
 
-	/*if (!(frameCount%90))
-	{
-		m_cameraOverhead.y *= -1;
-	}*/
-
-	D3DXVec3TransformCoord(&vecTarget, &vecTarget, &matRotation);
+	D3DXVec3TransformCoord(&vecTarget, &vecTarget, &matRotationX);
 	//最後に本来の座標（回転対象の座標）を足す
 	D3DXVec3Add(&vecTarget, &vecTarget, &vecCenter);
+
+	D3DXMATRIX matRotationY;
+	D3DXMatrixIdentity(&matRotationY);
+
+	static float totalEyeRadY = 0;
+
+	float eyeRadY = D3DXToRadian(rMouseState.m_mouseState.lY * 0.05f);
+
+	const float EYE_RADIAN_Y_LIMIT = D3DXToRadian(85.0f);
+
+	totalEyeRadY = min(max(totalEyeRadY, -EYE_RADIAN_Y_LIMIT), EYE_RADIAN_Y_LIMIT);
+
+	if (eyeRadY + totalEyeRadY >= EYE_RADIAN_Y_LIMIT)
+	{
+		eyeRadY = EYE_RADIAN_Y_LIMIT - totalEyeRadY;
+	}
+
+	if (eyeRadY + totalEyeRadY <= -EYE_RADIAN_Y_LIMIT)
+	{
+		eyeRadY = -EYE_RADIAN_Y_LIMIT - totalEyeRadY;
+	}
+
+	totalEyeRadY += eyeRadY;
+
+	D3DXMatrixRotationX(&matRotationY, eyeRadY);
+
+	D3DXVec3TransformCoord(&vecTarget, &vecTarget, &matRotationY);
+
+	//最後に本来の座標（回転対象の座標）を足す
+	D3DXVec3Add(&vecTarget, &vecTarget, &vecCenter);
+
 	m_eyePoint.x = vecTarget.x;
 	m_eyePoint.y = vecTarget.y;
 	m_eyePoint.z = vecTarget.z;
@@ -569,7 +591,7 @@ VOID Camera::SetTransform()
 	float aspect = (float)viewPort.Width / (float)viewPort.Height;
 
 	const INT DEFAULT_EYE_RADIAN = 60;
-	const FLOAT DEFAULT_FAR = 100.f;
+	const FLOAT DEFAULT_FAR = 10000.0f;
 
 	D3DXMATRIX projection;
 

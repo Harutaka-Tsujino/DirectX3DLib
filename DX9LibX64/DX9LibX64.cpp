@@ -321,8 +321,6 @@ VOID MainFunc()
 		rpDirectX3DDevice->LightEnable(0, TRUE);
 	}
 
-	rpDirectX3DDevice->SetRenderState(D3DRS_ZENABLE, TRUE);
-
 	//ビルボードの描画
 	if (shotRenderCount)
 	{
@@ -394,7 +392,7 @@ VOID MainFunc()
 		D3DXMatrixMultiply(&mat_world, &mat_world, &mat_rotz);
 
 		// 移動
-		D3DXMatrixTranslation(&mat_trans, 0.047f, -0.027f, 0.132f);
+		D3DXMatrixTranslation(&mat_trans, 0.049f, -0.0285f, 0.137f);
 
 		// 掛け合わせ
 		D3DXMatrixMultiply(&mat_world, &mat_world, &mat_trans);
@@ -442,6 +440,23 @@ VOID MainFunc()
 		rpDirectX3DDevice->SetTexture(0, NULL);
 	}
 
+	//的の描画
+	for (int i = 0; i < boardFbx.m_modelDataCount; ++i)
+	{
+
+		D3DXMATRIX			matWorld;
+		D3DXMatrixIdentity(&matWorld);
+
+		D3DXMATRIX			matPosition;	// 位置座標行列
+		D3DXMatrixTranslation(&matPosition, 0.0f, -40.0f, 80.0f);
+		D3DXMatrixMultiply(&matWorld, &matWorld, &matPosition);
+
+		rpDirectX3DDevice->SetTransform(D3DTS_WORLD, &matWorld);
+
+		rpDirectX3DDevice->SetTexture(0, NULL);
+		boardFbx.m_pModel[i]->DrawFbx();
+	}
+
 	//MP7A1の描画
 	for (int i = 0; i < mP7.m_modelDataCount; ++i)
 	{
@@ -469,35 +484,17 @@ VOID MainFunc()
 		D3DXMatrixRotationX(&matGunShock, -2.2f*shotRenderCount * (D3DX_PI / 180.f));
 		D3DXMatrixMultiply(&matWorld, &matWorld, &matGunShock);
 
-		static int moveXMouse;
-
-		moveXMouse += rMouseState.m_mouseState.lX;
-
-		//視点変更
-		D3DXMatrixRotationY(&matYaw, moveXMouse* 0.05f * (D3DX_PI / 180.0f));
-		D3DXMatrixMultiply(&matWorld, &matWorld, &matYaw);
-
 		D3DXVECTOR3 gunPos(0.05f, -0.06f, 0.1f - shotRenderCount * 0.005f);
-
-		D3DXMATRIX			matLookPtMove;
-
-		D3DXMatrixRotationY(&matLookPtMove, moveXMouse* 0.05f * (D3DX_PI / 180.f));
-
-		D3DXVec3TransformCoord(&gunPos, &gunPos, &matLookPtMove);
-
-		D3DXVECTOR3 cameraPos;
-
-		rCamera.GetCameraPos(&cameraPos);
-
-		D3DXVec3Add(&gunPos, &gunPos, &cameraPos);
 
 		D3DXMATRIX			matPosition;	// 位置座標行列
 		D3DXMatrixTranslation(&matPosition, gunPos.x, gunPos.y, gunPos.z);
 		D3DXMatrixMultiply(&matWorld, &matWorld, &matPosition);
+
+		rCamera.NegateView(&matWorld);
+
 		rpDirectX3DDevice->SetTransform(D3DTS_WORLD, &matWorld);
 
 		rpDirectX3DDevice->SetTexture(0, textures[_T("matBlack")]);
-
 		mP7.m_pModel[i]->DrawFbx();
 	}
 
