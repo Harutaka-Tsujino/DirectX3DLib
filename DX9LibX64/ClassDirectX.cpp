@@ -577,7 +577,7 @@ VOID Camera::SetTransform()
 		&projection,
 		D3DXToRadian(DEFAULT_EYE_RADIAN),
 		aspect,
-		0.f,
+		0.01f,
 		DEFAULT_FAR);
 
 	rpDirectX3DDevice->SetTransform(D3DTS_PROJECTION, &projection);
