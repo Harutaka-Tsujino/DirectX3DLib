@@ -43,7 +43,7 @@ public:
 	bool LoadFbx(const char* pName);
 	
 	std::vector<FbxModel*> m_pModel;		//!<	モデルデータを格納する場所
-	int m_modelDataCount = 0;
+	INT m_modelDataCount = 0;
 };
 
 #endif //	FBXRALATED_H

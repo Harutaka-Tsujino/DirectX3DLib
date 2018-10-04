@@ -54,16 +54,16 @@ private:
 
 	typedef struct FBXMODELDATA
 	{
-		int polygonCount = 0;						//!<	ポリゴン数
-		int vertexCount = 0;						//!<	総頂点数（コントロールポイント）
-		int indexCount = 0;							//!<	インデックス数（）
-		int fileTextureCount = 0;					//!<	テクスチャ数
-		int materialCount = 0;						//!<	マテリアル数
-		int UvLayerCount = 0;						//!<	UVレイヤーテクスチャ数
-		int uvIndexCount = 0;						//!<	UVのインデックス数
+		INT polygonCount = 0;						//!<	ポリゴン数
+		INT vertexCount = 0;						//!<	総頂点数（コントロールポイント）
+		INT indexCount = 0;							//!<	インデックス数（）
+		INT fileTextureCount = 0;					//!<	テクスチャ数
+		INT materialCount = 0;						//!<	マテリアル数
+		INT UvLayerCount = 0;						//!<	UVレイヤーテクスチャ数
+		INT uvIndexCount = 0;						//!<	UVのインデックス数
 
-		int* pIndexBuffer = NULL;					//!<	インデックスバッファ
-		int* pPolygonSize = NULL;					//!<	ポリゴン数
+		INT* pIndexBuffer = NULL;					//!<	インデックスバッファ
+		INT* pPolygonSize = NULL;					//!<	ポリゴン数
 
 		Vertex* pVertex = NULL;						//!<	頂点座標
 		ColorRGBA* pVertexColor = NULL;				//!<	頂点カラー

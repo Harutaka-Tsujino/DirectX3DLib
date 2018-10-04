@@ -2,47 +2,10 @@
 #include <tchar.h>
 #include <d3dx9.h>
 #include <dinput.h>
+#include <tchar.h>
 #include "ClassDirectX.h"
 
 DirectXInstances DirectX::m_directXInstances;
-
-typedef LPD3DXFONT FONTID;
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-VOID SetFont(INT scaleX, UINT scaleY, const CHAR *pFontType, FONTID *pFontId, UINT thickness, INT charSet)
-{
-	DirectX* pDirectX = DirectX::GetInstance();
-	DirectXInstances& rDirectXInstances = pDirectX->GetDirectXInstances();
-	LPDIRECT3DDEVICE9& rpDirectX3DDevice = rDirectXInstances.m_pDirectX3DDevice;
-
-	if (FAILED(D3DXCreateFontA(rpDirectX3DDevice, scaleY, scaleX, thickness, 0, 0, charSet, 0, 0, 0, pFontType, pFontId)))
-	{
-		return;
-	}
-
-	return;
-}
-
-VOID WriteText(INT posX, INT posY, const CHAR *pText, UINT format, FONTID pFontId, DWORD color)
-{
-	D3DXFONT_DESC fontSetting;
-
-	pFontId->GetDesc(&fontSetting);
-
-	const FLOAT charSpace = 1.3f;
-	INT textScaleX = (INT)(fontSetting.Width* charSpace * strlen(pText)) / 2;
-	INT textScaleY = fontSetting.Height / 2;
-
-	RECT rcText = { posX - textScaleX ,posY - textScaleY ,posX + textScaleX ,posY + textScaleY };
-
-	if (FAILED(pFontId->DrawTextA(NULL, pText, -1, &rcText, format, color)))
-	{
-		return;
-	}
-
-	return;
-}
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 HRESULT DirectXObjectInitializer::Initialize(BOOL canWindow)
 {
@@ -243,6 +206,93 @@ VOID DirectX3DDevice::CleanUpRender()
 
 	rpDirectX3DDevice->EndScene();
 	rpDirectX3DDevice->Present(NULL, NULL, NULL, NULL);
+
+	return;
+}
+
+template<typename T>
+VOID DirectX3DDevice::DrawVertex(const T* pVertex, const LPDIRECT3DTEXTURE9* pTexture, DWORD fVF, size_t size)
+{
+	DirectX* pDirectX = DirectX::GetInstance();
+	DirectXInstances& rDirectXInstances = pDirectX->GetDirectXInstances();
+	LPDIRECT3DDEVICE9& rpDirectX3DDevice = rDirectXInstances.m_pDirectX3DDevice;
+
+	LPDIRECT3DVERTEXBUFFER9 vertexBuffer = NULL;
+
+	rpDirectX3DDevice->CreateVertexBuffer(
+		size,
+		D3DUSAGE_WRITEONLY,
+		fVF,
+		D3DPOOL_MANAGED,
+		&vertexBuffer,
+		NULL);
+
+	T* pVertexTmp;
+
+	vertexBuffer->Lock(0, 0, (void**)&pVertexTmp, 0);
+
+	const INT ARRAY_NUM = size / sizeof(T);
+
+	pVertexTmp = new T[ARRAY_NUM];
+
+	memcpy(pVertexTmp, pVertex, size);
+
+	vertexBuffer->Unlock();
+
+	rpDirectX3DDevice->SetStreamSource(0, vertexBuffer, 0, sizeof(T));
+
+	rpDirectX3DDevice->SetTexture(0, *pTexture);
+
+	const INT TRIANGLE_VERTICES_NUM = 3;
+	const INT TRIANGLE_NUM = size / (sizeof(T)*TRIANGLE_VERTICES_NUM)
+
+	rpDirectX3DDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, 0, TRIANGLE_NUM);
+
+	vertexBuffer->Release();
+	delete[]pVertexTmp;
+}
+
+VOID DirectX3DDevice::Custom2DVertices(CustomVertex *pCustomVertex, FLOAT posX, FLOAT posY, FLOAT posZ, FLOAT scaleX, FLOAT scaleY,
+	DWORD color, FLOAT startPosTu, FLOAT startPosTv, FLOAT scaleTu, FLOAT scaleTv, FLOAT scaleImageX, FLOAT scaleImageY)
+{
+	pCustomVertex[0] = { posX - scaleX ,posY - scaleY,posZ,1,color,startPosTu / scaleImageX,startPosTv / scaleImageY };
+	pCustomVertex[1] = { posX + scaleX ,posY - scaleY,posZ,1,color,(startPosTu + scaleTu) / scaleImageX,startPosTv / scaleImageY };
+	pCustomVertex[2] = { posX + scaleX ,posY + scaleY,posZ,1,color,(startPosTu + scaleTu) / scaleImageX,(startPosTv + scaleTv) / scaleImageY };
+	pCustomVertex[3] = { posX - scaleX ,posY + scaleY,posZ,1,color,startPosTu / scaleImageX,(startPosTv + scaleTv) / scaleImageY };
+
+	return;
+}
+
+VOID DirectX3DDevice::SetFont(INT scaleX, UINT scaleY, const TCHAR *pFontType, LPD3DXFONT *pFontId, UINT thickness, INT charSet)
+{
+	DirectX* pDirectX = DirectX::GetInstance();
+	DirectXInstances& rDirectXInstances = pDirectX->GetDirectXInstances();
+	LPDIRECT3DDEVICE9& rpDirectX3DDevice = rDirectXInstances.m_pDirectX3DDevice;
+
+	if (FAILED(D3DXCreateFont(rpDirectX3DDevice, scaleY, scaleX, thickness, 0, 0, charSet, 0, 0, 0, pFontType, pFontId)))
+	{
+		return;
+	}
+
+	return;
+}
+
+VOID DirectX3DDevice::WriteText(INT posX, INT posY, const TCHAR *pText, UINT format, LPD3DXFONT pFontId, DWORD color)
+{
+	D3DXFONT_DESC fontSetting;
+
+	pFontId->GetDesc(&fontSetting);
+
+	const FLOAT charSpace = 1.3f;
+	INT textScaleX = (INT)(fontSetting.Width* charSpace * _tcslen(pText)) / 2;
+	INT textScaleY = fontSetting.Height / 2;
+
+	RECT rcText = { posX - textScaleX ,posY - textScaleY ,posX + textScaleX ,posY + textScaleY };
+
+	if (FAILED(pFontId->DrawText(NULL, pText, -1, &rcText, format, color)))
+	{
+		return;
+	}
 
 	return;
 }
@@ -499,69 +549,246 @@ VOID Camera::SetTransform()
 
 	MouseState& rMouseState = inputData.m_mouseState;
 
+	KeyBoardState& rKeyState = inputData.m_keyBoardState;
+
 	D3DXMatrixIdentity(&m_view);
 
-	static int frameCount = 0;
-
-	/*FONTID fontId;
-
-	if (!frameCount)
 	{
-		SetFont(40, 40, "Times New Roman", &fontId, 20,0);
+		D3DXVECTOR2 straightVec(0.0f, 0.0f);
+
+		straightVec.y = m_eyePoint.z - m_cameraPos.z;
+		straightVec.x = m_eyePoint.x - m_cameraPos.x;
+
+		float syntheticStraightVec = (float)sqrt(pow(straightVec.y, 2) + pow(straightVec.x, 2));
+
+		D3DXVECTOR2 straightUnitVec(0.0f, 0.0f);
+
+		straightUnitVec.y = straightVec.y / syntheticStraightVec;
+
+		if (isnan(straightUnitVec.y))
+		{
+			straightUnitVec.y = 1.0f;
+		}
+
+		straightUnitVec.x = straightVec.x / syntheticStraightVec;
+
+		if (isnan(straightUnitVec.x))
+		{
+			straightUnitVec.x = 1.0f;
+		}
+
+		D3DXVECTOR2 rightUnitVec;
+
+		float powStraightVecX = (float)pow(straightVec.x, 2);
+
+		rightUnitVec.y = (float)sqrt(powStraightVecX / (pow(straightVec.y, 2) + powStraightVecX));
+
+		if (isnan(rightUnitVec.y))
+		{
+			rightUnitVec.y = 1.0f;
+		}
+
+		rightUnitVec.x = (-rightUnitVec.y*straightUnitVec.y) / straightUnitVec.x;
+
+		if (isnan(rightUnitVec.x))
+		{
+			rightUnitVec.x = 1.0f;
+		}
+
+		float moveVecCross = straightUnitVec.x*rightUnitVec.y - straightUnitVec.y*rightUnitVec.x;
+
+		float speedMultiply = 0.3f;
+
+		const INT NOT_JUMP = -1;
+
+		const INT DO_JUMP = 0;
+
+		static INT jumpCount = NOT_JUMP;
+
+		if (rKeyState.m_keyPush[DIK_SPACE] && jumpCount == NOT_JUMP)
+		{
+			jumpCount = DO_JUMP;
+		}
+
+		if (jumpCount >= 0)
+		{
+			const INT fPS = 60;
+			
+			static float initialVelocity = 8.4f / fPS;
+
+			static float gravity = -20.8f / fPS;
+
+			float time = (float)jumpCount / (float)fPS;
+
+			m_cameraPos.y += (initialVelocity*time + 0.5f *gravity * (float)pow(time, 2));
+
+			++jumpCount;
+
+			if (m_cameraPos.y < 0.0f)
+			{
+				m_cameraPos.y = 0.0f;
+				jumpCount = NOT_JUMP;
+			}
+		}
+
+		if (rKeyState.m_keyHold[DIK_LCONTROL])
+		{
+			speedMultiply = 0.1f;
+		}
+
+		else if (rKeyState.m_keyHold[DIK_LSHIFT])
+		{
+			speedMultiply = 1.3f;
+		}
+
+		if (rKeyState.m_keyHold[DIK_W])
+		{
+			m_cameraPos.z += straightUnitVec.y*speedMultiply;
+			m_cameraPos.x += straightUnitVec.x*speedMultiply;
+		}
+
+		if (rKeyState.m_keyHold[DIK_S])
+		{
+			m_cameraPos.z -= straightUnitVec.y*speedMultiply;
+			m_cameraPos.x -= straightUnitVec.x*speedMultiply;
+		}
+
+		if (rKeyState.m_keyHold[DIK_D])
+		{
+			if (moveVecCross > 0)
+			{
+				m_cameraPos.z -= rightUnitVec.y*speedMultiply;
+				m_cameraPos.x -= rightUnitVec.x*speedMultiply;
+			}
+
+			if (moveVecCross < 0)
+			{
+				m_cameraPos.z += rightUnitVec.y*speedMultiply;
+				m_cameraPos.x += rightUnitVec.x*speedMultiply;
+			}
+		}
+
+		if (rKeyState.m_keyHold[DIK_A])
+		{
+			if (moveVecCross > 0)
+			{
+				m_cameraPos.z += rightUnitVec.y*speedMultiply;
+				m_cameraPos.x += rightUnitVec.x*speedMultiply;
+			}
+
+			if (moveVecCross < 0)
+			{
+				m_cameraPos.z -= rightUnitVec.y*speedMultiply;
+				m_cameraPos.x -= rightUnitVec.x*speedMultiply;
+			}
+		}
 	}
 
-	WriteText(600,600,)*/
+	static bool canLockOn = false;
 
-	++frameCount;
-
-	D3DXVECTOR3 vecCenter(0.0f, 0.0f, 0.0f);
-
-	D3DXMATRIX matRotationX;
-	D3DXMatrixIdentity(&matRotationX);
-
-	//まず最初に、原点に半径を足しただけの座標を用意する
-	static D3DXVECTOR3 vecTarget(0.0f, 0.f, 10.0f);
-
-	//次に、原点を中心とした回転（オイラー回転）の行列を作る
-	D3DXMatrixRotationY(&matRotationX, D3DXToRadian(rMouseState.m_mouseState.lX * 0.05f));
-
-	D3DXVec3TransformCoord(&vecTarget, &vecTarget, &matRotationX);
-	//最後に本来の座標（回転対象の座標）を足す
-	D3DXVec3Add(&vecTarget, &vecTarget, &vecCenter);
-
-	D3DXMATRIX matRotationY;
-	D3DXMatrixIdentity(&matRotationY);
-
-	static float totalEyeRadY = 0;
-
-	float eyeRadY = D3DXToRadian(rMouseState.m_mouseState.lY * 0.05f);
-
-	const float EYE_RADIAN_Y_LIMIT = D3DXToRadian(85.0f);
-
-	totalEyeRadY = min(max(totalEyeRadY, -EYE_RADIAN_Y_LIMIT), EYE_RADIAN_Y_LIMIT);
-
-	if (eyeRadY + totalEyeRadY >= EYE_RADIAN_Y_LIMIT)
+	if (rKeyState.m_keyPush[DIK_Q])
 	{
-		eyeRadY = EYE_RADIAN_Y_LIMIT - totalEyeRadY;
+		canLockOn = (canLockOn) ? false : true;
 	}
 
-	if (eyeRadY + totalEyeRadY <= -EYE_RADIAN_Y_LIMIT)
+	static float totalEyeRadX = 0.0f;
+	static float totalEyeRadY = 0.0f;
+
+	if (canLockOn)
 	{
-		eyeRadY = -EYE_RADIAN_Y_LIMIT - totalEyeRadY;
+		/*totalEyeRadX = 0.0f;
+		totalEyeRadY = 0.0f;*/
+
+		m_eyePoint.x = 0.0f;
+		m_eyePoint.y = 0.0f;
+		m_eyePoint.z = 10.0f;
+
+		D3DXVECTOR2 straightVec(0.0f, 0.0f);
+
+		straightVec.y = m_eyePoint.z - m_cameraPos.z;
+		straightVec.x = m_eyePoint.x - m_cameraPos.x;
+
+		if (!straightVec.x && !straightVec.x)
+		{
+			straightVec.y = m_eyePoint.z - m_cameraPos.z*0.9f;
+			straightVec.x = m_eyePoint.x - m_cameraPos.x*0.9f;
+		}
+
+		float syntheticStraightVec = (float)sqrt(pow(straightVec.y, 2) + pow(straightVec.x, 2));
+
+		D3DXVECTOR2 straightUnitVec(0.0f, 0.0f);
+
+		straightUnitVec.y = straightVec.y / syntheticStraightVec;
+
+		if (isnan(straightUnitVec.y))
+		{
+			straightVec.y = 1.0f;
+		}
+
+		straightUnitVec.x = straightVec.x / syntheticStraightVec;
+
+		if (isnan(straightUnitVec.x))
+		{
+			straightVec.x = 1.0f;
+		}
+
+		D3DXVECTOR2 originalUnitVec(0.0f, 1.0f);
+
+		double cos = (double)D3DXVec2Dot(&straightUnitVec, &originalUnitVec);
+
+		float eyeVecCross = straightUnitVec.x*originalUnitVec.y - straightUnitVec.y*originalUnitVec.x;
+
+		if (eyeVecCross > 0)
+		{
+			totalEyeRadX = (float)acos(cos);
+		}
+
+		if (eyeVecCross < 0)
+		{
+			totalEyeRadX = -(float)acos(cos);
+		}
+
+		totalEyeRadY = 0.0f;
 	}
 
-	totalEyeRadY += eyeRadY;
+	if (!canLockOn)
+	{
+		totalEyeRadX += D3DXToRadian(rMouseState.m_mouseState.lX * 0.05f);
 
-	D3DXMatrixRotationX(&matRotationY, eyeRadY);
+		D3DXMATRIX matRotatation;
+		D3DXMatrixIdentity(&matRotatation);
 
-	D3DXVec3TransformCoord(&vecTarget, &vecTarget, &matRotationY);
+		D3DXMATRIX matRotationX;
+		D3DXMatrixIdentity(&matRotationX);
 
-	//最後に本来の座標（回転対象の座標）を足す
-	D3DXVec3Add(&vecTarget, &vecTarget, &vecCenter);
+		//まず最初に、原点に半径を足しただけの座標を用意する
+		D3DXVECTOR3 vecTarget(0.0f, 0.f, 10.0f);
 
-	m_eyePoint.x = vecTarget.x;
-	m_eyePoint.y = vecTarget.y;
-	m_eyePoint.z = vecTarget.z;
+		//次に、原点を中心とした回転（オイラー回転）の行列を作る
+		D3DXMatrixRotationY(&matRotationX, totalEyeRadX);
+
+		D3DXMATRIX matRotationY;
+		D3DXMatrixIdentity(&matRotationY);
+
+		totalEyeRadY += D3DXToRadian(rMouseState.m_mouseState.lY * 0.05f);
+
+		const float EYE_RADIAN_Y_LIMIT = D3DXToRadian(85.0f);
+
+		totalEyeRadY = min(max(totalEyeRadY, -EYE_RADIAN_Y_LIMIT), EYE_RADIAN_Y_LIMIT);
+
+		D3DXMatrixRotationX(&matRotationY, totalEyeRadY);
+
+		D3DXMatrixMultiply(&matRotatation, &matRotationY, &matRotationX);
+
+		D3DXVec3TransformCoord(&vecTarget, &vecTarget, &matRotatation);
+
+		//最後に本来の座標（回転対象の座標）を足す
+		D3DXVec3Add(&vecTarget, &vecTarget, &m_cameraPos);
+
+		m_eyePoint.x = vecTarget.x;
+		m_eyePoint.y = vecTarget.y;
+		m_eyePoint.z = vecTarget.z;
+	}
 
 	/*TCHAR buff[256];
 

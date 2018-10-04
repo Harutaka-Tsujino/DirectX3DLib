@@ -43,9 +43,9 @@ void FbxRelated::Release()
 	}
 	*/
 
-	for (int j = 0; j < m_modelDataCount; ++j)
+	for (INT j = 0; j < m_modelDataCount; ++j)
 	{
-		for (int i = 0; i < m_pModel[j]->m_pFbxModelData->UvLayerCount; i++)
+		for (INT i = 0; i < m_pModel[j]->m_pFbxModelData->UvLayerCount; i++)
 		{
 			if (!m_pModel[m_modelDataCount - 1]->m_pFbxModelData->uvSet.uvBuffer.capacity())
 			{
@@ -93,8 +93,8 @@ void FbxRelated::TriangulateRecursive(FbxNode* pNode, FbxScene* pScene)
 		}
 	}
 
-	const int lChildCount = pNode->GetChildCount();
-	for (int lChildIndex = 0; lChildIndex < lChildCount; ++lChildIndex)
+	const INT lChildCount = pNode->GetChildCount();
+	for (INT lChildIndex = 0; lChildIndex < lChildCount; ++lChildIndex)
 	{
 		// 子ノードを探索。 
 		TriangulateRecursive(pNode->GetChild(lChildIndex), pScene);
@@ -129,7 +129,7 @@ bool FbxRelated::InitializeFbxSdkObjects()
 
 bool FbxRelated::LoadFbx(const char* pName)
 {
-	int sFileFormat = -1;
+	INT sFileFormat = -1;
 
 	// FBX SDK オブジェクトの初期化。 
 	if (!InitializeFbxSdkObjects())
@@ -180,10 +180,10 @@ bool FbxRelated::LoadFbx(const char* pName)
 	if (NULL != pRootNode)
 	{
 		//	ルートノードの子ノード数を取得
-		int childCount = pRootNode->GetChildCount();
+		INT childCount = pRootNode->GetChildCount();
 
 		//	子ノードの数だけ探査をする
-		for (int i = 0; childCount > i; i++)
+		for (INT i = 0; childCount > i; i++)
 		{
 			GetMesh(pRootNode->GetChild(i));
 		}
@@ -225,9 +225,9 @@ void FbxRelated::GetMesh(fbxsdk::FbxNode* pNode)
 	}
 
 	//	子ノードの再起探査
-	int childCount = pNode->GetChildCount();
+	INT childCount = pNode->GetChildCount();
 
-	for (int i = 0; childCount > i; i++)
+	for (INT i = 0; childCount > i; i++)
 	{
 		GetMesh(pNode->GetChild(i));
 	}
@@ -251,9 +251,9 @@ void FbxRelated::GetPosition(fbxsdk::FbxMesh* pMesh)
 	m_pModel[m_modelDataCount - 1]->m_pFbxModelData->polygonCount = pMesh->GetPolygonCount();
 
 	//	ポリゴンサイズを取得
-	m_pModel[m_modelDataCount - 1]->m_pFbxModelData->pPolygonSize = new int[m_pModel[m_modelDataCount - 1]->m_pFbxModelData->polygonCount];
+	m_pModel[m_modelDataCount - 1]->m_pFbxModelData->pPolygonSize = new INT[m_pModel[m_modelDataCount - 1]->m_pFbxModelData->polygonCount];
 
-	for (int i = 0; m_pModel[m_modelDataCount - 1]->m_pFbxModelData->polygonCount > i; i++)
+	for (INT i = 0; m_pModel[m_modelDataCount - 1]->m_pFbxModelData->polygonCount > i; i++)
 	{
 		m_pModel[m_modelDataCount - 1]->m_pFbxModelData->pPolygonSize[i] = pMesh->GetPolygonSize(i);
 	}
@@ -268,12 +268,12 @@ void FbxRelated::GetPosition(fbxsdk::FbxMesh* pMesh)
 	fbxsdk::FbxVector4* pVertex = pMesh->GetControlPoints();
 
 	//	インデックスバッファの取得
-	int* pIndex = pMesh->GetPolygonVertices();
+	INT* pIndex = pMesh->GetPolygonVertices();
 
 	//	頂点座標のキャストとハードコピー
 	D3DXVECTOR3* pTmpVertex = new D3DXVECTOR3[m_pModel[m_modelDataCount - 1]->m_pFbxModelData->vertexCount];
 
-	for (int i = 0; m_pModel[m_modelDataCount - 1]->m_pFbxModelData->vertexCount > i; i++)
+	for (INT i = 0; m_pModel[m_modelDataCount - 1]->m_pFbxModelData->vertexCount > i; i++)
 	{
 		//	i番目の頂点の座標Xを取得
 		pTmpVertex[i].x = (float)pVertex[i][0];
@@ -327,7 +327,7 @@ void FbxRelated::GetPosition(fbxsdk::FbxMesh* pMesh)
 
 	m_pModel[m_modelDataCount - 1]->m_pFbxModelData->pVertex = new FbxModel::Vertex[m_pModel[m_modelDataCount - 1]->m_pFbxModelData->indexCount];
 
-	for (int i = 0; m_pModel[m_modelDataCount - 1]->m_pFbxModelData->indexCount > i; i++)
+	for (INT i = 0; m_pModel[m_modelDataCount - 1]->m_pFbxModelData->indexCount > i; i++)
 	{
 		//	i番目の頂点の座標Xを取得
 		m_pModel[m_modelDataCount - 1]->m_pFbxModelData->pVertex[i].Vec.x = pTmpVertex[pIndex[i]].x;
@@ -340,9 +340,9 @@ void FbxRelated::GetPosition(fbxsdk::FbxMesh* pMesh)
 	}
 
 	//	インデックスバッファのハードコピー
-	m_pModel[m_modelDataCount - 1]->m_pFbxModelData->pIndexBuffer = new int[m_pModel[m_modelDataCount - 1]->m_pFbxModelData->indexCount];
+	m_pModel[m_modelDataCount - 1]->m_pFbxModelData->pIndexBuffer = new INT[m_pModel[m_modelDataCount - 1]->m_pFbxModelData->indexCount];
 
-	for (int i = 0; m_pModel[m_modelDataCount - 1]->m_pFbxModelData->indexCount > i; i++)
+	for (INT i = 0; m_pModel[m_modelDataCount - 1]->m_pFbxModelData->indexCount > i; i++)
 	{
 		m_pModel[m_modelDataCount - 1]->m_pFbxModelData->pIndexBuffer[i] = pIndex[i];
 	}
@@ -352,10 +352,10 @@ void FbxRelated::GetPosition(fbxsdk::FbxMesh* pMesh)
 void FbxRelated::GetVertexNormal(fbxsdk::FbxMesh* pMesh)
 {
 	//	法線セット数を取得
-	int normalLayerCount = pMesh->GetElementNormalCount();
+	INT normalLayerCount = pMesh->GetElementNormalCount();
 
 	//	レイヤー数だけ回る
-	for (int i = 0; normalLayerCount > i; i++)
+	for (INT i = 0; normalLayerCount > i; i++)
 	{
 		//	法線セットを取得
 		fbxsdk::FbxGeometryElementNormal* pNormal = pMesh->GetElementNormal(i);
@@ -377,10 +377,10 @@ void FbxRelated::GetVertexNormal(fbxsdk::FbxMesh* pMesh)
 			case fbxsdk::FbxGeometryElement::eDirect:
 			{
 				//	法線数を取得
-				int normalCount = pNormal->GetDirectArray().GetCount();
+				INT normalCount = pNormal->GetDirectArray().GetCount();
 
 				//	eDirect の場合データは順番に格納されているのでそのまま保持
-				for (int i = 0; normalCount > i; i++)
+				for (INT i = 0; normalCount > i; i++)
 				{
 					//	法線の取得
 					m_pModel[m_modelDataCount - 1]->m_pFbxModelData->pVertex[i].Normal.x = (float)pNormal->GetDirectArray().GetAt(i)[0];
@@ -406,10 +406,10 @@ void FbxRelated::GetVertexNormal(fbxsdk::FbxMesh* pMesh)
 			case fbxsdk::FbxGeometryElement::eDirect:
 			{
 				//	法線数を取得
-				int normalCount = pNormal->GetDirectArray().GetCount();
+				INT normalCount = pNormal->GetDirectArray().GetCount();
 
 				//	eDirect の場合データは順番に格納されているのでそのまま保持
-				for (int i = 0; normalCount > i; i++)
+				for (INT i = 0; normalCount > i; i++)
 				{
 					//	法線の取得
 					m_pModel[m_modelDataCount - 1]->m_pFbxModelData->pVertex[i].Normal.x = (float)pNormal->GetDirectArray().GetAt(i)[0];
@@ -443,7 +443,7 @@ void FbxRelated::GetVertexUV(fbxsdk::FbxMesh* pMesh)
 	//	UVセット数を取得
 	m_pModel[m_modelDataCount - 1]->m_pFbxModelData->UvLayerCount = pMesh->GetElementUVCount();
 
-	for (int i = 0; m_pModel[m_modelDataCount - 1]->m_pFbxModelData->UvLayerCount > i; i++)
+	for (INT i = 0; m_pModel[m_modelDataCount - 1]->m_pFbxModelData->UvLayerCount > i; i++)
 	{
 		//	UVバッファを取得
 		fbxsdk::FbxGeometryElementUV* pUV = pMesh->GetElementUV(i);
@@ -455,7 +455,7 @@ void FbxRelated::GetVertexUV(fbxsdk::FbxMesh* pMesh)
 		fbxsdk::FbxGeometryElement::EReferenceMode reference = pUV->GetReferenceMode();
 
 		//	UV数を取得
-		int uvCount = pUV->GetDirectArray().GetCount();
+		INT uvCount = pUV->GetDirectArray().GetCount();
 
 		//	マッピングモードの判別
 		switch (mapping)
@@ -473,18 +473,18 @@ void FbxRelated::GetVertexUV(fbxsdk::FbxMesh* pMesh)
 
 			case fbxsdk::FbxGeometryElement::eIndexToDirect:
 			{
-				fbxsdk::FbxLayerElementArrayTemplate<int>* pUvIndex = &pUV->GetIndexArray();
+				fbxsdk::FbxLayerElementArrayTemplate<INT>* pUvIndex = &pUV->GetIndexArray();
 
 				m_pModel[m_modelDataCount - 1]->m_pFbxModelData->uvIndexCount = pUvIndex->GetCount();
 
 				//	UVを保持
 				std::vector<D3DXVECTOR2*> temp;
 
-				int uVCount = 0;
+				INT uVCount = 0;
 
 				temp.push_back(new D3DXVECTOR2[uVCount = m_pModel[m_modelDataCount - 1]->m_pFbxModelData->uvIndexCount]);
 
-				for (int j = 0; uVCount > j; j++)
+				for (INT j = 0; uVCount > j; j++)
 				{
 					fbxsdk::FbxVector2&  rFbxVector2 = pUV->GetDirectArray().GetAt(pUvIndex->GetAt(j));
 
@@ -522,7 +522,7 @@ void FbxRelated::GetVertexUV(fbxsdk::FbxMesh* pMesh)
 		return;
 	}
 
-	for (int i = 0; i < (m_pModel[m_modelDataCount - 1]->m_pFbxModelData->indexCount); ++i)
+	for (INT i = 0; i < (m_pModel[m_modelDataCount - 1]->m_pFbxModelData->indexCount); ++i)
 	{
 		//	コードを短縮するためのバッファのバッファ
 		D3DXVECTOR2* pUVBufferBuffer = m_pModel[m_modelDataCount - 1]->m_pFbxModelData->uvSet.uvBuffer[0];
@@ -542,10 +542,10 @@ void FbxRelated::GetMaterialData(fbxsdk::FbxMesh* pMesh)
 	m_pModel[m_modelDataCount - 1]->m_pFbxModelData->materialCount = pNode->GetMaterialCount();
 
 	//	テクスチァの数をカウントする
-	static int fileTextureCount = 0;
+	static INT fileTextureCount = 0;
 
 	//	マテリアルの数だけ繰り返す
-	for (int i = 0; m_pModel[m_modelDataCount - 1]->m_pFbxModelData->materialCount > i; i++)
+	for (INT i = 0; m_pModel[m_modelDataCount - 1]->m_pFbxModelData->materialCount > i; i++)
 	{
 		//	マテリアルを取得
 		fbxsdk::FbxSurfaceMaterial* pMaterial = pNode->GetMaterial(i);
@@ -644,22 +644,22 @@ void FbxRelated::GetTextureName(fbxsdk::FbxSurfaceMaterial* pMaterial, const cha
 	fbxsdk::FbxProperty prop = pMaterial->FindProperty(pMatAttr);
 
 	//	FbxLayerTexture の数を取得
-	int layeredTextureCount = prop.GetSrcObjectCount<fbxsdk::FbxLayeredTexture>();
+	INT layeredTextureCount = prop.GetSrcObjectCount<fbxsdk::FbxLayeredTexture>();
 
 	//	アタッチされたテクスチャがFbxLayeredTexture の場合
 	if (0 < layeredTextureCount)
 	{
 		//	アタッチされたテクスチャの数だけ繰り返す
-		for (int i = 0; layeredTextureCount > i; i++)
+		for (INT i = 0; layeredTextureCount > i; i++)
 		{
 			//	テクスチャを取得
 			fbxsdk::FbxLayeredTexture* pLayeredTexture = prop.GetSrcObject<fbxsdk::FbxLayeredTexture>(i);
 
 			//	レイヤー数を取得
-			int textureCount = pLayeredTexture->GetSrcObjectCount<fbxsdk::FbxFileTexture>();
+			INT textureCount = pLayeredTexture->GetSrcObjectCount<fbxsdk::FbxFileTexture>();
 
 			//	レイヤー数だけ繰り返す
-			for (int j = 0; textureCount > j; j++)
+			for (INT j = 0; textureCount > j; j++)
 			{
 				//	テクスチャを取得
 				fbxsdk::FbxFileTexture* pFbxFileTexture = prop.GetSrcObject<fbxsdk::FbxFileTexture>(j);
@@ -697,12 +697,12 @@ void FbxRelated::GetTextureName(fbxsdk::FbxSurfaceMaterial* pMaterial, const cha
 	else
 	{
 		//	テクスチャ数を取得
-		int fileTextureCount = prop.GetSrcObjectCount<fbxsdk::FbxFileTexture>();
+		INT fileTextureCount = prop.GetSrcObjectCount<fbxsdk::FbxFileTexture>();
 
 		if (0 < fileTextureCount)
 		{
 			//	テクスチャの数だけ繰り返す
-			for (int i = 0; fileTextureCount > i; i++)
+			for (INT i = 0; fileTextureCount > i; i++)
 			{
 				//	テクスチャを取得
 				fbxsdk::FbxFileTexture* pFbxFileTexture = prop.GetSrcObject<fbxsdk::FbxFileTexture>(i);
@@ -743,10 +743,10 @@ void FbxRelated::GetTextureName(fbxsdk::FbxSurfaceMaterial* pMaterial, const cha
 void FbxRelated::GetVertexColor(fbxsdk::FbxMesh* pMesh)
 {
 	//	頂点カラーセット数を取得
-	int vColorLayerCount = pMesh->GetElementVertexColorCount();
+	INT vColorLayerCount = pMesh->GetElementVertexColorCount();
 
 	//	レイヤー数だけ回る
-	for (int i = 0; vColorLayerCount > i; i++)
+	for (INT i = 0; vColorLayerCount > i; i++)
 	{
 		//	法線セットを取得
 		fbxsdk::FbxGeometryElementVertexColor* pColor = pMesh->GetElementVertexColor(i);
@@ -773,13 +773,13 @@ void FbxRelated::GetVertexColor(fbxsdk::FbxMesh* pMesh)
 			{
 			case fbxsdk::FbxGeometryElement::eIndexToDirect:
 			{
-				fbxsdk::FbxLayerElementArrayTemplate<int>* pIndex = &pColor->GetIndexArray();
-				int indexCount = pIndex->GetCount();
+				fbxsdk::FbxLayerElementArrayTemplate<INT>* pIndex = &pColor->GetIndexArray();
+				INT indexCount = pIndex->GetCount();
 
 				m_pModel[m_modelDataCount - 1]->m_pFbxModelData->pVertexColor = new FbxModel::ColorRGBA[indexCount];
 
 				//	頂点の数だけ頂点カラーを取得
-				for (int j = 0; indexCount > j; j++)
+				for (INT j = 0; indexCount > j; j++)
 				{
 					m_pModel[m_modelDataCount - 1]->m_pFbxModelData->pVertexColor[j].r = (float)pColor->GetDirectArray().GetAt(pIndex->GetAt(j))[0];
 					m_pModel[m_modelDataCount - 1]->m_pFbxModelData->pVertexColor[j].g = (float)pColor->GetDirectArray().GetAt(pIndex->GetAt(j))[1];

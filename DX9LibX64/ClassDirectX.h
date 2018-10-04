@@ -157,7 +157,7 @@ public:
 	VOID GetEyePoint(D3DXVECTOR3* pEyePoint);
 	VOID NegateView(D3DXMATRIX* pMatRotate);
 
-private:
+protected:
 	Camera();
 	~Camera() {};
 
@@ -165,6 +165,33 @@ private:
 	D3DXVECTOR3 m_eyePoint;
 	D3DXVECTOR3 m_cameraOverhead;
 	D3DXMATRIX m_view;
+};
+
+//class FPSCamera :public Camera
+//{
+//public:
+//	VOID Move();
+//	VOID Jump();
+//	VOID LockOn();
+//
+//private:
+//	float m_dashSpeedMultiply;
+//	float m_defaultSpeedMultiply;
+//	float m_sneakSpeedMultiply;
+//
+//}
+
+//ポリゴンの頂点情報構造体
+struct CustomVertex
+{
+public:
+	FLOAT m_x;
+	FLOAT m_y;
+	FLOAT m_z;
+	FLOAT m_rHW;
+	DWORD m_aRGB;
+	FLOAT m_tu;
+	FLOAT m_tv;
 };
 
 //DirectXの3Dデバイスクラス
@@ -178,6 +205,16 @@ public:
 	VOID SetVertexFormat(t_VERTEX_FORMAT d3DFVF);
 	VOID PrepareRender();
 	VOID CleanUpRender();
+
+	template<typename T>
+	VOID DrawVertex(const T* pVertex, const LPDIRECT3DTEXTURE9* pTexture, DWORD fVF = (D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1), size_t size = sizeof(CustomVertex) * 4);
+
+	VOID Custom2DVertices(CustomVertex *pCustomVertex, FLOAT posX, FLOAT posY, FLOAT posZ, FLOAT scaleX, FLOAT scaleY, DWORD color = 0xFFFFFFFF,
+		FLOAT startPosTu = 0.0f, FLOAT startPosTv = 0.0f, FLOAT scaleTu = 1.0f, FLOAT scaleTv = 1.0f, FLOAT scaleImageX = 1.0f, FLOAT scaleImageY = 1.0f);
+
+	VOID SetFont(INT scaleX, UINT scaleY, const TCHAR *pFontType, LPD3DXFONT *pFontId, UINT thickness = 0, INT charSet = SHIFTJIS_CHARSET);
+
+	VOID WriteText(INT posX, INT posY, const TCHAR *pText, UINT format, LPD3DXFONT pFontId, DWORD color);
 
 	Camera m_camera;
 
@@ -319,17 +356,4 @@ private:
 	~DirectX() {};
 
 	static DirectXInstances m_directXInstances;
-};
-
-//ポリゴンの頂点情報構造体
-struct CustomVertex
-{
-public:
-	FLOAT m_x;
-	FLOAT m_y;
-	FLOAT m_z;
-	FLOAT m_rHW;
-	DWORD m_aRGB;
-	FLOAT m_tu;
-	FLOAT m_tv;
 };

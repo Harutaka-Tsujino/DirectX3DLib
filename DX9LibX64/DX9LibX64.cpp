@@ -78,14 +78,14 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR szStr, INT iCmdSh
 
 	Window* pWindow = Window::GetInstance(hInst, TEXT("TestApp"));
 
-	pWindow->SetWindowMode(TRUE);
+	pWindow->SetWindowMode(FALSE);
 
 	DirectX* pDirectX = DirectX::GetInstance();
 
 	return LoopMainFunc(MainFunc, pWindow, pDirectX);
 }
 
-VOID CustomImageVerticies(CustomVertex *pCustomVertex, FLOAT posX, FLOAT posY, FLOAT posZ, FLOAT scaleX, FLOAT scaleY,
+VOID Custom2DVertices(CustomVertex *pCustomVertex, FLOAT posX, FLOAT posY, FLOAT posZ, FLOAT scaleX, FLOAT scaleY,
 	DWORD color, FLOAT startPosTu, FLOAT startPosTv, FLOAT scaleTu, FLOAT scaleTv, FLOAT scaleImageX, FLOAT scaleImageY)
 {
 	pCustomVertex[0] = { posX - scaleX ,posY - scaleY,posZ,1,color,startPosTu / scaleImageX,startPosTv / scaleImageY };
@@ -110,6 +110,8 @@ public:
 
 VOID MainFunc()
 {
+	ShowCursor(FALSE);
+
 	DirectX* pDirectX = DirectX::GetInstance();
 	DirectXInstances& rDirectXInstances = pDirectX->GetDirectXInstances();
 	LPDIRECT3DDEVICE9& rpDirectX3DDevice = rDirectXInstances.m_pDirectX3DDevice;
@@ -205,6 +207,12 @@ VOID MainFunc()
 			TEXT("textures/mazulFlash3.png"),
 			&textures[_T("mazulFlash3")]);
 
+		textures[_T("ground")] = nullptr;
+
+		D3DXCreateTextureFromFile(rpDirectX3DDevice,
+			TEXT("textures/ground.png"),
+			&textures[_T("ground")]);
+
 		frameCount = 0;
 	}
 
@@ -214,7 +222,7 @@ VOID MainFunc()
 
 		CustomVertex backVertices[4];
 
-		CustomImageVerticies(backVertices, 1920.0f*0.5f, 1080.0f*0.5f, 200.0f,
+		Custom2DVertices(backVertices, 1920.0f*0.5f, 1080.0f*0.5f, 200.0f,
 			1920.0f*0.5f, 1080.0f*0.5f,
 			0xFFFFFFFF,
 			0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f);
@@ -223,9 +231,8 @@ VOID MainFunc()
 
 		//rpDirectX3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, backVertices, sizeof(CustomVertex));
 
-
 		static float diffusionValue = 1.0f;
-		static int diffusionCaunt = 1;
+		static INT diffusionCaunt = 1;
 
 		diffusionValue = 0.6f*(float)pow(diffusionCaunt, 2);
 
@@ -245,9 +252,9 @@ VOID MainFunc()
 
 		diffusionCaunt = max(min(diffusionCaunt, 27), 1);
 
-		for (int i = 0; i < RETICLE_LENGTH_COUNT; ++i)
+		for (INT i = 0; i < RETICLE_LENGTH_COUNT; ++i)
 		{
-			CustomImageVerticies(reticleLengthVertices, 1920.0f*0.5f, 1080.0f*(0.46f + (i*0.08f)) + ((i == 0) ? -diffusionValue : diffusionValue), 0.0f,
+			Custom2DVertices(reticleLengthVertices, 1920.0f*0.5f, 1080.0f*(0.46f + (i*0.08f)) + ((i == 0) ? -diffusionValue : diffusionValue), 0.0f,
 				12.0f, 18.0f,
 				0xFF22BB22,
 				0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f);
@@ -261,9 +268,9 @@ VOID MainFunc()
 
 		const INT RETICLE_WIDTH_COUNT = 2;
 
-		for (int i = 0; i < RETICLE_WIDTH_COUNT; ++i)
+		for (INT i = 0; i < RETICLE_WIDTH_COUNT; ++i)
 		{
-			CustomImageVerticies(reticleWidthVertices, (1920.0f*0.5f + 1080.0f*0.04f*((i == 0) ? -1.0f : 1.0f)) + ((i == 0) ? -diffusionValue : diffusionValue), 1080.0f*0.50f, 0.0f,
+			Custom2DVertices(reticleWidthVertices, (1920.0f*0.5f + 1080.0f*0.04f*((i == 0) ? -1.0f : 1.0f)) + ((i == 0) ? -diffusionValue : diffusionValue), 1080.0f*0.50f, 0.0f,
 				18.0f, 12.0f,
 				0xFF22BB22,
 				0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f);
@@ -275,7 +282,7 @@ VOID MainFunc()
 
 		CustomVertex reticleDotVertices[4];
 
-		CustomImageVerticies(reticleDotVertices, 1920.0f*0.5f, 1080.0f*0.5f, 0.0f,
+		Custom2DVertices(reticleDotVertices, 1920.0f*0.5f, 1080.0f*0.5f, 0.0f,
 			30.0f, 30.0f,
 			0xFF22BB22,
 			0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f);
@@ -286,10 +293,10 @@ VOID MainFunc()
 	}
 
 	//e‚ðŒ‚‚Á‚½Žž‚Ì‰‰oƒtƒŒ[ƒ€
-	static const int SHOT_RENDER_TIME = 5;
+	static const INT SHOT_RENDER_TIME = 5;
 
 	//‰‰o‚ð‘ª‚éƒJƒEƒ“ƒg
-	static int shotRenderCount = 0;
+	static INT shotRenderCount = 0;
 
 	if (rMouseState.m_buttonHold[0] && !shotRenderCount)
 	{
@@ -328,7 +335,7 @@ VOID MainFunc()
 
 		rpDirectX3DDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
 
-		const int RECT_VERTICES_NUM = 4;
+		const INT RECT_VERTICES_NUM = 4;
 
 		LPDIRECT3DVERTEXBUFFER9 vertexBuffer = NULL;
 
@@ -343,7 +350,7 @@ VOID MainFunc()
 		Vertex3D* billBoard;
 		vertexBuffer->Lock(0, 0, (void**)&billBoard, 0);
 
-		for (int i = 0; i < RECT_VERTICES_NUM; ++i)
+		for (INT i = 0; i < RECT_VERTICES_NUM; ++i)
 		{
 			billBoard[i].m_aRGB = 0xFFFFCC11;
 		}
@@ -440,25 +447,168 @@ VOID MainFunc()
 		rpDirectX3DDevice->SetTexture(0, NULL);
 	}
 
-	//“I‚Ì•`‰æ
-	for (int i = 0; i < boardFbx.m_modelDataCount; ++i)
+	//’n–Ê‚Ì•`‰æ
+	if (TRUE)
 	{
+		rpDirectX3DDevice->SetFVF(D3DFVF_XYZ | D3DFVF_DIFFUSE | D3DFVF_TEX1);
 
+		rpDirectX3DDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
+
+		const INT RECT_VERTICES_NUM = 4;
+
+		LPDIRECT3DVERTEXBUFFER9 vertexBuffer = NULL;
+
+		rpDirectX3DDevice->CreateVertexBuffer(
+			4 * sizeof(Vertex3D),
+			D3DUSAGE_WRITEONLY,
+			D3DFVF_XYZ | D3DFVF_DIFFUSE | D3DFVF_TEX1,
+			D3DPOOL_MANAGED,
+			&vertexBuffer,
+			NULL);
+
+		Vertex3D* billBoard;
+		vertexBuffer->Lock(0, 0, (void**)&billBoard, 0);
+
+		for (INT i = 0; i < RECT_VERTICES_NUM; ++i)
+		{
+			billBoard[i].m_aRGB = 0xFFFFFFFF;
+		}
+
+		billBoard[0].m_x = -5.0f;
+		billBoard[0].m_y = 5.0f;
+		billBoard[0].m_z = 0.0f;
+		billBoard[0].m_tu = 0.0f;
+		billBoard[0].m_tv = 0.0f;
+
+		billBoard[1].m_x = 5.0f;
+		billBoard[1].m_y = 5.0f;
+		billBoard[1].m_z = 0.0f;
+		billBoard[1].m_tu = 1.0f;
+		billBoard[1].m_tv = 0.0f;
+
+		billBoard[2].m_x = 5.0f;
+		billBoard[2].m_y = -5.0f;
+		billBoard[2].m_z = 0.0f;
+		billBoard[2].m_tu = 1.0f;
+		billBoard[2].m_tv = 1.0f;
+
+		billBoard[3].m_x = -5.0f;
+		billBoard[3].m_y = -5.0f;
+		billBoard[3].m_z = 0.0f;
+		billBoard[3].m_tu = 0.0f;
+		billBoard[3].m_tv = 1.0f;
+
+		D3DXMATRIX mat_world, mat_trans, mat_rotx, mat_roty, mat_rotz, mat_scale;
+		D3DXMatrixIdentity(&mat_world);
+		D3DXMatrixIdentity(&mat_trans);
+		D3DXMatrixIdentity(&mat_scale);
+
+		// Šg‘å
+		D3DXMatrixScaling(&mat_scale, 300.0f, 300.0f, 300.0f);
+
+		D3DXMatrixMultiply(&mat_world, &mat_world, &mat_scale);
+
+		// ‰ñ“]
+		D3DXMatrixRotationX(&mat_rotx, D3DXToRadian(90.0f));
+		D3DXMatrixRotationY(&mat_roty, D3DXToRadian(0.0f));
+		D3DXMatrixRotationZ(&mat_rotz, D3DXToRadian(0.0f));
+
+		D3DXMatrixMultiply(&mat_world, &mat_world, &mat_roty);
+		D3DXMatrixMultiply(&mat_world, &mat_world, &mat_rotx);
+		D3DXMatrixMultiply(&mat_world, &mat_world, &mat_rotz);
+
+		// ˆÚ“®
+		D3DXMatrixTranslation(&mat_trans, 0.0f, -1.8f, 0.0f);
+
+		// Š|‚¯‡‚í‚¹
+		D3DXMatrixMultiply(&mat_world, &mat_world, &mat_trans);
+
+		rpDirectX3DDevice->SetTransform(D3DTS_WORLD, &mat_world);
+
+		vertexBuffer->Unlock();
+
+		rpDirectX3DDevice->SetStreamSource(0, vertexBuffer, 0, sizeof(Vertex3D));
+
+		rpDirectX3DDevice->SetTexture(0, textures[_T("ground")]);
+		rpDirectX3DDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, 0, 2);
+
+		vertexBuffer->Release();
+		vertexBuffer = NULL;
+
+		rpDirectX3DDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
+
+		rpDirectX3DDevice->SetTexture(0, NULL);
+	}
+
+	rpDirectX3DDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+	rpDirectX3DDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
+
+	//•Ç‚Ì•`‰æ
+	for (INT i = 0; i < 2; ++i)
+	{
 		D3DXMATRIX			matWorld;
 		D3DXMatrixIdentity(&matWorld);
 
+		D3DXMATRIX			matScale;
+
+		D3DXMatrixScaling(&matScale, 100.0f, 100.0f, 100.0f);
+
+		D3DXMatrixMultiply(&matWorld, &matWorld, &matScale);
+
 		D3DXMATRIX			matPosition;	// ˆÊ’uÀ•Ws—ñ
-		D3DXMatrixTranslation(&matPosition, 0.0f, -40.0f, 80.0f);
+
+		float posZ = 0.0f;
+
+		if (i == 0)
+		{
+			posZ = 1000.0f;
+			rpDirectX3DDevice->SetTexture(0, textures[_T("tan")]);
+		}
+
+		if (i == 1)
+		{
+			posZ = -1000.0f;
+			rpDirectX3DDevice->SetTexture(0, textures[_T("ground")]);
+		}
+
+		D3DXMatrixTranslation(&matPosition, 0.0f, -40.0f, posZ);
+		D3DXMatrixMultiply(&matWorld, &matWorld, &matPosition);
+
+		rpDirectX3DDevice->SetTransform(D3DTS_WORLD, &matWorld);
+
+		boardFbx.m_pModel[0]->DrawFbx();
+	}
+
+	//“I‚Ì•`‰æ
+	{
+		D3DXMATRIX			matWorld;
+		D3DXMatrixIdentity(&matWorld);
+
+		D3DXMATRIX			matScale;
+
+		D3DXMatrixScaling(&matScale, 0.007f, 0.007f, 0.007f);
+
+		D3DXMatrixMultiply(&matWorld, &matWorld, &matScale);
+
+		D3DXMATRIX			matPosition;	// ˆÊ’uÀ•Ws—ñ
+
+		float posZ = 0.0f;
+
+		D3DXMatrixTranslation(&matPosition, 0.095f, -0.61f, 10.0f);
 		D3DXMatrixMultiply(&matWorld, &matWorld, &matPosition);
 
 		rpDirectX3DDevice->SetTransform(D3DTS_WORLD, &matWorld);
 
 		rpDirectX3DDevice->SetTexture(0, NULL);
-		boardFbx.m_pModel[i]->DrawFbx();
+
+		boardFbx.m_pModel[0]->DrawFbx();
 	}
 
+	rpDirectX3DDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
+	rpDirectX3DDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
+
 	//MP7A1‚Ì•`‰æ
-	for (int i = 0; i < mP7.m_modelDataCount; ++i)
+	for (INT i = 0; i < mP7.m_modelDataCount; ++i)
 	{
 		D3DXMATRIX			matWorld;
 		D3DXMatrixIdentity(&matWorld);
@@ -503,9 +653,9 @@ VOID MainFunc()
 		D3DXMATRIX			matWorld;
 		D3DXMatrixIdentity(&matWorld);
 
-		static int renderCount = 0;
+		static INT renderCount = 0;
 
-		static int cartridgeRenderRand = 0;
+		static INT cartridgeRenderRand = 0;
 
 		if (rMouseState.m_buttonHold[0] && !renderCount)
 		{
