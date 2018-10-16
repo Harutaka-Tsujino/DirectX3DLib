@@ -1,62 +1,91 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="ソース ファイル">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="ヘッダー ファイル">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
     <Filter Include="リソース ファイル">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="DX9LibX64.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="ClassWindow.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="ClassDirectX.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="ClassFPS.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="FbxRelated.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="FbxModel.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="DX9LibX64.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="ClassDirectX.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="ClassWindow.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="ClassFPS.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="FbxRelated.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="FbxModel.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
+    <Filter Include="Class">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Class\FBX">
+      <UniqueIdentifier>{23a84baf-ed70-4e64-80ad-2cfb6ecf9316}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Class\FPS">
+      <UniqueIdentifier>{b892e18d-ce1b-478a-b9a9-b48051378d28}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Class\Vector">
+      <UniqueIdentifier>{3ef55082-3a0f-4292-a574-83eccfa72768}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Class\GameManager">
+      <UniqueIdentifier>{7cc5c046-39f1-44c3-ae76-58a09f2f6e5d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Class\GameManager\DirectX">
+      <UniqueIdentifier>{4c7f7ad2-61ff-45fe-85e7-6a89c93d171a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Class\GameManager\Window">
+      <UniqueIdentifier>{201b8cac-50d2-4368-9c2e-ac0fba2bf061}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DX9LibX64">
+      <UniqueIdentifier>{2770b8e8-3e85-475a-ae53-aa325edc6a44}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\命名規則.md">
       <Filter>リソース ファイル</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Class\FBX\FbxModel.cpp">
+      <Filter>Class\FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="Class\FBX\FbxRelated.cpp">
+      <Filter>Class\FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="Class\FPS\FPS.cpp">
+      <Filter>Class\FPS</Filter>
+    </ClCompile>
+    <ClCompile Include="Class\Vector\Vector.cpp">
+      <Filter>Class\Vector</Filter>
+    </ClCompile>
+    <ClCompile Include="Class\GameManager\DirectX\DirectX.cpp">
+      <Filter>Class\GameManager\DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="Class\GameManager\Window\Window.cpp">
+      <Filter>Class\GameManager\Window</Filter>
+    </ClCompile>
+    <ClCompile Include="Class\GameManager\GameManager.cpp">
+      <Filter>Class\GameManager</Filter>
+    </ClCompile>
+    <ClCompile Include="DXLibX64\DX9LibX64.cpp">
+      <Filter>DX9LibX64</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Class\FBX\FbxModel.h">
+      <Filter>Class\FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="Class\FBX\FbxRelated.h">
+      <Filter>Class\FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="Class\FPS\FPS.h">
+      <Filter>Class\FPS</Filter>
+    </ClInclude>
+    <ClInclude Include="Class\Vector\Vector.h">
+      <Filter>Class\Vector</Filter>
+    </ClInclude>
+    <ClInclude Include="Class\GameManager\DirectX\DirectX.h">
+      <Filter>Class\GameManager\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="Class\GameManager\Window\Window.h">
+      <Filter>Class\GameManager\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="Class\GameManager\GameManager.h">
+      <Filter>Class\GameManager</Filter>
+    </ClInclude>
+    <ClInclude Include="DXLibX64\DX9LibX64.h">
+      <Filter>DX9LibX64</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

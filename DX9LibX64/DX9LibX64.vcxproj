@@ -122,23 +122,27 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ClassDirectX.cpp" />
-    <ClCompile Include="ClassFPS.cpp" />
-    <ClCompile Include="ClassWindow.cpp" />
-    <ClCompile Include="DX9LibX64.cpp" />
-    <ClCompile Include="FbxModel.cpp" />
-    <ClCompile Include="FbxRelated.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="ClassDirectX.h" />
-    <ClInclude Include="ClassFPS.h" />
-    <ClInclude Include="ClassWindow.h" />
-    <ClInclude Include="DX9LibX64.h" />
-    <ClInclude Include="FbxModel.h" />
-    <ClInclude Include="FbxRelated.h" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="..\命名規則.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Class\FBX\FbxModel.cpp" />
+    <ClCompile Include="Class\FBX\FbxRelated.cpp" />
+    <ClCompile Include="Class\FPS\FPS.cpp" />
+    <ClCompile Include="Class\GameManager\DirectX\DirectX.cpp" />
+    <ClCompile Include="Class\GameManager\GameManager.cpp" />
+    <ClCompile Include="Class\GameManager\Window\Window.cpp" />
+    <ClCompile Include="Class\Vector\Vector.cpp" />
+    <ClCompile Include="DXLibX64\DX9LibX64.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Class\FBX\FbxModel.h" />
+    <ClInclude Include="Class\FBX\FbxRelated.h" />
+    <ClInclude Include="Class\FPS\FPS.h" />
+    <ClInclude Include="Class\GameManager\DirectX\DirectX.h" />
+    <ClInclude Include="Class\GameManager\GameManager.h" />
+    <ClInclude Include="Class\GameManager\Window\Window.h" />
+    <ClInclude Include="Class\Vector\Vector.h" />
+    <ClInclude Include="DXLibX64\DX9LibX64.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
