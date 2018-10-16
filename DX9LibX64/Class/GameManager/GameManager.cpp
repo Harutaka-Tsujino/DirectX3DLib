@@ -1,9 +1,9 @@
 #include <windows.h>
 #include <tchar.h>
 #include <d3dx9.h>
+#include <crtdbg.h>
 #include <cstdio>
 #include <cstdlib>
-#include <crtdbg.h>
 #include "GameManager.h"
 #include "Window\Window.h"
 #include "DirectX\DirectX.h"

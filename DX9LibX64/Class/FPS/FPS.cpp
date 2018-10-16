@@ -1,7 +1,7 @@
 #include<windows.h>
+#include <crtdbg.h>
 #include <cstdio>
 #include <cstdlib>
-#include <crtdbg.h>
 #include"FPS.h"
 
 #define _CRTDBG_MAP_ALLOC

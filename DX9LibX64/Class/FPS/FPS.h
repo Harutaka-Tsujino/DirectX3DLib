@@ -1,7 +1,6 @@
 #pragma once
 #include <windows.h>
 
-
 class FPS
 {
 public:

@@ -2,10 +2,10 @@
 #include <tchar.h>
 #include <d3dx9.h>
 #include <dinput.h>
+#include <crtdbg.h>
 #include <tchar.h>
 #include <cstdio>
 #include <cstdlib>
-#include <crtdbg.h>
 #include "DirectX.h"
 
 #define _CRTDBG_MAP_ALLOC

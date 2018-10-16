@@ -1,13 +1,13 @@
 #include <windows.h>
-#include <iostream>
-#include <vector>
-#include <map>
 #include <tchar.h>
 #include <d3dx9.h>
 #include <dinput.h>
+#include <crtdbg.h>
+#include <iostream>
+#include <vector>
+#include <map>
 #include <cstdio>
 #include <cstdlib>
-#include <crtdbg.h>
 #include "DX9LibX64.h"
 #include "../Class/GameManager/GameManager.h"
 #include "../Class/FBX/FbxRelated.h"

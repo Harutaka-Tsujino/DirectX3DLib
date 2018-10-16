@@ -1,8 +1,8 @@
 #include <windows.h>	
 #include <d3dx9.h>
+#include <crtdbg.h>
 #include <cstdio>
 #include <cstdlib>
-#include <crtdbg.h>
 
 #define _CRTDBG_MAP_ALLOC
 #define new ::new(_NORMAL_BLOCK, __FILE__, __LINE__)
