@@ -129,6 +129,7 @@
     <ClCompile Include="Class\FBX\FbxRelated.cpp" />
     <ClCompile Include="Class\FPS\FPS.cpp" />
     <ClCompile Include="Class\GameManager\DirectX\DirectX.cpp" />
+    <ClCompile Include="Class\GameManager\Draw\Draw.cpp" />
     <ClCompile Include="Class\GameManager\GameManager.cpp" />
     <ClCompile Include="Class\GameManager\Window\Window.cpp" />
     <ClCompile Include="Class\Vector\Vector.cpp" />
@@ -139,6 +140,7 @@
     <ClInclude Include="Class\FBX\FbxRelated.h" />
     <ClInclude Include="Class\FPS\FPS.h" />
     <ClInclude Include="Class\GameManager\DirectX\DirectX.h" />
+    <ClInclude Include="Class\GameManager\Draw\Draw.h" />
     <ClInclude Include="Class\GameManager\GameManager.h" />
     <ClInclude Include="Class\GameManager\Window\Window.h" />
     <ClInclude Include="Class\Vector\Vector.h" />

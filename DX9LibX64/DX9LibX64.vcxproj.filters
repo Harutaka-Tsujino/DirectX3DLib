@@ -30,6 +30,9 @@
     <Filter Include="DX9LibX64">
       <UniqueIdentifier>{2770b8e8-3e85-475a-ae53-aa325edc6a44}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Class\GameManager\Draw">
+      <UniqueIdentifier>{caa7b040-7888-4b49-930e-203d971bbd00}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\命名規則.md">
@@ -61,6 +64,9 @@
     <ClCompile Include="DXLibX64\DX9LibX64.cpp">
       <Filter>DX9LibX64</Filter>
     </ClCompile>
+    <ClCompile Include="Class\GameManager\Draw\Draw.cpp">
+      <Filter>Class\GameManager\Draw</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Class\FBX\FbxModel.h">
@@ -86,6 +92,9 @@
     </ClInclude>
     <ClInclude Include="DXLibX64\DX9LibX64.h">
       <Filter>DX9LibX64</Filter>
+    </ClInclude>
+    <ClInclude Include="Class\GameManager\Draw\Draw.h">
+      <Filter>Class\GameManager\Draw</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
