@@ -416,15 +416,11 @@ VOID DirectXInputDevices::GetInputStates()
 	m_pInputStatesGetter->Get(m_InputData);
 
 	delete m_pInputStatesGetter;
-
-	return;
 }
 
 VOID DirectXInputDevices::GetInputData(InputData* pInputData)
 {
 	memcpy(pInputData, &m_InputData, sizeof(InputData));
-
-	return;
 }
 
 Camera::Camera()
@@ -447,8 +443,6 @@ VOID Camera::SetCameraPos(FLOAT x, FLOAT y, FLOAT z)
 	m_cameraPos.x = x;
 	m_cameraPos.y = y;
 	m_cameraPos.z = z;
-
-	return;
 }
 
 VOID Camera::GetCameraPos(D3DXVECTOR3* pCameraPos)
@@ -456,8 +450,6 @@ VOID Camera::GetCameraPos(D3DXVECTOR3* pCameraPos)
 	pCameraPos->x = m_cameraPos.x;
 	pCameraPos->y = m_cameraPos.y;
 	pCameraPos->z = m_cameraPos.z;
-
-	return;
 }
 
 VOID Camera::SetEyePoint(FLOAT x, FLOAT y, FLOAT z)
@@ -465,8 +457,6 @@ VOID Camera::SetEyePoint(FLOAT x, FLOAT y, FLOAT z)
 	m_eyePoint.x = x;
 	m_eyePoint.y = y;
 	m_eyePoint.z = z;
-
-	return;
 }
 
 VOID Camera::GetEyePoint(D3DXVECTOR3* pEyePoint)
@@ -474,8 +464,6 @@ VOID Camera::GetEyePoint(D3DXVECTOR3* pEyePoint)
 	pEyePoint->x = m_eyePoint.x;
 	pEyePoint->y = m_eyePoint.y;
 	pEyePoint->z = m_eyePoint.z;
-
-	return;
 }
 
 VOID Camera::SetTransform()
@@ -840,8 +828,6 @@ VOID Camera::SetTransform()
 		DEFAULT_FAR);
 
 	rpDirectX3DDevice->SetTransform(D3DTS_PROJECTION, &projection);
-
-	return;
 }
 
 VOID Camera::NegateView(D3DXMATRIX* pMatRotate)
@@ -849,13 +835,10 @@ VOID Camera::NegateView(D3DXMATRIX* pMatRotate)
 	D3DXMATRIX viewInverse;
 	D3DXMatrixInverse(&viewInverse, NULL, &m_view);
 	D3DXMatrixMultiply(pMatRotate, pMatRotate, &viewInverse);
-
-	return;
 }
 
 DirectX::~DirectX()
 {
-	m_directXInstances.m_pDirectXClass = NULL;
 }
 
 DirectX* DirectX::GetInstance()
@@ -873,6 +856,7 @@ DirectX* DirectX::GetInstance()
 VOID DirectX::DeleteInstance()
 {
 	delete m_directXInstances.m_pDirectXClass;
+	m_directXInstances.m_pDirectXClass = NULL;
 }
 
 VOID DirectX::SetHWND(HWND* pHWnd)

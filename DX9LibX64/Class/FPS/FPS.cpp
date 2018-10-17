@@ -11,7 +11,6 @@ FPS* FPS::m_pFPSClass = NULL;
 
 FPS::~FPS()
 {
-	m_pFPSClass = NULL;
 }
 
 FPS* FPS::GetInstance()
@@ -65,4 +64,5 @@ VOID FPS::UpdateTime()
 VOID FPS::DeleteInstance()
 {
 	delete m_pFPSClass;
+	m_pFPSClass = NULL;
 }

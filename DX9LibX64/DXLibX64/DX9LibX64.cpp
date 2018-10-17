@@ -25,8 +25,6 @@ VOID MainFunc()
 {
 	GameManager* pGameManager = GameManager::CopyInstance();
 	InputData inputData = pGameManager->GetInputData();
-
-	return;
 }
 
 INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR szStr, INT iCmdShow)
@@ -38,8 +36,8 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR szStr, INT iCmdSh
 
 	GameManager* pGameManager = GameManager::GetInstance(hInst, _T("TEST_TEST_TEST"), MainFunc, displaySize, TRUE);
 	pGameManager->Create();
-	pGameManager->DeleteInstance();
-	return 0;
+
+	return pGameManager->DeleteInstance();
 }
 
 //INT LoopMainFunc(VOID(*func)(), Window* pWindow, DirectX* pDirectX)

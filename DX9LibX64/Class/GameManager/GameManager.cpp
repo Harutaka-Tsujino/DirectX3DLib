@@ -46,7 +46,6 @@ GameManager::GameManager(HINSTANCE hInst, TCHAR* pAppName, BOOL canWindow)
 
 GameManager::~GameManager()
 {
-	m_pGameManager = NULL;
 }
 
 VOID GameManager::Create()
@@ -54,8 +53,6 @@ VOID GameManager::Create()
 	InitializeWindow();
 	InitializeDirectX();
 	LoopMainFunc();
-
-	return;
 }
 
 VOID GameManager::InitializeDirectX()
@@ -65,15 +62,11 @@ VOID GameManager::InitializeDirectX()
 	m_pDirectX->m_DirectXObject.Initialize();
 	m_pDirectX->m_DirectX3DDevice.Initialize();
 	m_pDirectX->m_DirectXInputDevices.Initialize();
-
-	return;
 }
 
 VOID GameManager::InitializeWindow()
 {
 	m_pWindow->MakeWindow();
-
-	return;
 }
 
 VOID GameManager::UpdateInput()
@@ -82,8 +75,6 @@ VOID GameManager::UpdateInput()
 	rDirectXInputDevices.StoreInputStates();
 	rDirectXInputDevices.GetInputStates();
 	rDirectXInputDevices.GetInputData(&m_inputData);
-
-	return;
 }
 
 InputData GameManager::GetInputData()
@@ -118,8 +109,10 @@ VOID GameManager::LoopMainFunc()
 	pFPS->DeleteInstance();
 }
 
-VOID GameManager::DeleteInstance()
+INT GameManager::DeleteInstance()
 {
+	INT returnValue = (INT)m_pWindow->GetMSG().wParam;
+
 	m_pWindow->DeleteInstance();
 	m_pWindow = NULL;
 
@@ -127,4 +120,7 @@ VOID GameManager::DeleteInstance()
 	m_pDirectX = NULL;
 
 	delete m_pGameManager;
+	m_pGameManager = NULL;
+
+	return returnValue;
 }

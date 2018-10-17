@@ -12,7 +12,7 @@ public:
 
 	VOID Create();
 	InputData GetInputData();
-	VOID DeleteInstance();
+	INT DeleteInstance();
 
 private:
 	GameManager(HINSTANCE hInst, TCHAR* pAppName, BOOL canWindow);
