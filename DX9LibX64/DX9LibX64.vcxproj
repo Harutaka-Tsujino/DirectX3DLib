@@ -131,6 +131,7 @@
     <ClCompile Include="Class\GameManager\DirectX\DirectX.cpp" />
     <ClCompile Include="Class\GameManager\Draw\Draw.cpp" />
     <ClCompile Include="Class\GameManager\GameManager.cpp" />
+    <ClCompile Include="Class\GameManager\Object\Object.cpp" />
     <ClCompile Include="Class\GameManager\Window\Window.cpp" />
     <ClCompile Include="Class\Vector\Vector.cpp" />
     <ClCompile Include="DXLibX64\DX9LibX64.cpp" />
@@ -142,6 +143,7 @@
     <ClInclude Include="Class\GameManager\DirectX\DirectX.h" />
     <ClInclude Include="Class\GameManager\Draw\Draw.h" />
     <ClInclude Include="Class\GameManager\GameManager.h" />
+    <ClInclude Include="Class\GameManager\Object\Object.h" />
     <ClInclude Include="Class\GameManager\Window\Window.h" />
     <ClInclude Include="Class\Vector\Vector.h" />
     <ClInclude Include="DXLibX64\DX9LibX64.h" />

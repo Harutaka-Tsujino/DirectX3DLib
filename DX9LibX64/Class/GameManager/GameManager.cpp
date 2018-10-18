@@ -8,6 +8,7 @@
 #include "Window\Window.h"
 #include "DirectX\DirectX.h"
 #include "../FPS/FPS.h"
+#include "Draw\Draw.h"
 
 #define _CRTDBG_MAP_ALLOC
 #define new ::new(_NORMAL_BLOCK, __FILE__, __LINE__)
@@ -52,6 +53,7 @@ VOID GameManager::Create()
 {
 	InitializeWindow();
 	InitializeDirectX();
+	Draw::SetLPDIRECT3DDEVICE9(GetDirectX3DDevice());
 	LoopMainFunc();
 }
 
@@ -107,6 +109,11 @@ VOID GameManager::LoopMainFunc()
 	}
 
 	pFPS->DeleteInstance();
+}
+
+LPDIRECT3DDEVICE9 GameManager::GetDirectX3DDevice()
+{
+	return m_pDirectX->GetDirectXInstances().m_pDirectX3DDevice;
 }
 
 INT GameManager::DeleteInstance()

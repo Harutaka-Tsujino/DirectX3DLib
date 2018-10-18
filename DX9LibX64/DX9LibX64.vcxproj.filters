@@ -33,6 +33,12 @@
     <Filter Include="Class\GameManager\Draw">
       <UniqueIdentifier>{caa7b040-7888-4b49-930e-203d971bbd00}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Class\GameManager\Object">
+      <UniqueIdentifier>{dfdd9d9b-e304-400e-b2da-05c2d36f0d17}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Class\Porygon">
+      <UniqueIdentifier>{b10b142a-49d1-4c20-91ac-62a246b22648}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\命名規則.md">
@@ -67,6 +73,9 @@
     <ClCompile Include="Class\GameManager\Draw\Draw.cpp">
       <Filter>Class\GameManager\Draw</Filter>
     </ClCompile>
+    <ClCompile Include="Class\GameManager\Object\Object.cpp">
+      <Filter>Class\GameManager\Object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Class\FBX\FbxModel.h">
@@ -95,6 +104,9 @@
     </ClInclude>
     <ClInclude Include="Class\GameManager\Draw\Draw.h">
       <Filter>Class\GameManager\Draw</Filter>
+    </ClInclude>
+    <ClInclude Include="Class\GameManager\Object\Object.h">
+      <Filter>Class\GameManager\Object</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

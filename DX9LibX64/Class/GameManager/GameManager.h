@@ -13,6 +13,7 @@ public:
 	VOID Create();
 	InputData GetInputData();
 	INT DeleteInstance();
+	LPDIRECT3DDEVICE9 GetDirectX3DDevice();
 
 private:
 	GameManager(HINSTANCE hInst, TCHAR* pAppName, BOOL canWindow);
