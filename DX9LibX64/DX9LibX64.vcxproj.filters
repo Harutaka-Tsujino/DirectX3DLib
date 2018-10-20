@@ -36,7 +36,7 @@
     <Filter Include="Class\GameManager\Object">
       <UniqueIdentifier>{dfdd9d9b-e304-400e-b2da-05c2d36f0d17}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Class\Porygon">
+    <Filter Include="Class\CustomVertices">
       <UniqueIdentifier>{b10b142a-49d1-4c20-91ac-62a246b22648}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -76,6 +76,9 @@
     <ClCompile Include="Class\GameManager\Object\Object.cpp">
       <Filter>Class\GameManager\Object</Filter>
     </ClCompile>
+    <ClCompile Include="Class\GameManager\CustomVertices\CustomVertices.cpp">
+      <Filter>Class\CustomVertices</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Class\FBX\FbxModel.h">
@@ -107,6 +110,9 @@
     </ClInclude>
     <ClInclude Include="Class\GameManager\Object\Object.h">
       <Filter>Class\GameManager\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Class\GameManager\CustomVertices\CustomVertices.h">
+      <Filter>Class\CustomVertices</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

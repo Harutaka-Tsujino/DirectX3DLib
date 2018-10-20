@@ -11,14 +11,14 @@
 #include "../Object/Object.h"
 #include "../GameManager.h"
 #include "../../FBX/FbxRelated.h"
+#include "../CustomVertices/CustomVertices.h"
+
+struct CustomVertex;
 
 /**
 * @class Draw
 * @brief オブジェクトの描画を行う
 */
-
-struct CustomVertex;
-
 class Draw
 {
 public:
@@ -54,7 +54,7 @@ public:
 	*/
 	static VOID SetLPDIRECT3DDEVICE9(LPDIRECT3DDEVICE9 pDirectX3DDevice);
 
-	/**
+	/** 
 	* @fn virtual VOID Render(const FbxRelated* pFBXModel,
 	*	const D3DXMATRIX* pMatWorld, const LPDIRECT3DTEXTURE9 texture = NULL)
 	* @brief FBXの描画を行う

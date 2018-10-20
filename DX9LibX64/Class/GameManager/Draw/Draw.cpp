@@ -3,6 +3,7 @@
 #include "Draw.h"
 #include "../Object/Object.h"
 #include "../GameManager.h"
+#include "../CustomVertices/CustomVertices.h"
 
 Draw* Draw::m_pDraw = NULL;
 LPDIRECT3DDEVICE9 Draw::m_pDirectX3DDevice = NULL;
