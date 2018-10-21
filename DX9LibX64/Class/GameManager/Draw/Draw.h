@@ -22,9 +22,6 @@ struct CustomVertex;
 class Draw
 {
 public:
-	Draw() {};
-	~Draw() {};
-
 	/**
 	* @fnstatic Draw* GetInstance()
 	* @brief singleton用のインスタンスを生成し、
@@ -46,7 +43,7 @@ public:
 	VOID DeleteInstance();
 
 	/**
-	* @fnstatic VOID SetLPDIRECT3DDEVICE9(LPDIRECT3DDEVICE9 pDirectX3DDevice)
+	* @fn static VOID SetLPDIRECT3DDEVICE9(LPDIRECT3DDEVICE9 pDirectX3DDevice)
 	* @brief 描画に用いるDirectXの3Dデバイスを受け取る関数
 	* @param (pDirectX3DDevice)　受け渡すDirectXの3Dデバイス
 	* @return なし
@@ -94,12 +91,11 @@ public:
 		const D3DXMATRIX* pMatWorld, const LPDIRECT3DTEXTURE9 pTexture = NULL);
 
 protected:
-
-	//! DirectXの3Dデバイス
-	static LPDIRECT3DDEVICE9 m_pDirectX3DDevice;
+	static LPDIRECT3DDEVICE9 m_pDirectX3DDevice;		//! DirectXの3Dデバイス
 
 private:
+	Draw() {};
+	~Draw() {};
 
-	//! singleton用のこのクラスのポインタ
-	static Draw* m_pDraw;
+	static Draw* m_pDraw;		//! singleton用のこのクラスのポインタ
 };

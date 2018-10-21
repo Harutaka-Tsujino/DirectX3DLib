@@ -10,10 +10,43 @@ CustomVertices* CustomVertices::GetInstance()
 	return m_pCustomVertices;
 }
 
-VOID CustomVertices::deleteInstance()
+VOID CustomVertices::DeleteInstance()
 {
 	delete m_pCustomVertices;
 	m_pCustomVertices = NULL;
+}
+
+VOID CustomVertices::Rotate(CustomVertex* pCustomVertices, const D3DXVECTOR3* pRelativeRotateCenter, const D3DXMATRIX* pMatRotate)
+{
+	D3DXVECTOR3 rectCenter(
+		(pCustomVertices[0].m_pos.x + pCustomVertices[2].m_pos.x) * 0.5f,
+		(pCustomVertices[0].m_pos.y + pCustomVertices[2].m_pos.y) * 0.5f,
+		(pCustomVertices[0].m_pos.z + pCustomVertices[2].m_pos.z) * 0.5f);
+
+	D3DXVECTOR3 distancesFromRectCenter[M_RECT_VERTICES_NUM];
+
+	for (INT i = 0; i < M_RECT_VERTICES_NUM; ++i)
+	{
+		distancesFromRectCenter[i].x = pCustomVertices[i].m_pos.x - rectCenter.x;
+		distancesFromRectCenter[i].y = pCustomVertices[i].m_pos.y - rectCenter.y;
+		distancesFromRectCenter[i].z = pCustomVertices[i].m_pos.z - rectCenter.z;
+	};
+
+	D3DXVECTOR3 movedPosesToRotation[M_RECT_VERTICES_NUM];
+
+	for (INT i = 0; i < M_RECT_VERTICES_NUM; ++i)
+	{
+		movedPosesToRotation[i].x = distancesFromRectCenter[i].x - pRelativeRotateCenter->x;
+		movedPosesToRotation[i].y = distancesFromRectCenter[i].y - pRelativeRotateCenter->y;
+		movedPosesToRotation[i].z = distancesFromRectCenter[i].z - pRelativeRotateCenter->z;
+	};
+
+	for (int i = 0; i < M_RECT_VERTICES_NUM; ++i)
+	{
+		D3DXVec3TransformCoord(&pCustomVertices[i].m_pos, &movedPosesToRotation[i], pMatRotate);
+		D3DXVec3Add(&pCustomVertices[i].m_pos, &pCustomVertices[i].m_pos, &rectCenter);
+		D3DXVec3Add(&pCustomVertices[i].m_pos, &pCustomVertices[i].m_pos, pRelativeRotateCenter);
+	}
 }
 
 VOID CustomVertices::RotateXYZ(CustomVertex* pCustomVertices, const D3DXVECTOR3* pDegree, const D3DXVECTOR3* pRelativeRotateCenter)
@@ -25,110 +58,26 @@ VOID CustomVertices::RotateXYZ(CustomVertex* pCustomVertices, const D3DXVECTOR3*
 
 VOID CustomVertices::RotateX(CustomVertex* pCustomVertices, FLOAT degree, const D3DXVECTOR3* pRelativeRotateCenter)
 {
-	D3DXVECTOR3 rectCenter(
-		(pCustomVertices[0].m_pos.x + pCustomVertices[2].m_pos.x) * 0.5f,
-		(pCustomVertices[0].m_pos.y + pCustomVertices[2].m_pos.y) * 0.5f,
-		(pCustomVertices[0].m_pos.z + pCustomVertices[2].m_pos.z) * 0.5f);
-
-	D3DXVECTOR3 distancesFromRectCenter[M_RECT_VERTICES_NUM];
-
-	for (INT i = 0; i < M_RECT_VERTICES_NUM; ++i)
-	{
-		distancesFromRectCenter[i].x = pCustomVertices[i].m_pos.x - rectCenter.x;
-		distancesFromRectCenter[i].y = pCustomVertices[i].m_pos.y - rectCenter.y;
-		distancesFromRectCenter[i].z = pCustomVertices[i].m_pos.z - rectCenter.z;
-	};
-
-	D3DXVECTOR3 movedPosesToRotation[M_RECT_VERTICES_NUM];
-
-	for (INT i = 0; i < M_RECT_VERTICES_NUM; ++i)
-	{
-		movedPosesToRotation[i].x = distancesFromRectCenter[i].x - pRelativeRotateCenter->x;
-		movedPosesToRotation[i].y = distancesFromRectCenter[i].y - pRelativeRotateCenter->y;
-		movedPosesToRotation[i].z = distancesFromRectCenter[i].z - pRelativeRotateCenter->z;
-	};
-
 	D3DXMATRIX matRotate;
 	D3DXMatrixRotationX(&matRotate, D3DXToRadian(degree));
 
-	for (int i = 0; i < M_RECT_VERTICES_NUM; ++i)
-	{
-		D3DXVec3TransformCoord(&pCustomVertices[i].m_pos, &movedPosesToRotation[i], &matRotate);
-		D3DXVec3Add(&pCustomVertices[i].m_pos, &pCustomVertices[i].m_pos, &rectCenter);
-		D3DXVec3Add(&pCustomVertices[i].m_pos, &pCustomVertices[i].m_pos, pRelativeRotateCenter);
-	}
+	Rotate(pCustomVertices, pRelativeRotateCenter, &matRotate);
 }
 
 VOID CustomVertices::RotateY(CustomVertex* pCustomVertices, FLOAT degree, const D3DXVECTOR3* pRelativeRotateCenter)
 {
-	D3DXVECTOR3 rectCenter(
-		(pCustomVertices[0].m_pos.x + pCustomVertices[2].m_pos.x) * 0.5f,
-		(pCustomVertices[0].m_pos.y + pCustomVertices[2].m_pos.y) * 0.5f,
-		(pCustomVertices[0].m_pos.z + pCustomVertices[2].m_pos.z) * 0.5f);
-
-	D3DXVECTOR3 distancesFromRectCenter[M_RECT_VERTICES_NUM];
-
-	for (INT i = 0; i < M_RECT_VERTICES_NUM; ++i)
-	{
-		distancesFromRectCenter[i].x = pCustomVertices[i].m_pos.x - rectCenter.x;
-		distancesFromRectCenter[i].y = pCustomVertices[i].m_pos.y - rectCenter.y;
-		distancesFromRectCenter[i].z = pCustomVertices[i].m_pos.z - rectCenter.z;
-	};
-
-	D3DXVECTOR3 movedPosesToRotation[M_RECT_VERTICES_NUM];
-
-	for (INT i = 0; i < M_RECT_VERTICES_NUM; ++i)
-	{
-		movedPosesToRotation[i].x = distancesFromRectCenter[i].x - pRelativeRotateCenter->x;
-		movedPosesToRotation[i].y = distancesFromRectCenter[i].y - pRelativeRotateCenter->y;
-		movedPosesToRotation[i].z = distancesFromRectCenter[i].z - pRelativeRotateCenter->z;
-	};
-
 	D3DXMATRIX matRotate;
 	D3DXMatrixRotationY(&matRotate, D3DXToRadian(degree));
 
-	for (int i = 0; i < M_RECT_VERTICES_NUM; ++i)
-	{
-		D3DXVec3TransformCoord(&pCustomVertices[i].m_pos, &movedPosesToRotation[i], &matRotate);
-		D3DXVec3Add(&pCustomVertices[i].m_pos, &pCustomVertices[i].m_pos, &rectCenter);
-		D3DXVec3Add(&pCustomVertices[i].m_pos, &pCustomVertices[i].m_pos, pRelativeRotateCenter);
-	}
+	Rotate(pCustomVertices, pRelativeRotateCenter, &matRotate);
 }
 
 VOID CustomVertices::RotateZ(CustomVertex* pCustomVertices, FLOAT degree, const D3DXVECTOR3* pRelativeRotateCenter)
 {
-	D3DXVECTOR3 rectCenter(
-		(pCustomVertices[0].m_pos.x + pCustomVertices[2].m_pos.x) * 0.5f,
-		(pCustomVertices[0].m_pos.y + pCustomVertices[2].m_pos.y) * 0.5f,
-		(pCustomVertices[0].m_pos.z + pCustomVertices[2].m_pos.z) * 0.5f);
-
-	D3DXVECTOR3 distancesFromRectCenter[M_RECT_VERTICES_NUM];
-
-	for (INT i = 0; i < M_RECT_VERTICES_NUM; ++i)
-	{
-		distancesFromRectCenter[i].x = pCustomVertices[i].m_pos.x - rectCenter.x;
-		distancesFromRectCenter[i].y = pCustomVertices[i].m_pos.y - rectCenter.y;
-		distancesFromRectCenter[i].z = pCustomVertices[i].m_pos.z - rectCenter.z;
-	};
-
-	D3DXVECTOR3 movedPosesToRotation[M_RECT_VERTICES_NUM];
-
-	for (INT i = 0; i < M_RECT_VERTICES_NUM; ++i)
-	{
-		movedPosesToRotation[i].x = distancesFromRectCenter[i].x - pRelativeRotateCenter->x;
-		movedPosesToRotation[i].y = distancesFromRectCenter[i].y - pRelativeRotateCenter->y;
-		movedPosesToRotation[i].z = distancesFromRectCenter[i].z - pRelativeRotateCenter->z;
-	};
-
 	D3DXMATRIX matRotate;
 	D3DXMatrixRotationZ(&matRotate, D3DXToRadian(degree));
 
-	for (int i = 0; i < M_RECT_VERTICES_NUM; ++i)
-	{
-		D3DXVec3TransformCoord(&pCustomVertices[i].m_pos, &movedPosesToRotation[i], &matRotate);
-		D3DXVec3Add(&pCustomVertices[i].m_pos, &pCustomVertices[i].m_pos, &rectCenter);
-		D3DXVec3Add(&pCustomVertices[i].m_pos, &pCustomVertices[i].m_pos, pRelativeRotateCenter);
-	}
+	Rotate(pCustomVertices, pRelativeRotateCenter, &matRotate);
 }
 
 VOID CustomVertices::Rescale(CustomVertex* pCustomVertices, const D3DXVECTOR2* pScaleRate)
@@ -160,11 +109,11 @@ VOID CustomVertices::Move(CustomVertex* pCustomVertices, const D3DXVECTOR3* pMov
 	}
 }
 
-VOID CustomVertices::Locale(CustomVertex* pCustomVertices, const D3DXVECTOR3* pCenter)
+VOID CustomVertices::Locale(CustomVertex* pCustomVertices, const D3DXVECTOR3* pPos)
 {
 	for (int i = 0; i < M_RECT_VERTICES_NUM; ++i)
 	{
-		pCustomVertices[i].m_pos = *pCenter;
+		pCustomVertices[i].m_pos = *pPos;
 	}
 }
 
