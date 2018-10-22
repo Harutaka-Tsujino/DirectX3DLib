@@ -126,7 +126,7 @@ private:
 
 	static CustomVertices* m_pCustomVertices;		//! singleton用のこのクラスのポインタ
 
-	static const INT M_RECT_VERTICES_NUM = 4;
+	static const INT M_RECT_VERTICES_NUM = 4;		//! 矩形を構成する頂点の数
 
 	VOID Rotate(CustomVertex* pCustomVertices, const D3DXVECTOR3* pRelativeRotateCenter, const D3DXMATRIX* pMatRotate);
 };
