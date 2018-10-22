@@ -17,7 +17,7 @@ class Scene;
 class SceneManager :public Activity
 {
 public:
-	SceneManager* GetInstance();
+	SceneManager * GetInstance();
 
 	VOID DeleteInstnce();
 

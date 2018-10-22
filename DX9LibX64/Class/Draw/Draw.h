@@ -79,13 +79,13 @@ public:
 	* @fn virtual VOID Render(const CustomVertex* pCustomVertices,
 	*	const D3DXMATRIX* pMatWorld, const LPDIRECT3DTEXTURE9 pTexture = NULL)
 	* @brief 3Dの描画
-	* @param (pCustomVertices) 頂点データの先頭ポインタ
+	* @param (Custom3DVertex) 3D頂点データの先頭ポインタ
 	* @param (pMatWorld) 拡大回転移動行列をまとめた行列のポインタ
 	* @return なし
 	* @detail pMatWorldをSetTransformを行い、virtual VOID Render(const CustomVertex* pCustomVertices,
 	*　	const LPDIRECT3DTEXTURE9 pTexture = NULL)
 	*/
-	virtual VOID Render(const CustomVertex* pCustomVertices,
+	virtual VOID Render(const Custom3DVertex* pCustom3DVertices,
 		const D3DXMATRIX* pMatWorld, const LPDIRECT3DTEXTURE9 pTexture = NULL);
 
 protected:

@@ -19,6 +19,20 @@ public:
 };
 
 /**
+* @struct CustomVertex
+* @brief 3D頂点データ
+*/
+struct Custom3DVertex
+{
+public:
+	D3DXVECTOR3 m_pos;		//! 座標
+
+	DWORD m_aRGB;			//! 色カラーコードARGB
+
+	D3DXVECTOR2 m_TexUV;	//! テクスチャの座標
+};
+
+/**
 * @class CustomVertices
 * @brief 頂点情報の操作を行う
 */
@@ -62,6 +76,14 @@ public:
 
 	VOID RotateZ(CustomVertex* pCustomVertices, FLOAT degree, const D3DXVECTOR3* pRelativeRotateCenter);
 
+	VOID RotateXYZ(Custom3DVertex* pCustom3DVertices, const D3DXVECTOR3* pDegree, const D3DXVECTOR3* pRelativeRotateCenter);
+
+	VOID RotateX(Custom3DVertex* pCustom3DVertices, FLOAT degree, const D3DXVECTOR3* pRelativeRotateCenter);
+
+	VOID RotateY(Custom3DVertex* pCustom3DVertices, FLOAT degree, const D3DXVECTOR3* pRelativeRotateCenter);
+
+	VOID RotateZ(Custom3DVertex* pCustom3DVertices, FLOAT degree, const D3DXVECTOR3* pRelativeRotateCenter);
+
 	/**
 	* @fn VOID Rescale(CustomVertex* pCustomVertices, const D3DXVECTOR2* pScaleRate)
 	* @brief 矩形を拡縮させる
@@ -72,6 +94,8 @@ public:
 	*/
 	VOID Rescale(CustomVertex* pCustomVertices, const D3DXVECTOR2* pScaleRate);
 
+	VOID Rescale(Custom3DVertex* pCustom3DVertices, const D3DXVECTOR2* pScaleRate);
+
 	/**
 	* @fn Move(CustomVertex* pCustomVertices, const D3DXVECTOR3* pMovement)
 	* @brief 矩形を移動させる
@@ -81,6 +105,8 @@ public:
 	*/
 	VOID Move(CustomVertex* pCustomVertices, const D3DXVECTOR3* pMovement);
 
+	VOID Move(Custom3DVertex* pCustom3DVertices, const D3DXVECTOR3* pMovement);
+
 	/**
 	* @fn Move(CustomVertex* pCustomVertices, const D3DXVECTOR3* pMovement)
 	* @brief 矩形を引数の位置に再配置させる
@@ -89,6 +115,8 @@ public:
 	* @return なし
 	*/
 	VOID Locale(CustomVertex* pCustomVertices, const D3DXVECTOR3* pPos);
+
+	VOID Locale(Custom3DVertex* pCustom3DVertices, const D3DXVECTOR3* pPos);
 
 	/**
 	* @fn VOID SetTexUV(CustomVertex* pCustomVertices, FLOAT startTU = 0.0f, FLOAT startTV = 0.0f, FLOAT endTU = 1.0f, FLOAT endTV = 1.0f)
@@ -101,6 +129,8 @@ public:
 	* @return なし
 	*/
 	VOID SetTexUV(CustomVertex* pCustomVertices, FLOAT startTU = 0.0f, FLOAT startTV = 0.0f, FLOAT endTU = 1.0f, FLOAT endTV = 1.0f);
+
+	VOID SetTexUV(Custom3DVertex* pCustom3DVertices, FLOAT startTU = 0.0f, FLOAT startTV = 0.0f, FLOAT endTU = 1.0f, FLOAT endTV = 1.0f);
 
 	/**
 	* @fn VOID Create(CustomVertex *pCustomVertices, const D3DXVECTOR3* pCenter, const D3DXVECTOR2* pHalfScale,
@@ -119,6 +149,9 @@ public:
 	VOID Create(CustomVertex *pCustomVertices, const D3DXVECTOR3* pCenter, const D3DXVECTOR2* pHalfScale,
 		DWORD color = 0xFFFFFFFF, FLOAT startTU = 0.0f, FLOAT startTV = 0.0f, FLOAT endTU = 1.0f, FLOAT endTV = 1.0f);
 
+	VOID Create(Custom3DVertex* pCustom3DVertices, const D3DXVECTOR3* pCenter, const D3DXVECTOR2* pHalfScale,
+		DWORD color = 0xFFFFFFFF, FLOAT startTU = 0.0f, FLOAT startTV = 0.0f, FLOAT endTU = 1.0f, FLOAT endTV = 1.0f);
+
 private:
 	CustomVertices() {};
 	~CustomVertices() {};
@@ -128,4 +161,6 @@ private:
 	static const INT M_RECT_VERTICES_NUM = 4;		//! 矩形を構成する頂点の数
 
 	VOID Rotate(CustomVertex* pCustomVertices, const D3DXVECTOR3* pRelativeRotateCenter, const D3DXMATRIX* pMatRotate);
+
+	VOID Rotate(Custom3DVertex* pCustom3DVertices, const D3DXVECTOR3* pRelativeRotateCenter, const D3DXMATRIX* pMatRotate);
 };

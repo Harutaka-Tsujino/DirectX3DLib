@@ -25,15 +25,17 @@ VOID Draw::SetLPDIRECT3DDEVICE9(LPDIRECT3DDEVICE9 pDirectX3DDevice)
 	m_pDirectX3DDevice = pDirectX3DDevice;
 }
 
-VOID Draw::Render(const CustomVertex* pCustomVertices, const D3DXMATRIX* pMatWorld, const LPDIRECT3DTEXTURE9 pTexture)
+VOID Draw::Render(const Custom3DVertex* pCustom3DVertices, const D3DXMATRIX* pMatWorld, const LPDIRECT3DTEXTURE9 pTexture)
 {
+	m_pDirectX3DDevice->SetFVF(D3DFVF_XYZ | D3DFVF_DIFFUSE | D3DFVF_TEX1);
 	m_pDirectX3DDevice->SetTransform(D3DTS_WORLD, pMatWorld);
 
-	Render(pCustomVertices, pTexture);
+	Render(pCustom3DVertices, pTexture);
 }
 
 VOID Draw::Render(const CustomVertex* pCustomVertices, const LPDIRECT3DTEXTURE9 pTexture)
 {
+	m_pDirectX3DDevice->SetFVF(D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1);
 	m_pDirectX3DDevice->SetTexture(0, pTexture);
 	m_pDirectX3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, pCustomVertices, sizeof(CustomVertex));
 }
