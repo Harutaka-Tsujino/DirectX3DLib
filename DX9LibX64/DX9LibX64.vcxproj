@@ -125,28 +125,38 @@
     <None Include="..\命名規則.md" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Class\Activity\Activity.cpp" />
+    <ClCompile Include="Class\CustomVertices\CustomVertices.cpp" />
+    <ClCompile Include="Class\Draw\Draw.cpp" />
     <ClCompile Include="Class\FBX\FbxModel.cpp" />
     <ClCompile Include="Class\FBX\FbxRelated.cpp" />
     <ClCompile Include="Class\FPS\FPS.cpp" />
-    <ClCompile Include="Class\GameManager\CustomVertices\CustomVertices.cpp" />
     <ClCompile Include="Class\GameManager\DirectX\DirectX.cpp" />
-    <ClCompile Include="Class\GameManager\Draw\Draw.cpp" />
     <ClCompile Include="Class\GameManager\GameManager.cpp" />
-    <ClCompile Include="Class\GameManager\Object\Object.cpp" />
     <ClCompile Include="Class\GameManager\Window\Window.cpp" />
+    <ClCompile Include="Class\SceneManager\SceneManager.cpp" />
+    <ClCompile Include="Class\SceneManager\Scene\HomeScene\HomeScene.cpp" />
+    <ClCompile Include="Class\SceneManager\Scene\Scene.cpp" />
+    <ClCompile Include="Class\SceneManager\Scene\TitleScene\TtileScene.cpp" />
+    <ClCompile Include="Class\Singleton\Singleton.cpp" />
     <ClCompile Include="Class\Vector\Vector.cpp" />
     <ClCompile Include="DXLibX64\DX9LibX64.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Class\Activity\Activity.h" />
+    <ClInclude Include="Class\CustomVertices\CustomVertices.h" />
+    <ClInclude Include="Class\Draw\Draw.h" />
     <ClInclude Include="Class\FBX\FbxModel.h" />
     <ClInclude Include="Class\FBX\FbxRelated.h" />
     <ClInclude Include="Class\FPS\FPS.h" />
-    <ClInclude Include="Class\GameManager\CustomVertices\CustomVertices.h" />
     <ClInclude Include="Class\GameManager\DirectX\DirectX.h" />
-    <ClInclude Include="Class\GameManager\Draw\Draw.h" />
     <ClInclude Include="Class\GameManager\GameManager.h" />
-    <ClInclude Include="Class\GameManager\Object\Object.h" />
     <ClInclude Include="Class\GameManager\Window\Window.h" />
+    <ClInclude Include="Class\SceneManager\SceneManager.h" />
+    <ClInclude Include="Class\SceneManager\Scene\HomeScene\HomeScene.h" />
+    <ClInclude Include="Class\SceneManager\Scene\Scene.h" />
+    <ClInclude Include="Class\SceneManager\Scene\TitleScene\TitleScene.h" />
+    <ClInclude Include="Class\Singleton\Singleton.h" />
     <ClInclude Include="Class\Vector\Vector.h" />
     <ClInclude Include="DXLibX64\DX9LibX64.h" />
   </ItemGroup>

@@ -313,11 +313,15 @@ VOID MouseAndKeyboardStatesStorage::Store(InputData& rInputData)
 
 VOID DirectXInputDevices::StoreInputStates()
 {
-	m_pInputStatesStoreter = new MouseAndKeyboardStatesStorage;
+	/*m_pInputStatesStoreter = new MouseAndKeyboardStatesStorage;
 
 	m_pInputStatesStoreter->Store(m_InputData);
 
-	delete m_pInputStatesStoreter;
+	delete m_pInputStatesStoreter;*/
+
+	static MouseAndKeyboardStatesStorage inputStorage;
+
+	inputStorage.Store(m_InputData);
 }
 
 VOID MouseAndKeyboardStatesGetter::Get(InputData& rInputData)
@@ -402,11 +406,15 @@ VOID MouseAndKeyboardStatesGetter::Get(InputData& rInputData)
 
 VOID DirectXInputDevices::GetInputStates()
 {
-	m_pInputStatesGetter = new MouseAndKeyboardStatesGetter;
+	/*m_pInputStatesGetter = new MouseAndKeyboardStatesGetter;
 
 	m_pInputStatesGetter->Get(m_InputData);
 
-	delete m_pInputStatesGetter;
+	delete m_pInputStatesGetter;*/
+
+	static MouseAndKeyboardStatesGetter inputGetter;
+
+	inputGetter.Get(m_InputData);
 }
 
 VOID DirectXInputDevices::GetInputData(InputData* pInputData)

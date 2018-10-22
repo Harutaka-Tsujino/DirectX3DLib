@@ -82,7 +82,7 @@ public:
 
 	FbxModel();
 	~FbxModel();
-	void DrawFbx();
+	VOID DrawFbx();
 };
 
 #endif	//	FBXMODEL_H

@@ -1,8 +1,7 @@
 #include <windows.h>
 #include <vector>
 #include "Draw.h"
-#include "../Object/Object.h"
-#include "../GameManager.h"
+#include "../FBX/FbxRelated.h"
 #include "../CustomVertices/CustomVertices.h"
 
 Draw* Draw::m_pDraw = NULL;

@@ -31,7 +31,7 @@ FbxModel::~FbxModel()
 {
 }
 
-void FbxModel::DrawFbx()
+VOID FbxModel::DrawFbx()
 {
 	m_pDevice->SetFVF(MY_FVF);
 

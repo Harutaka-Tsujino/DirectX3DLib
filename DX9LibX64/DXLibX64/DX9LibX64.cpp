@@ -91,7 +91,7 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR szStr, INT iCmdSh
 //
 //	return(INT)pWindow->GetMSG().wParam;
 //}
-
+//
 //VOID Custom2DVertices(CustomVertex *pCustomVertex, FLOAT posX, FLOAT posY, FLOAT posZ, FLOAT scaleX, FLOAT scaleY,
 //	DWORD color, FLOAT startPosTu, FLOAT startPosTv, FLOAT scaleTu, FLOAT scaleTv, FLOAT scaleImageX, FLOAT scaleImageY)
 //{
@@ -102,7 +102,7 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR szStr, INT iCmdSh
 //
 //	return;
 //}
-
+//
 //3Dの頂点フォーマット
 //struct Vertex3D
 //{
@@ -114,7 +114,7 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR szStr, INT iCmdSh
 //	FLOAT m_tu;
 //	FLOAT m_tv;
 //};
-
+//
 //VOID MainFunc()
 //{
 //	ShowCursor(FALSE);
@@ -343,7 +343,7 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR szStr, INT iCmdSh
 //			NULL);
 //
 //		Vertex3D* billBoard;
-//		vertexBuffer->Lock(0, 0, (void**)&billBoard, 0);
+//		vertexBuffer->Lock(0, 0, (VOID**)&billBoard, 0);
 //
 //		for (INT i = 0; i < RECT_VERTICES_NUM; ++i)
 //		{
@@ -538,7 +538,7 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR szStr, INT iCmdSh
 //			NULL);
 //
 //		Vertex3D* billBoard;
-//		vertexBuffer->Lock(0, 0, (void**)&billBoard, 0);
+//		vertexBuffer->Lock(0, 0, (VOID**)&billBoard, 0);
 //
 //		for (INT i = 0; i < RECT_VERTICES_NUM; ++i)
 //		{
@@ -839,7 +839,7 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR szStr, INT iCmdSh
 //
 //	return;
 //}
-
+//
 //Player::Player(const char* pPlayerModelPath)
 //{
 //	DirectX* pDirectX = DirectX::GetInstance();

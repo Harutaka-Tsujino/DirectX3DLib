@@ -28,7 +28,7 @@ FbxRelated::~FbxRelated()
 	Release();
 }
 
-void FbxRelated::Release()
+VOID FbxRelated::Release()
 {
 	if (m_pFbxScene)
 	{
@@ -79,7 +79,7 @@ void FbxRelated::Release()
 	std::vector<FbxModel*>().swap(m_pModel);
 }
 
-void FbxRelated::TriangulateRecursive(FbxNode* pNode, FbxScene* pScene)
+VOID FbxRelated::TriangulateRecursive(FbxNode* pNode, FbxScene* pScene)
 {
 	FbxNodeAttribute* pNodeAttribute = pNode->GetNodeAttribute();
 
@@ -198,7 +198,7 @@ bool FbxRelated::LoadFbx(const char* pName)
 	return true;
 }
 
-void FbxRelated::GetMesh(fbxsdk::FbxNode* pNode)
+VOID FbxRelated::GetMesh(fbxsdk::FbxNode* pNode)
 {
 	//	ノードも属性を取得
 	fbxsdk::FbxNodeAttribute* pAttr = pNode->GetNodeAttribute();
@@ -240,7 +240,7 @@ void FbxRelated::GetMesh(fbxsdk::FbxNode* pNode)
 	}
 }
 
-void FbxRelated::GetPosition(fbxsdk::FbxMesh* pMesh)
+VOID FbxRelated::GetPosition(fbxsdk::FbxMesh* pMesh)
 {
 	if (!m_modelDataCount)
 	{
@@ -356,7 +356,7 @@ void FbxRelated::GetPosition(fbxsdk::FbxMesh* pMesh)
 	delete pTmpVertex;
 }
 
-void FbxRelated::GetVertexNormal(fbxsdk::FbxMesh* pMesh)
+VOID FbxRelated::GetVertexNormal(fbxsdk::FbxMesh* pMesh)
 {
 	//	法線セット数を取得
 	INT normalLayerCount = pMesh->GetElementNormalCount();
@@ -445,7 +445,7 @@ void FbxRelated::GetVertexNormal(fbxsdk::FbxMesh* pMesh)
 }
 
 //	UV取得関数
-void FbxRelated::GetVertexUV(fbxsdk::FbxMesh* pMesh)
+VOID FbxRelated::GetVertexUV(fbxsdk::FbxMesh* pMesh)
 {
 	//	UVセット数を取得
 	m_pModel[m_modelDataCount - 1]->m_pFbxModelData->UvLayerCount = pMesh->GetElementUVCount();
@@ -540,7 +540,7 @@ void FbxRelated::GetVertexUV(fbxsdk::FbxMesh* pMesh)
 
 }
 
-void FbxRelated::GetMaterialData(fbxsdk::FbxMesh* pMesh)
+VOID FbxRelated::GetMaterialData(fbxsdk::FbxMesh* pMesh)
 {
 	//	メッシュからノードを取得
 	fbxsdk::FbxNode* pNode = pMesh->GetNode();
@@ -645,7 +645,7 @@ void FbxRelated::GetMaterialData(fbxsdk::FbxMesh* pMesh)
 
 }
 
-void FbxRelated::GetTextureName(fbxsdk::FbxSurfaceMaterial* pMaterial, const char* pMatAttr)
+VOID FbxRelated::GetTextureName(fbxsdk::FbxSurfaceMaterial* pMaterial, const char* pMatAttr)
 {
 	//	プロパティを取得
 	fbxsdk::FbxProperty prop = pMaterial->FindProperty(pMatAttr);
@@ -747,7 +747,7 @@ void FbxRelated::GetTextureName(fbxsdk::FbxSurfaceMaterial* pMaterial, const cha
 }
 
 
-void FbxRelated::GetVertexColor(fbxsdk::FbxMesh* pMesh)
+VOID FbxRelated::GetVertexColor(fbxsdk::FbxMesh* pMesh)
 {
 	//	頂点カラーセット数を取得
 	INT vColorLayerCount = pMesh->GetElementVertexColorCount();

@@ -211,7 +211,7 @@ public:
 
 		T* pVertexTmp;
 
-		vertexBuffer->Lock(0, 0, (void**)&pVertexTmp, 0);
+		vertexBuffer->Lock(0, 0, (VOID**)&pVertexTmp, 0);
 
 		memcpy(pVertexTmp, pVertex, size);
 

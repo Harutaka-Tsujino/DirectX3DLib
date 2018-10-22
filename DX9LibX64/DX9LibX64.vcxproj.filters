@@ -30,14 +30,29 @@
     <Filter Include="DX9LibX64">
       <UniqueIdentifier>{2770b8e8-3e85-475a-ae53-aa325edc6a44}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Class\GameManager\Draw">
-      <UniqueIdentifier>{caa7b040-7888-4b49-930e-203d971bbd00}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Class\GameManager\Object">
-      <UniqueIdentifier>{dfdd9d9b-e304-400e-b2da-05c2d36f0d17}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Class\CustomVertices">
       <UniqueIdentifier>{b10b142a-49d1-4c20-91ac-62a246b22648}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Class\SceneManager">
+      <UniqueIdentifier>{271c64da-70d6-43bf-ae89-0201084dea78}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Class\SceneManager\Scene">
+      <UniqueIdentifier>{7ef55bd8-dc1d-4fbd-85ec-d2a3121b1f8e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Class\Activity">
+      <UniqueIdentifier>{8fcad537-77ac-4407-831b-c9dc91413ae6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Class\Draw">
+      <UniqueIdentifier>{caa7b040-7888-4b49-930e-203d971bbd00}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Class\Singleton">
+      <UniqueIdentifier>{95237abf-ca99-4e5b-87f6-b6bbc53c5c50}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Class\SceneManager\Scene\TitleScene">
+      <UniqueIdentifier>{bdf0923f-432d-40da-a1c1-3c270ff18a59}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Class\SceneManager\Scene\HomeScene">
+      <UniqueIdentifier>{fa13fffc-8c7a-453a-9dee-f8017def651c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -70,14 +85,29 @@
     <ClCompile Include="DXLibX64\DX9LibX64.cpp">
       <Filter>DX9LibX64</Filter>
     </ClCompile>
-    <ClCompile Include="Class\GameManager\Draw\Draw.cpp">
-      <Filter>Class\GameManager\Draw</Filter>
+    <ClCompile Include="Class\SceneManager\SceneManager.cpp">
+      <Filter>Class\SceneManager</Filter>
     </ClCompile>
-    <ClCompile Include="Class\GameManager\Object\Object.cpp">
-      <Filter>Class\GameManager\Object</Filter>
+    <ClCompile Include="Class\SceneManager\Scene\Scene.cpp">
+      <Filter>Class\SceneManager\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Class\GameManager\CustomVertices\CustomVertices.cpp">
+    <ClCompile Include="Class\Activity\Activity.cpp">
+      <Filter>Class\Activity</Filter>
+    </ClCompile>
+    <ClCompile Include="Class\CustomVertices\CustomVertices.cpp">
       <Filter>Class\CustomVertices</Filter>
+    </ClCompile>
+    <ClCompile Include="Class\Draw\Draw.cpp">
+      <Filter>Class\Draw</Filter>
+    </ClCompile>
+    <ClCompile Include="Class\Singleton\Singleton.cpp">
+      <Filter>Class\Singleton</Filter>
+    </ClCompile>
+    <ClCompile Include="Class\SceneManager\Scene\TitleScene\TtileScene.cpp">
+      <Filter>Class\SceneManager\Scene\TitleScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Class\SceneManager\Scene\HomeScene\HomeScene.cpp">
+      <Filter>Class\SceneManager\Scene\HomeScene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -105,14 +135,29 @@
     <ClInclude Include="DXLibX64\DX9LibX64.h">
       <Filter>DX9LibX64</Filter>
     </ClInclude>
-    <ClInclude Include="Class\GameManager\Draw\Draw.h">
-      <Filter>Class\GameManager\Draw</Filter>
+    <ClInclude Include="Class\SceneManager\SceneManager.h">
+      <Filter>Class\SceneManager</Filter>
     </ClInclude>
-    <ClInclude Include="Class\GameManager\Object\Object.h">
-      <Filter>Class\GameManager\Object</Filter>
+    <ClInclude Include="Class\SceneManager\Scene\Scene.h">
+      <Filter>Class\SceneManager\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Class\GameManager\CustomVertices\CustomVertices.h">
+    <ClInclude Include="Class\Activity\Activity.h">
+      <Filter>Class\Activity</Filter>
+    </ClInclude>
+    <ClInclude Include="Class\CustomVertices\CustomVertices.h">
       <Filter>Class\CustomVertices</Filter>
+    </ClInclude>
+    <ClInclude Include="Class\Draw\Draw.h">
+      <Filter>Class\Draw</Filter>
+    </ClInclude>
+    <ClInclude Include="Class\Singleton\Singleton.h">
+      <Filter>Class\Singleton</Filter>
+    </ClInclude>
+    <ClInclude Include="Class\SceneManager\Scene\TitleScene\TitleScene.h">
+      <Filter>Class\SceneManager\Scene\TitleScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Class\SceneManager\Scene\HomeScene\HomeScene.h">
+      <Filter>Class\SceneManager\Scene\HomeScene</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

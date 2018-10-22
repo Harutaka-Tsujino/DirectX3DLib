@@ -8,9 +8,7 @@
 #pragma once
 #include <windows.h>
 #include <map>
-#include "../Object/Object.h"
-#include "../GameManager.h"
-#include "../../FBX/FbxRelated.h"
+#include "../FBX/FbxRelated.h"
 #include "../CustomVertices/CustomVertices.h"
 
 struct CustomVertex;
