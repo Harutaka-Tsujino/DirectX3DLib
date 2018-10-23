@@ -251,7 +251,7 @@ VOID CustomVertices::Create(CustomVertex* pCustomVertices, const D3DXVECTOR3* pC
 		pCustomVertices[i].m_pos.x += (i % 3) ? pHalfScale->x : -(pHalfScale->x);
 		pCustomVertices[i].m_pos.y += (i / 2) ? pHalfScale->y : -(pHalfScale->y);
 
-		pCustomVertices[i].m_aRGB = 0XFFFFFFFF;
+		pCustomVertices[i].m_aRGB = color;
 	}
 
 	SetTexUV(pCustomVertices, startTU, startTV, endTU, endTV);

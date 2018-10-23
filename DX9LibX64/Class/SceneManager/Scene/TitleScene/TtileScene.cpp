@@ -10,33 +10,19 @@ VOID TitleScene::Update()
 {
 	static int frame = -1;
 
-	D3DXVECTOR2 displaySize;
-	m_pGameManager->GetDisplaySize(&displaySize);
-
-	CustomVertex background[4];
-
-	D3DXVECTOR2 halfBackgroundSize = displaySize * 0.50f;
-
-	D3DXVECTOR3 backgroundCenter = halfBackgroundSize;
-	backgroundCenter.z = 1.0f;
-
-	m_pCustomVertices->Create(background, &backgroundCenter, &halfBackgroundSize);
-
-	//m_pDraw->Render(background, NULL);
-
 	D3DXVECTOR3 vecDirection(-0.5f, -1.0f, 1.0f);
 	D3DLIGHT9 light;
 
 	ZeroMemory(&light, sizeof(D3DLIGHT9));
 
 	light.Type = D3DLIGHT_DIRECTIONAL;
-	light.Diffuse.r = 2.0f;
-	light.Diffuse.g = 2.0f;
-	light.Diffuse.b = 2.0f;
+	light.Diffuse.r = 1.5f;
+	light.Diffuse.g = 1.5f;
+	light.Diffuse.b = 1.5f;
 
-	light.Specular.r = 20.0f;
-	light.Specular.b = 20.0f;
-	light.Specular.g = 20.0f;
+	light.Specular.r = 10.0f;
+	light.Specular.b = 10.0f;
+	light.Specular.g = 10.0f;
 
 	light.Ambient.r = 10.f;
 	light.Ambient.b = 10.f;
@@ -57,13 +43,37 @@ VOID TitleScene::Update()
 		starFBX.LoadFbx("3DModels/Eiwi/untitled.fbx");
 
 		D3DXCreateTextureFromFile(pDirectX3DDevice,
-			_T("2DTextures/YellowAlpha58.png"),
+			_T("2DTextures/circle.png"),
 			&pTexture);
 
 		++frame;
 	}
 
-	D3DXVECTOR4 eiwiEmissive(0.9f, 0.3f, 0.3f, 0.01f);
+	D3DXVECTOR2 displaySize;
+	m_pGameManager->GetDisplaySize(&displaySize);
+
+	CustomVertex background[4];
+
+	D3DXVECTOR2 halfBackgroundSize;
+	D3DXVECTOR3 backgroundCenter(0.0f,0.0f,1.0f);
+
+	for (int n = 0; n < 32; ++n)
+	{
+		halfBackgroundSize.x = ((-n)+(frame/3))* 2.0f;
+		halfBackgroundSize.y = halfBackgroundSize.x;
+
+		backgroundCenter.x = displaySize.x/32*(float)(n+1);
+
+			for (int i = 0; i < 18; ++i)
+			{
+				backgroundCenter.y = displaySize.y /18* (float)(i+1);
+				m_pCustomVertices->Create(background, &backgroundCenter, &halfBackgroundSize,0xFFDDDD11);
+
+				m_pDraw->Render(background, pTexture);
+			}
+	}
+
+	D3DXVECTOR4 eiwiEmissive(0.0f, 0.3f, 0.3f, 0.01f);
 	starFBX.SetEmissive(&eiwiEmissive);
 
 	D3DXMATRIX			matWorld;
@@ -91,9 +101,29 @@ VOID TitleScene::Update()
 	D3DXMatrixTranslation(&matPosition, matPos.x, matPos.y, matPos.z);
 	D3DXMatrixMultiply(&matWorld, &matWorld, &matPosition);
 
-	m_pDraw->Render(&starFBX, &matWorld, pTexture);
+	m_pDraw->Render(&starFBX, &matWorld, NULL);
 
-	++frame;
+	static bool canBack = false;
+
+	if (canBack)
+	{
+		--frame;
+	}
+
+	if (frame <0)
+	{
+		canBack = false;
+	}
+
+	if (!canBack)
+	{
+		++frame;
+	}
+
+	if (frame > 90)
+	{
+		canBack = true;
+	}
 }
 
 VOID TitleScene::Render()
