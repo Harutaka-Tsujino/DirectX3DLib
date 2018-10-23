@@ -1,6 +1,12 @@
 #include <d3dx9.h>
 #include "CustomVertices.h"
 
+#include <crtdbg.h>
+#include <cstdio>
+#include <cstdlib>
+#define _CRTDBG_MAP_ALLOC
+#define new ::new(_NORMAL_BLOCK, __FILE__, __LINE__)
+
 CustomVertices* CustomVertices::m_pCustomVertices = NULL;
 
 CustomVertices* CustomVertices::GetInstance()
@@ -236,14 +242,14 @@ VOID CustomVertices::SetTexUV(Custom3DVertex* pCustom3DVertices, FLOAT startTU, 
 	}
 }
 
-VOID CustomVertices::Create(CustomVertex *pCustomVertices, const D3DXVECTOR3* pCenter, const D3DXVECTOR2* pHalfScale,
+VOID CustomVertices::Create(CustomVertex* pCustomVertices, const D3DXVECTOR3* pCenter, const D3DXVECTOR2* pHalfScale,
 	DWORD color, FLOAT startTU, FLOAT startTV, FLOAT endTU, FLOAT endTV)
 {
 	for (int i = 0; i < M_RECT_VERTICES_NUM; ++i)
 	{
-		pCustomVertices->m_pos = *pCenter;
+		pCustomVertices[i].m_pos = *pCenter;
 		pCustomVertices[i].m_pos.x += (i % 3) ? pHalfScale->x : -(pHalfScale->x);
-		pCustomVertices[i].m_pos.x += (i / 2) ? pHalfScale->y : -(pHalfScale->y);
+		pCustomVertices[i].m_pos.y += (i / 2) ? pHalfScale->y : -(pHalfScale->y);
 
 		pCustomVertices[i].m_aRGB = 0XFFFFFFFF;
 	}
@@ -251,7 +257,7 @@ VOID CustomVertices::Create(CustomVertex *pCustomVertices, const D3DXVECTOR3* pC
 	SetTexUV(pCustomVertices, startTU, startTV, endTU, endTV);
 }
 
-VOID CustomVertices::Create(Custom3DVertex *pCustom3DVertices, const D3DXVECTOR3* pCenter, const D3DXVECTOR2* pHalfScale,
+VOID CustomVertices::Create(Custom3DVertex* pCustom3DVertices, const D3DXVECTOR3* pCenter, const D3DXVECTOR2* pHalfScale,
 	DWORD color, FLOAT startTU, FLOAT startTV, FLOAT endTU, FLOAT endTV)
 {
 	for (int i = 0; i < M_RECT_VERTICES_NUM; ++i)

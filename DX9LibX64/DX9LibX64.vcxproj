@@ -125,7 +125,7 @@
     <None Include="..\命名規則.md" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Class\Activity\Activity.cpp" />
+    <ClCompile Include="Class\BaseWorking\BaseWorking.cpp" />
     <ClCompile Include="Class\CustomVertices\CustomVertices.cpp" />
     <ClCompile Include="Class\Draw\Draw.cpp" />
     <ClCompile Include="Class\FBX\FbxModel.cpp" />
@@ -134,6 +134,8 @@
     <ClCompile Include="Class\GameManager\DirectX\DirectX.cpp" />
     <ClCompile Include="Class\GameManager\GameManager.cpp" />
     <ClCompile Include="Class\GameManager\Window\Window.cpp" />
+    <ClCompile Include="Class\ObjectManager\ObjectManager.cpp" />
+    <ClCompile Include="Class\ObjectManager\Object\Object.cpp" />
     <ClCompile Include="Class\SceneManager\SceneManager.cpp" />
     <ClCompile Include="Class\SceneManager\Scene\HomeScene\HomeScene.cpp" />
     <ClCompile Include="Class\SceneManager\Scene\Scene.cpp" />
@@ -143,7 +145,7 @@
     <ClCompile Include="DXLibX64\DX9LibX64.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Class\Activity\Activity.h" />
+    <ClInclude Include="Class\BaseWorking\BaseWorking.h" />
     <ClInclude Include="Class\CustomVertices\CustomVertices.h" />
     <ClInclude Include="Class\Draw\Draw.h" />
     <ClInclude Include="Class\FBX\FbxModel.h" />
@@ -152,6 +154,8 @@
     <ClInclude Include="Class\GameManager\DirectX\DirectX.h" />
     <ClInclude Include="Class\GameManager\GameManager.h" />
     <ClInclude Include="Class\GameManager\Window\Window.h" />
+    <ClInclude Include="Class\ObjectManager\ObjectManager.h" />
+    <ClInclude Include="Class\ObjectManager\Object\Object.h" />
     <ClInclude Include="Class\SceneManager\SceneManager.h" />
     <ClInclude Include="Class\SceneManager\Scene\HomeScene\HomeScene.h" />
     <ClInclude Include="Class\SceneManager\Scene\Scene.h" />

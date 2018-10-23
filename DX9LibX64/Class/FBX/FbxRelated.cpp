@@ -559,40 +559,10 @@ VOID FbxRelated::GetMaterialData(fbxsdk::FbxMesh* pMesh)
 
 		D3DMATERIAL9 MaterialData;
 
-		if (pMaterial->GetClassId().Is(fbxsdk::FbxSurfaceLambert::ClassId))
-		{
-			// Lambertにダウンキャスト
-			fbxsdk::FbxSurfaceLambert* lambert = (fbxsdk::FbxSurfaceLambert*)pMaterial;
+		memset(&MaterialData, 0, sizeof(D3DMATERIAL9));
 
-			// アンビエント
-			MaterialData.Ambient.r = (FLOAT)lambert->Ambient.Get().mData[0] * (FLOAT)lambert->AmbientFactor.Get();
-			MaterialData.Ambient.g = (FLOAT)lambert->Ambient.Get().mData[1] * (FLOAT)lambert->AmbientFactor.Get();
-			MaterialData.Ambient.b = (FLOAT)lambert->Ambient.Get().mData[2] * (FLOAT)lambert->AmbientFactor.Get();
-			GetTextureName(lambert, fbxsdk::FbxSurfaceMaterial::sAmbient);
-
-			// ディフューズ
-			MaterialData.Diffuse.r = (FLOAT)lambert->Diffuse.Get().mData[0] * (FLOAT)lambert->DiffuseFactor.Get();
-			MaterialData.Diffuse.g = (FLOAT)lambert->Diffuse.Get().mData[1] * (FLOAT)lambert->DiffuseFactor.Get();
-			MaterialData.Diffuse.b = (FLOAT)lambert->Diffuse.Get().mData[2] * (FLOAT)lambert->DiffuseFactor.Get();
-			GetTextureName(lambert, fbxsdk::FbxSurfaceMaterial::sDiffuse);
-
-			// エミッシブ
-			MaterialData.Emissive.r = (FLOAT)lambert->Emissive.Get().mData[0] * (FLOAT)lambert->EmissiveFactor.Get();
-			MaterialData.Emissive.g = (FLOAT)lambert->Emissive.Get().mData[1] * (FLOAT)lambert->EmissiveFactor.Get();
-			MaterialData.Emissive.b = (FLOAT)lambert->Emissive.Get().mData[2] * (FLOAT)lambert->EmissiveFactor.Get();
-			GetTextureName(lambert, fbxsdk::FbxSurfaceMaterial::sEmissive);
-
-			// 透過度
-			MaterialData.Ambient.a = 0.f;
-			MaterialData.Diffuse.a = 1.f;
-			MaterialData.Emissive.a = 0.f;
-			GetTextureName(lambert, fbxsdk::FbxSurfaceMaterial::sTransparentColor);
-
-			GetTextureName(lambert, fbxsdk::FbxSurfaceMaterial::sNormalMap);
-
-			m_pModel[m_modelDataCount - 1]->m_pFbxModelData->MaterialData.push_back(MaterialData);
-		}
-		else if (pMaterial->GetClassId().Is(fbxsdk::FbxSurfacePhong::ClassId))
+		BOOL isLmbert = 0;
+		if (isLmbert = pMaterial->GetClassId().Is(fbxsdk::FbxSurfacePhong::ClassId))
 		{
 			// Phongにダウンキャスト
 			fbxsdk::FbxSurfacePhong* phong = (fbxsdk::FbxSurfacePhong*)pMaterial;
@@ -616,10 +586,11 @@ VOID FbxRelated::GetMaterialData(fbxsdk::FbxMesh* pMesh)
 			GetTextureName(phong, fbxsdk::FbxSurfaceMaterial::sEmissive);
 
 			// 透過度
-			MaterialData.Ambient.a = 0.f;
-			MaterialData.Diffuse.a = 1.f;
-			MaterialData.Emissive.a = 0.f;
-			MaterialData.Specular.a = 0.f;
+			FLOAT alpha = (FLOAT)phong->TransparencyFactor.Get();
+			MaterialData.Ambient.a = 1.f;
+			MaterialData.Diffuse.a = 1.0f - alpha;
+			MaterialData.Emissive.a = 1.f;
+			MaterialData.Specular.a = 1.f;
 			GetTextureName(phong, fbxsdk::FbxSurfaceMaterial::sTransparentColor);
 
 			// スペキュラ
@@ -634,15 +605,49 @@ VOID FbxRelated::GetMaterialData(fbxsdk::FbxMesh* pMesh)
 			// 反射
 			//			reflectivity_ = (FLOAT)phong->GetReflectionFactor().Get();		??????????????
 
+			float buf =(FLOAT)phong->Reflection.Get().mData[0] * (FLOAT)phong->ReflectionFactor.Get();
+
 			MaterialData.Power = (FLOAT)phong->Shininess.Get();
 
 			GetTextureName(phong, fbxsdk::FbxSurfaceMaterial::sNormalMap);
 
 			m_pModel[m_modelDataCount - 1]->m_pFbxModelData->MaterialData.push_back(MaterialData);
 		}
+		else if (isLmbert = pMaterial->GetClassId().Is(fbxsdk::FbxSurfaceLambert::ClassId))
+		{
+			// Lambertにダウンキャスト
+			fbxsdk::FbxSurfaceLambert* lambert = (fbxsdk::FbxSurfaceLambert*)pMaterial;
 
+			// アンビエント
+			MaterialData.Ambient.r = (FLOAT)lambert->Ambient.Get().mData[0] * (FLOAT)lambert->AmbientFactor.Get();
+			MaterialData.Ambient.g = (FLOAT)lambert->Ambient.Get().mData[1] * (FLOAT)lambert->AmbientFactor.Get();
+			MaterialData.Ambient.b = (FLOAT)lambert->Ambient.Get().mData[2] * (FLOAT)lambert->AmbientFactor.Get();
+			GetTextureName(lambert, fbxsdk::FbxSurfaceMaterial::sAmbient);
+
+			// ディフューズ
+			MaterialData.Diffuse.r = (FLOAT)lambert->Diffuse.Get().mData[0] * (FLOAT)lambert->DiffuseFactor.Get();
+			MaterialData.Diffuse.g = (FLOAT)lambert->Diffuse.Get().mData[1] * (FLOAT)lambert->DiffuseFactor.Get();
+			MaterialData.Diffuse.b = (FLOAT)lambert->Diffuse.Get().mData[2] * (FLOAT)lambert->DiffuseFactor.Get();
+			GetTextureName(lambert, fbxsdk::FbxSurfaceMaterial::sDiffuse);
+
+			// エミッシブ
+			MaterialData.Emissive.r = (FLOAT)lambert->Emissive.Get().mData[0] * (FLOAT)lambert->EmissiveFactor.Get();
+			MaterialData.Emissive.g = (FLOAT)lambert->Emissive.Get().mData[1] * (FLOAT)lambert->EmissiveFactor.Get();
+			MaterialData.Emissive.b = (FLOAT)lambert->Emissive.Get().mData[2] * (FLOAT)lambert->EmissiveFactor.Get();
+			GetTextureName(lambert, fbxsdk::FbxSurfaceMaterial::sEmissive);
+
+			// 透過度
+			FLOAT alpha = (FLOAT)lambert->TransparencyFactor.Get();
+			MaterialData.Ambient.a = 1.f;
+			MaterialData.Diffuse.a = 1.0f - alpha;
+			MaterialData.Emissive.a = 1.f;
+			GetTextureName(lambert, fbxsdk::FbxSurfaceMaterial::sTransparentColor);
+
+			GetTextureName(lambert, fbxsdk::FbxSurfaceMaterial::sNormalMap);
+
+			m_pModel[m_modelDataCount - 1]->m_pFbxModelData->MaterialData.push_back(MaterialData);
+		}
 	}
-
 }
 
 VOID FbxRelated::GetTextureName(fbxsdk::FbxSurfaceMaterial* pMaterial, const char* pMatAttr)
@@ -746,7 +751,6 @@ VOID FbxRelated::GetTextureName(fbxsdk::FbxSurfaceMaterial* pMaterial, const cha
 	}
 }
 
-
 VOID FbxRelated::GetVertexColor(fbxsdk::FbxMesh* pMesh)
 {
 	//	頂点カラーセット数を取得
@@ -810,5 +814,45 @@ VOID FbxRelated::GetVertexColor(fbxsdk::FbxMesh* pMesh)
 		default:
 			break;
 		}
+	}
+}
+
+VOID FbxRelated::SetEmissive(const D3DXVECTOR4* pARGB)
+{
+	for (FbxModel* pI : m_pModel)
+	{
+		pI->SetEmissive(pARGB);
+	}
+}
+
+VOID FbxRelated::SetAmbient(const D3DXVECTOR4* pARGB)
+{
+	for (FbxModel* pI : m_pModel)
+	{
+		pI->SetAmbient(pARGB);
+	}
+}
+
+VOID FbxRelated::SetDiffuse(const D3DXVECTOR4* pARGB) 
+{
+	for (FbxModel* pI : m_pModel)
+	{
+		pI->SetDiffuse(pARGB);
+	}
+}
+
+VOID FbxRelated::SetSpecular(const D3DXVECTOR4* pARGB)
+{
+	for (FbxModel* pI : m_pModel)
+	{
+		pI->SetSpecular(pARGB);
+	}
+}
+
+VOID FbxRelated::SetPower(float power)
+{
+	for (FbxModel* pI : m_pModel)
+	{
+		pI->SetPower(power);
 	}
 }

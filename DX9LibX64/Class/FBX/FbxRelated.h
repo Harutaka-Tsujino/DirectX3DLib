@@ -41,7 +41,11 @@ public:
 	* @retval false		モデル読み込み失敗
 	*/
 	bool LoadFbx(const char* pName);
-
+	VOID SetAmbient(const D3DXVECTOR4* pARGB);											//!<	モデルを発光させる関数
+	VOID SetDiffuse(const D3DXVECTOR4* pARGB);
+	VOID SetEmissive(const D3DXVECTOR4* pARGB);
+	VOID SetSpecular(const D3DXVECTOR4* pARGB);
+	VOID SetPower(float power);
 	std::vector<FbxModel*> m_pModel;		//!<	モデルデータを格納する場所
 	INT m_modelDataCount = 0;
 };

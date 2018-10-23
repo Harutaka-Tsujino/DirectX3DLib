@@ -83,6 +83,13 @@ public:
 	FbxModel();
 	~FbxModel();
 	VOID DrawFbx();
+
+	VOID SetAmbient(const D3DXVECTOR4* pARGB);											//!<	モデルを発光させる関数
+	VOID SetDiffuse(const D3DXVECTOR4* pARGB);
+	VOID SetEmissive(const D3DXVECTOR4* pARGB);
+	VOID SetSpecular(const D3DXVECTOR4* pARGB);
+	VOID SetPower(float power);
+
 };
 
 #endif	//	FBXMODEL_H

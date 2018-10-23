@@ -14,6 +14,7 @@ public:
 	InputData GetInputData();
 	INT DeleteInstance();
 	LPDIRECT3DDEVICE9 GetDirectX3DDevice();
+	VOID GetDisplaySize(D3DXVECTOR2* pDisplaySize);
 
 private:
 	GameManager(HINSTANCE hInst, TCHAR* pAppName, BOOL canWindow);

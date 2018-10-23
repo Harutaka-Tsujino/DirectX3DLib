@@ -53,3 +53,55 @@ VOID FbxModel::DrawFbx()
 		m_pFbxModelData->pVertex,
 		sizeof(Vertex));
 }
+
+VOID FbxModel::SetEmissive(const D3DXVECTOR4* pARGB)
+{
+	for (int i = 0; i < m_pFbxModelData->materialCount; i++)
+	{
+		m_pFbxModelData->MaterialData[i].Emissive.a = pARGB->x;
+		m_pFbxModelData->MaterialData[i].Emissive.r = pARGB->y;
+		m_pFbxModelData->MaterialData[i].Emissive.g= pARGB->z;
+		m_pFbxModelData->MaterialData[i].Emissive.b = pARGB->w;
+	}
+}
+
+VOID FbxModel::SetAmbient(const D3DXVECTOR4* pARGB)
+{
+	for (int i = 0; i < m_pFbxModelData->materialCount; i++)
+	{
+		m_pFbxModelData->MaterialData[i].Ambient.a = pARGB->x;
+		m_pFbxModelData->MaterialData[i].Ambient.r = pARGB->y;
+		m_pFbxModelData->MaterialData[i].Ambient.g = pARGB->z;
+		m_pFbxModelData->MaterialData[i].Ambient.b = pARGB->w;
+	}
+}
+
+VOID FbxModel::SetDiffuse(const D3DXVECTOR4* pARGB)
+{
+	for (int i = 0; i < m_pFbxModelData->materialCount; i++)
+	{
+		m_pFbxModelData->MaterialData[i].Diffuse.a = pARGB->x;
+		m_pFbxModelData->MaterialData[i].Diffuse.r = pARGB->y;
+		m_pFbxModelData->MaterialData[i].Diffuse.g = pARGB->z;
+		m_pFbxModelData->MaterialData[i].Diffuse.b = pARGB->w;
+	}
+}
+
+VOID FbxModel::SetSpecular(const D3DXVECTOR4* pARGB)
+{
+	for (int i = 0; i < m_pFbxModelData->materialCount; i++)
+	{
+		m_pFbxModelData->MaterialData[i].Specular.a = pARGB->x;
+		m_pFbxModelData->MaterialData[i].Specular.r = pARGB->y;
+		m_pFbxModelData->MaterialData[i].Specular.g = pARGB->z;
+		m_pFbxModelData->MaterialData[i].Specular.b = pARGB->w;
+	}
+}
+
+VOID FbxModel::SetPower(float power)
+{
+	for (int i = 0; i < m_pFbxModelData->materialCount; i++)
+	{
+		m_pFbxModelData->MaterialData[i].Power=power;
+	}
+}

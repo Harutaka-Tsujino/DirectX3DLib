@@ -1,6 +1,6 @@
 #pragma once
 #include <windows.h>
-#include "../Activity/Activity.h"
+#include "../BaseWorking/BaseWorking.h"
 #include "Scene\Scene.h"
 
 enum class SceneID
@@ -14,10 +14,10 @@ enum class SceneID
 
 class Scene;
 
-class SceneManager :public Activity
+class SceneManager :public BaseWorking
 {
 public:
-	SceneManager * GetInstance();
+	static SceneManager * GetInstance();
 
 	VOID DeleteInstnce();
 
@@ -26,16 +26,20 @@ public:
 	VOID Render();
 
 private:
-	SceneManager() {};
-	~SceneManager() {};
+	SceneManager();
+	~SceneManager();
 
 	VOID Manage();
 
 	static SceneManager* m_pSceneManager;
 
 	Scene* m_pScene = NULL;
-
 	SceneID m_currentScene = SceneID::VOID_SCENE;
-
 	SceneID m_nextScene = SceneID::TITLE_SCENE;
+
+	GameManager* m_pGameManager;
+	CustomVertices* m_pCustomVertices;
+	Draw* m_pDraw;
+
+	InputData m_inputData;
 };

@@ -30,7 +30,7 @@ public:
 	*	m_pDrawに代入し戻り値で変えす、
 	*	このクラスを破棄する場合はVOID DeleteInstance()を使用する
 	*/
-	Draw* GetInstance();
+	static Draw* GetInstance();
 
 	/**
 	* @fnstatic  VOID DeleteInstance()

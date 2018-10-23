@@ -1,6 +1,15 @@
 #include <windows.h>
 #include "../../../GameManager/GameManager.h"
+#include "../../SceneManager.h"
 #include "HomeScene.h"
+
+#include <crtdbg.h>
+#include <cstdio>
+#include <cstdlib>
+#define _CRTDBG_MAP_ALLOC
+#define new ::new(_NORMAL_BLOCK, __FILE__, __LINE__)
+
+enum class SceneID;
 
 VOID HomeScene::Update()
 {

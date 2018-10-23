@@ -86,11 +86,12 @@ VOID DirectX3DDeviceInitializer::SetRenderState(BOOL canCullPolygon)
 	rpDirectX3DDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 	rpDirectX3DDevice->SetRenderState(D3DRS_ZENABLE, TRUE);
 	rpDirectX3DDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
-	rpDirectX3DDevice->SetRenderState(D3DRS_AMBIENT, 0x00CCCCCC);
+	rpDirectX3DDevice->SetRenderState(D3DRS_AMBIENT, 0x00222266);
 	rpDirectX3DDevice->SetRenderState(D3DRS_SPECULARENABLE, TRUE);
 	rpDirectX3DDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
 	rpDirectX3DDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATEREQUAL);
-	rpDirectX3DDevice->SetRenderState(D3DRS_ALPHAREF, 0x33);
+	rpDirectX3DDevice->SetRenderState(D3DRS_ALPHAREF, 0x00);
+	rpDirectX3DDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 
 	if (!canCullPolygon)
 	{
@@ -186,7 +187,7 @@ VOID DirectX3DDevice::PrepareRender()
 	DirectXInstances& rDirectXInstances = pDirectX->GetDirectXInstances();
 	LPDIRECT3DDEVICE9& rpDirectX3DDevice = rDirectXInstances.m_pDirectX3DDevice;
 
-	rpDirectX3DDevice->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0xE0, 0xF8, 0xF7), 1.f, 0);
+	rpDirectX3DDevice->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0x07, 0x07, 0x19), 1.f, 0);
 	rpDirectX3DDevice->BeginScene();
 }
 

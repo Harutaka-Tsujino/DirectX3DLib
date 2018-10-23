@@ -1,11 +1,29 @@
 #include <windows.h>
-#include "../Activity/Activity.h"
+#include "../BaseWorking/BaseWorking.h"
 #include "Scene\Scene.h"
 #include "Scene\TitleScene\TitleScene.h"
 #include "Scene\HomeScene\HomeScene.h"
 #include "SceneManager.h"
 
+#include <crtdbg.h>
+#include <cstdio>
+#include <cstdlib>
+#define _CRTDBG_MAP_ALLOC
+#define new ::new(_NORMAL_BLOCK, __FILE__, __LINE__)
+
 SceneManager* SceneManager::m_pSceneManager = NULL;
+
+SceneManager::SceneManager()
+{
+	m_pGameManager = GameManager::CopyInstance();
+	m_inputData = m_pGameManager->GetInputData();
+	m_pCustomVertices  = CustomVertices::GetInstance();
+	m_pDraw = Draw::GetInstance();
+}
+
+SceneManager::~SceneManager()
+{
+}
 
 SceneManager* SceneManager::GetInstance()
 {
@@ -16,6 +34,9 @@ SceneManager* SceneManager::GetInstance()
 
 VOID SceneManager::DeleteInstnce()
 {
+	m_pCustomVertices->DeleteInstance();
+	m_pDraw->DeleteInstance();
+	delete m_pScene;
 	delete m_pSceneManager;
 	m_pSceneManager = NULL;
 }
@@ -55,6 +76,8 @@ VOID SceneManager::Update()
 {
 	Manage();
 
+	m_inputData = m_pGameManager->GetInputData();
+	m_pScene->syncLibInstance(m_pGameManager, m_pCustomVertices, m_pDraw, m_inputData);
 	m_pScene->Update();
 	m_pScene->syncNextScene(&m_nextScene);
 }

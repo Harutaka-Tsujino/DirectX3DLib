@@ -90,6 +90,7 @@ VOID GameManager::LoopMainFunc()
 
 	FPS* pFPS = FPS::GetInstance();
 
+
 	while (m_pWindow->GetMSG().message != WM_QUIT)
 	{
 		if (!m_pWindow->ConfirmMessage())
@@ -103,6 +104,7 @@ VOID GameManager::LoopMainFunc()
 		{
 			UpdateInput();
 			rDirectX3DDevice.PrepareRender();
+			m_pDirectX->m_DirectX3DDevice.m_camera.SetTransform();
 			m_pMainFunc();
 			rDirectX3DDevice.CleanUpRender();
 		}
@@ -130,4 +132,9 @@ INT GameManager::DeleteInstance()
 	m_pGameManager = NULL;
 
 	return returnValue;
+}
+
+VOID GameManager::GetDisplaySize(D3DXVECTOR2* pDisplaySize)
+{
+	*pDisplaySize = m_displaySize;
 }

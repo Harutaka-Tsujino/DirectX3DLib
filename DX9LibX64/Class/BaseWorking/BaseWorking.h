@@ -1,11 +1,11 @@
 #pragma once
 #include <windows.h>
 
-class Activity
+class BaseWorking
 {
 public:
-	Activity() {};
-	~Activity() {};
+	BaseWorking() {};
+	~BaseWorking() {};
 
 	virtual VOID Update() = 0;
 	virtual VOID Render() = 0;
